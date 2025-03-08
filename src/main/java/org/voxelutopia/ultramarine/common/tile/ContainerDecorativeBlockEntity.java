@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.common.block.ContainerDecorativeBlock;
 import org.voxelutopia.ultramarine.common.menu.ContainerDecorativeBlockMenu;
 import org.voxelutopia.ultramarine.init.registry.ModBlockEntities;
@@ -34,7 +35,7 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
     }
 
     @Override
-    protected NonNullList<ItemStack> getItems() {
+    protected @NotNull NonNullList<ItemStack> getItems() {
         return this.items;
     }
 
@@ -44,12 +45,12 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
     }
 
     @Override
-    protected Component getDefaultName() {
+    protected @NotNull Component getDefaultName() {
         return Component.translatable("container." + BuiltInRegistries.BLOCK.getKey(block).getPath());
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
+    protected @NotNull AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory) {
         if (block instanceof ContainerDecorativeBlock container) {
             return container.getContainerType().createMenu(pContainerId, pInventory, this);
         }

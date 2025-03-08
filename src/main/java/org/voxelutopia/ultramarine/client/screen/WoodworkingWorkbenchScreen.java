@@ -15,7 +15,7 @@ import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 import java.util.List;
 
 public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<WoodworkingWorkbenchMenu> {
-    private static final ResourceLocation BG_LOCATION = new ResourceLocation("textures/gui/container/stonecutter.png");
+    private static final ResourceLocation BG_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/stonecutter.png");
     private static final int SCROLLER_WIDTH = 12;
     private static final int SCROLLER_HEIGHT = 15;
     private static final int RECIPES_COLUMNS = 4;
@@ -38,7 +38,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pX, int pY) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, pX, pY, pPartialTick);
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(BG_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -65,13 +65,16 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int j = this.topPos + 14;
             int k = this.startIndex + 12;
             List<WoodworkingRecipe> list = this.menu.getRecipes();
-
             for (int l = this.startIndex; l < k && l < this.menu.getNumRecipes(); ++l) {
                 int i1 = l - this.startIndex;
                 int j1 = i + i1 % 4 * 16;
                 int k1 = j + i1 / 4 * 18 + 2;
                 if (pX >= j1 && pX < j1 + 16 && pY >= k1 && pY < k1 + 18) {
-                    guiGraphics.renderTooltip(this.font, list.get(l).getResultItem(this.minecraft.level.registryAccess()), pX, pY);
+                    if (this.minecraft != null) {
+                        if (this.minecraft.level != null) {
+                            guiGraphics.renderTooltip(this.font, list.get(l).getResultItem(this.minecraft.level.registryAccess()), pX, pY);
+                        }
+                    }
                 }
             }
         }
@@ -103,7 +106,11 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int k = pLeft + j % 4 * 16;
             int l = j / 4;
             int i1 = pTop + l * 18 + 2;
-            guiGraphics.renderItemDecorations(this.font, list.get(i).getResultItem(this.minecraft.level.registryAccess()), k, i1);
+            if (this.minecraft != null) {
+                if (this.minecraft.level != null) {
+                    guiGraphics.renderItemDecorations(this.font, list.get(i).getResultItem(this.minecraft.level.registryAccess()), k, i1);
+                }
+            }
         }
 
     }
@@ -120,9 +127,11 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
                 int i1 = l - this.startIndex;
                 double d0 = pMouseX - (double) (i + i1 % 4 * 16);
                 double d1 = pMouseY - (double) (j + i1 / 4 * 18);
-                if (d0 >= 0.0D && d1 >= 0.0D && d0 < 16.0D && d1 < 18.0D && this.menu.clickMenuButton(this.minecraft.player, l)) {
+                if (this.minecraft != null && d0 >= 0.0D && d1 >= 0.0D && d0 < 16.0D && d1 < 18.0D && this.menu.clickMenuButton(this.minecraft.player, l)) {
                     Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
-                    this.minecraft.gameMode.handleInventoryButtonClick((this.menu).containerId, l);
+                    if (this.minecraft.gameMode != null) {
+                        this.minecraft.gameMode.handleInventoryButtonClick((this.menu).containerId, l);
+                    }
                     return true;
                 }
             }

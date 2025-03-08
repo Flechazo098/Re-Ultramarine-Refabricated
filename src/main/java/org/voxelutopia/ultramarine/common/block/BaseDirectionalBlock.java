@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
@@ -32,5 +33,10 @@ public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockP
     @Override
     public BaseBlockProperty getProperty() {
         return property;
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec () {
+        return null;
     }
 }

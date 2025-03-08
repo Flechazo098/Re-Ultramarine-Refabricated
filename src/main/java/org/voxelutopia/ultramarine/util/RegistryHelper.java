@@ -4,6 +4,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.ItemLike;
 
 /**
  * Name: Ultramarine / RegistryHelper
@@ -18,7 +19,7 @@ public class RegistryHelper {
         return BuiltInRegistries.BLOCK.getKey(b);
     }
 
-    public static ResourceLocation getItemRegistryName(Item b) {
-        return BuiltInRegistries.ITEM.getKey(b);
+    public static ResourceLocation getItemRegistryName(ItemLike item) {
+        return BuiltInRegistries.ITEM.getKey(item.asItem());
     }
 }

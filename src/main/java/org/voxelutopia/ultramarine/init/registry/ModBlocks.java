@@ -1,19 +1,19 @@
 package org.voxelutopia.ultramarine.init.registry;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import org.voxelutopia.ultramarine.common.block.*;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.Vec3;
 import org.voxelutopia.ultramarine.Ultramarine;
-import org.voxelutopia.ultramarine.common.block.*;
 import org.voxelutopia.ultramarine.init.data.ContainerType;
 
 @SuppressWarnings("unused")
@@ -828,12 +828,12 @@ public class ModBlocks {
 
 
     public static Block registerBlock(String name, Block block) {
-        //registerBlockItem(name, block);
-        return Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(Ultramarine.MOD_ID, name), block);
+        return Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name), block);
     }
 
     public static void registerBlockItem(String name, Block block) {
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(Ultramarine.MOD_ID, name), new BlockItem(block, new FabricItemSettings()));
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name), new BlockItem(block, new Item.Properties())
+        );
     }
 
     public static void registerModBlocks() {

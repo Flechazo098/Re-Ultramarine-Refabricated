@@ -49,7 +49,7 @@ public class RoofTiles extends ShiftableBlock {
     public enum RoofTileType implements ShiftedTileType {
         NORMAL("roof_tiles"), STAIRS("roof_tile_stairs"), EDGE("roof_tile_edge");
 
-        String blockName;
+        final String blockName;
 
         RoofTileType(String blockName) {
             this.blockName = blockName;

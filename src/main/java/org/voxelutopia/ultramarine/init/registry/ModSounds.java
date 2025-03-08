@@ -44,7 +44,7 @@ public class ModSounds {
 
 
     private static SoundEvent register(String name) {
-        return Registry.register(BuiltInRegistries.SOUND_EVENT, name, SoundEvent.createVariableRangeEvent(new ResourceLocation(Ultramarine.MOD_ID, name)));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, name, SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name)));
     }
 
     private static SoundEvent register(String name, SoundEvent soundEvent) {

@@ -77,13 +77,13 @@ public class Censer extends DecorativeBlock implements EntityBlock {
     }
 
     @Override
-    public @NotNull BlockState getStateForPlacement(BlockPlaceContext pContext) {
+    public @NotNull BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return isLuminous() ? state.setValue(LIT, false) : state;
     }
 
     @Override
-    public int getLightBlock(BlockState state, BlockGetter blockGetter, BlockPos blockPos) {
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         if (isLuminous()) return state.getValue(LIT) ? 4 : 0;
         else return 0;
     }

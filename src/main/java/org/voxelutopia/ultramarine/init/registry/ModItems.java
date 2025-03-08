@@ -752,7 +752,7 @@ public class ModItems {
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(BuiltInRegistries.ITEM,
-                new ResourceLocation(Ultramarine.MOD_ID, name), item);
+                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name), item);
     }
 
     public static void registerModItems() {

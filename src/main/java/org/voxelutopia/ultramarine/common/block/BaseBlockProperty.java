@@ -9,6 +9,8 @@ import net.minecraft.world.level.material.MapColor;
 import org.voxelutopia.ultramarine.init.data.ModBlockTags;
 
 public final class BaseBlockProperty {
+
+
     public static BaseBlockProperty STONE = new BaseBlockProperty(BlockBehaviour.Properties.of()
             .mapColor(MapColor.STONE)
             .sound(SoundType.STONE)

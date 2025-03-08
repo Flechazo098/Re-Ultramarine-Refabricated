@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.4.1'
+    id 'fabric-loom' version "${fabric_loom_version}"
     id 'maven-publish'
 }
 
@@ -27,7 +27,7 @@ repositories {
         }
     }
     mavenCentral()
-    maven { url = "https://mvn.devos.one/snapshots/" }
+    maven { url = "https://mvn.devos.one/releases/" }
 }
 
 dependencies {
@@ -38,8 +38,8 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extra_version}")))
-    include(modImplementation("io.github.fabricators_of_create.Porting-Lib:model_generators:${project.port_version}"))
+//    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extra_version}")))
+    include(modImplementation("io.github.fabricators_of_create.Porting-Lib:gametest:${project.port_version}"))
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
@@ -58,7 +58,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly

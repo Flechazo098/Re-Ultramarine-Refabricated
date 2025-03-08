@@ -13,7 +13,7 @@ public class ModRecipeTypes {
     public static RecipeType<WoodworkingRecipe> WOODWORKING;
 
     public static void registerModRecipeTypes() {
-        WOODWORKING = Registry.register(BuiltInRegistries.RECIPE_TYPE, new ResourceLocation(Ultramarine.MOD_ID, "woodworking"),
+        WOODWORKING = Registry.register(BuiltInRegistries.RECIPE_TYPE, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "woodworking"),
                 Type.INSTANCE);
     }
 

@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -103,7 +104,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @NotNull
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = setDiagonalStateForPlacement(this.defaultBlockState(), pContext);
         if (isDirectional() && isDiagonallyPlaceable()) {
             var directions = getMainAndShiftedDirections(pContext);
@@ -121,7 +122,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         if (isDirectional()) pBuilder.add(FACING);
         if (isDiagonallyPlaceable()) pBuilder.add(DIAGONAL);
@@ -130,7 +131,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
+    public void onPlace(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pOldState, boolean pIsMoving) {
         if (offsetDirection != null) {
             switch (offsetDirection) {
                 case DOWN -> {
@@ -150,22 +151,22 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return shape.getShape(pState, pLevel, pPos, pContext);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+    public VoxelShape getCollisionShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
         return noCollision ? Shapes.empty() : getShape(pState, pLevel, pPos, pContext);
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState pState) {
+    public RenderShape getRenderShape(@NotNull BlockState pState) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public int getLightBlock(BlockState state, BlockGetter blockGetter, BlockPos blockPos) {
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         if (isLuminous()) return state.getValue(LIT) ? 14 : 0;
         else return 0;
     }
@@ -189,13 +190,18 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public VoxelShape getBlockSupportShape(BlockState pState, BlockGetter pReader, BlockPos pPos) {
+    public VoxelShape getBlockSupportShape(@NotNull BlockState pState, @NotNull BlockGetter pReader, @NotNull BlockPos pPos) {
         return noFenceConnect ? FULL_14 : super.getBlockSupportShape(pState, pReader, pPos);
     }
 
     @Override
-    public float getShadeBrightness(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+    public float getShadeBrightness(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
         return 1.0f;
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec () {
+        return null;
     }
 
     @FunctionalInterface

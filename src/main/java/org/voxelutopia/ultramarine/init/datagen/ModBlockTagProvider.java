@@ -60,7 +60,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return UltramarineDataGenerators.MOD_ID + " Block Tags";
     }
 }

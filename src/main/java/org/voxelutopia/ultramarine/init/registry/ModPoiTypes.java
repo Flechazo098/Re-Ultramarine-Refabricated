@@ -12,7 +12,7 @@ public class ModPoiTypes {
 
     public static void registerModPOI() {
 
-        COOKING_POI = PointOfInterestHelper.register(new ResourceLocation(Ultramarine.MOD_ID, "cooking_poi"), 1, 1, ModBlocks.FOOD_HAMPER);
+        COOKING_POI = PointOfInterestHelper.register(ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "cooking_poi"), 1, 1, ModBlocks.FOOD_HAMPER);
 
     }
 

@@ -20,7 +20,7 @@ public class ModEntityTypes {
 
                 Registry.register(
                         BuiltInRegistries.ENTITY_TYPE,
-                        new ResourceLocation(Ultramarine.MOD_ID, "seat"),
+                        ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "seat"),
                         FabricEntityTypeBuilder.<SeatEntity>create(MobCategory.MISC, SeatEntity::new)
                                 .dimensions(EntityDimensions.fixed(0.1F, 0.1F))
                                 .trackRangeBlocks(64).trackedUpdateRate(20)
@@ -31,7 +31,7 @@ public class ModEntityTypes {
 
                 Registry.register(
                         BuiltInRegistries.ENTITY_TYPE,
-                        new ResourceLocation(Ultramarine.MOD_ID, "custom_wandering_trader"),
+                        ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "custom_wandering_trader"),
                         FabricEntityTypeBuilder.create(MobCategory.MISC, CustomWanderingTrader::new)
 
                                 .dimensions(EntityDimensions.fixed(0.6F, 0.2F))

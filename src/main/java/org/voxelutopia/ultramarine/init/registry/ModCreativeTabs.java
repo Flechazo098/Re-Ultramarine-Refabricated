@@ -107,7 +107,7 @@ public class ModCreativeTabs {
     }
 
     private static CreativeModeTab register(String name, CreativeModeTab tab) {
-        return Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(Ultramarine.MOD_ID, name), tab);
+        return Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name), tab);
     }
 
 }

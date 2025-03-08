@@ -15,6 +15,6 @@ public class ModItemTags {
     }
 
     private static TagKey<Item> bind(String string) {
-        return TagKey.create(Registries.ITEM, new ResourceLocation(Ultramarine.MOD_ID, string));
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, string));
     }
 }

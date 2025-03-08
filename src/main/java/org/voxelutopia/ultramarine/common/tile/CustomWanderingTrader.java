@@ -10,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
@@ -26,21 +27,21 @@ public class CustomWanderingTrader extends WanderingTrader {
 
     static {
         TRADE_OPTIONS.addAll(List.of(
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 10), new ItemStack(ModItems.INCENSE), 8, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 4), new ItemStack(ModItems.XUAN_PAPER), 20, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 8), new ItemStack(Items.LAPIS_LAZULI), 10, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 8), new ItemStack(Items.PRISMARINE_SHARD), 10, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 15), new ItemStack(ModItems.RED_SILK_FABRIC_ROLL), 5, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 15), new ItemStack(ModItems.GREEN_SILK_FABRIC_ROLL), 5, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.COPPER_CASH_COIN, 15), new ItemStack(ModItems.PURPLE_SILK_FABRIC_ROLL), 5, 5, 0.05f),
-                new MerchantOffer(new ItemStack(Items.AMETHYST_SHARD), new ItemStack(ModItems.COPPER_CASH_COIN, 6), 8, 5, 0.05f),
-                new MerchantOffer(new ItemStack(Items.ENDER_PEARL), new ItemStack(ModItems.COPPER_CASH_COIN, 3), 10, 5, 0.05f),
-                new MerchantOffer(new ItemStack(Items.BOOK), new ItemStack(ModItems.COPPER_CASH_COIN, 3), 5, 5, 0.05f),
-                new MerchantOffer(new ItemStack(Items.NAUTILUS_SHELL), new ItemStack(ModItems.COPPER_CASH_COIN, 20), 2, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.POLISHED_EBONY_PLANK), new ItemStack(ModItems.COPPER_CASH_COIN, 4), 10, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.POLISHED_ROSEWOOD_PLANK), new ItemStack(ModItems.COPPER_CASH_COIN, 4), 10, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.BLUE_AND_WHITE_PORCELAIN_PIECE), new ItemStack(ModItems.COPPER_CASH_COIN, 6), 8, 5, 0.05f),
-                new MerchantOffer(new ItemStack(ModItems.JADE), new ItemStack(ModItems.COPPER_CASH_COIN, 15), 2, 5, 0.05f)
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 10).getItem()), new ItemStack(ModItems.INCENSE), 8, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 4).getItem()), new ItemStack(ModItems.XUAN_PAPER), 20, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 8).getItem()), new ItemStack(Items.LAPIS_LAZULI), 10, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 8).getItem()), new ItemStack(Items.PRISMARINE_SHARD), 10, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 15).getItem()), new ItemStack(ModItems.RED_SILK_FABRIC_ROLL), 5, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 15).getItem()), new ItemStack(ModItems.GREEN_SILK_FABRIC_ROLL), 5, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.COPPER_CASH_COIN, 15).getItem()), new ItemStack(ModItems.PURPLE_SILK_FABRIC_ROLL), 5, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(Items.AMETHYST_SHARD).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 6), 8, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(Items.ENDER_PEARL).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 3), 10, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(Items.BOOK).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 3), 5, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(Items.NAUTILUS_SHELL).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 20), 2, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.POLISHED_EBONY_PLANK).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 4), 10, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.POLISHED_ROSEWOOD_PLANK).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 4), 10, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.BLUE_AND_WHITE_PORCELAIN_PIECE).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 6), 8, 5, 0.05f),
+                new MerchantOffer(new ItemCost(new ItemStack(ModItems.JADE).getItem()), new ItemStack(ModItems.COPPER_CASH_COIN, 15), 2, 5, 0.05f)
         ));
     }
 
@@ -62,7 +63,9 @@ public class CustomWanderingTrader extends WanderingTrader {
 
     @Override
     public @NotNull MerchantOffers getOffers() {
-        return offers;
+        if (offers != null) {
+            return offers;
+        }
     }
 
     @Override

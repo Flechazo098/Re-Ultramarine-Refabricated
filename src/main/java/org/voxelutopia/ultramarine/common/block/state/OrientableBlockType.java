@@ -1,6 +1,7 @@
 package org.voxelutopia.ultramarine.common.block.state;
 
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum OrientableBlockType implements StringRepresentable {
     LEFT("left", 1),
@@ -15,7 +16,7 @@ public enum OrientableBlockType implements StringRepresentable {
         this.opposite = opposite;
     }
 
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return this.name;
     }
 

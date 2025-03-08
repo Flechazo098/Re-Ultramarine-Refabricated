@@ -38,8 +38,8 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
     public static ConsumeAction DEFAULT_EAT_ACTION = ((pState, pLevel, pPos, pPlayer) -> {
         if (pState.getBlock() instanceof ConsumableDecorativeBlock consumable) {
             var food = consumable.getFood();
-            pPlayer.getFoodData().eat(food.getNutrition(), food.getSaturationModifier());
-            for (Pair<MobEffectInstance, Float> pair : food.getEffects()) {
+            pPlayer.getFoodData().eat(food.nutrition(), food.saturation());
+            for (Pair<MobEffectInstance, Float> pair : food.geteffects()) {
                 if (!pLevel.isClientSide && pair.getFirst() != null && pLevel.random.nextFloat() < pair.getSecond()) {
                     pPlayer.addEffect(new MobEffectInstance(pair.getFirst()));
                 }
@@ -70,7 +70,7 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
 
     @Override
     @NotNull
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return state.hasProperty(BITES) ? state.setValue(BITES, getMaxBites()) : state;
     }
@@ -106,7 +106,7 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
         return food;
     }
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(BITES);
     }
@@ -120,7 +120,7 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
     @SuppressWarnings("unused")
     public static class Builder extends DecorativeBlock.Builder {
 
-        private static final FoodProperties DEFAULT_FOOD = new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build();
+        private static final FoodProperties DEFAULT_FOOD = new FoodProperties.Builder().nutrition(2).saturationModifier(0.2f).build();
         private int bites = 4;
         private Supplier<ItemStack> plate = () -> new ItemStack(Blocks.STONE_SLAB);
         private ConsumeAction eatAction = DEFAULT_EAT_ACTION;

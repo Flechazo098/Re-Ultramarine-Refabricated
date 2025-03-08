@@ -3,6 +3,7 @@ package org.voxelutopia.ultramarine.init.handler;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.voxelutopia.ultramarine.common.tile.CustomWanderingTrader;
 import org.voxelutopia.ultramarine.init.data.ModBlockTags;
@@ -50,41 +51,47 @@ public class CommonEventHandler {
     // Implemented in ItemEntityMixin
 
     private static void villagerTraders() {
-
         EntityEvents.VILLAGER_TRADE.register((trades, profession) -> {
             if (profession == ModVillagerProfessions.COOK) {
+                // 使用 ItemCost 包装交易成本物品
                 trades.get(1).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(ModItems.RAW_MEAT, 5),
-                        new ItemStack(Items.EMERALD, 2),
+                        new ItemCost(new ItemStack(ModItems.RAW_MEAT, 5).getItem()), // 输入物品使用 ItemCost
+                        new ItemStack(Items.EMERALD, 2),                   // 输出物品保持 ItemStack
                         12, 2, 0.05f
                 ));
+
                 trades.get(1).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(Items.EMERALD, 3),
+                        new ItemCost(new ItemStack(Items.EMERALD, 3).getItem()),
                         new ItemStack(ModItems.COOKED_MEAT, 4),
                         12, 2, 0.05f
                 ));
+
                 trades.get(2).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(Items.EMERALD, 1),
+                        new ItemCost(new ItemStack(Items.EMERALD, 1).getItem()),
                         new ItemStack(ModItems.GREASE, 2),
                         16, 2, 0.05f
                 ));
+
                 trades.get(2).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(Items.EMERALD, 1),
+                        new ItemCost(new ItemStack(Items.EMERALD, 1).getItem()),
                         new ItemStack(ModItems.FUR, 2),
                         16, 2, 0.05f
                 ));
+
                 trades.get(3).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(Items.EMERALD, 3),
+                        new ItemCost(new ItemStack(Items.EMERALD, 3).getItem()),
                         new ItemStack(ModItems.MUNG_BEAN_CAKE, 4),
                         12, 3, 0.05f
                 ));
+
                 trades.get(3).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(Items.EMERALD, 3),
+                        new ItemCost(new ItemStack(Items.EMERALD, 3).getItem()),
                         new ItemStack(ModItems.MOONCAKE, 4),
                         12, 3, 0.05f
                 ));
+
                 trades.get(4).add(($1, $2) -> new MerchantOffer(
-                        new ItemStack(Items.EMERALD, 5),
+                        new ItemCost(new ItemStack(Items.EMERALD, 5).getItem()),
                         new ItemStack(ModItems.BAOZI, 2),
                         8, 3, 0.05f
                 ));
@@ -92,8 +99,6 @@ public class CommonEventHandler {
             }
             return trades;
         });
-
-
     }
 
 }

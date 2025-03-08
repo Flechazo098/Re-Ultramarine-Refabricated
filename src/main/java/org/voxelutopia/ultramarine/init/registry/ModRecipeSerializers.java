@@ -13,7 +13,7 @@ public class ModRecipeSerializers {
 
 
     public static void registerModRecipeSerializers() {
-        WOODWORKING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Ultramarine.MOD_ID, "woodworking"),
+        WOODWORKING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "woodworking"),
                 WoodworkingRecipe.Serializer.INSTANCE);
     }
 

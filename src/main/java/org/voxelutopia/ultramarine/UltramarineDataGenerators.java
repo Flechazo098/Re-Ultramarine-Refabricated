@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine;
 
+import org.voxelutopia.ultramarine.init.datagen.*;
 import io.github.fabricators_of_create.porting_lib.data.ExistingFileHelper;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;

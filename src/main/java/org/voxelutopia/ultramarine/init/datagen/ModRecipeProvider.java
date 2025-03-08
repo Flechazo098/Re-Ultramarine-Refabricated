@@ -1,40 +1,48 @@
 package org.voxelutopia.ultramarine.init.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.UltramarineDataGenerators;
+import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 import org.voxelutopia.ultramarine.init.data.ModItemTags;
 import org.voxelutopia.ultramarine.init.registry.ModItems;
-import org.voxelutopia.ultramarine.init.registry.ModRecipeSerializers;
 import org.voxelutopia.ultramarine.util.RegistryHelper;
 
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
 public class ModRecipeProvider extends RecipeProvider {
 
-    public ModRecipeProvider(FabricDataOutput pGenerator) {
-        super(pGenerator);
+    private final CompletableFuture<HolderLookup.Provider> registries;
+
+    public ModRecipeProvider(FabricDataOutput pGenerator, CompletableFuture<HolderLookup.Provider> registries) {
+        super(pGenerator, registries);
+        this.registries = registries;
     }
 
-    private static void generateLampRecipes(@NotNull Consumer<FinishedRecipe> recipeConsumer) {
+    private static void generateLampRecipes(@NotNull RecipeOutput recipeOutput) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.WHITE_CANDLE, 1)
                 .define('S', Items.STRING)
                 .define('G', ModItems.GREASE)
                 .pattern("S")
                 .pattern("G")
-                .unlockedBy(itemUnlockName(ModItems.GREASE), itemCriterion(ModItems.GREASE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(ModItems.GREASE), has(ModItems.GREASE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.OCTAGONAL_PALACE_LANTERN, 1)
                 .define('F', ModItems.WOODEN_FRAME)
                 .define('P', ModItemTags.POLISHED_PLANKS)
@@ -42,16 +50,16 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("FPF")
                 .pattern("PCP")
                 .pattern("FPF")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SQUARE_PALACE_LANTERN, 1)
                 .define('F', ModItems.WOODEN_FRAME)
                 .define('C', ItemTags.CANDLES)
                 .pattern(" F ")
                 .pattern("FCF")
                 .pattern(" F ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STANDING_LAMP, 1)
                 .define('X', ModItems.XUAN_PAPER)
                 .define('C', ItemTags.CANDLES)
@@ -61,8 +69,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("XCX")
                 .pattern("PFP")
                 .pattern(" W ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SMALL_STANDING_LAMP, 1)
                 .define('X', ModItems.XUAN_PAPER)
                 .define('C', ItemTags.CANDLES)
@@ -72,8 +80,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("XCX")
                 .pattern("PFP")
                 .pattern(" W ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.WHITE_SKY_LANTERN, 1)
                 .define('X', ModItems.XUAN_PAPER)
                 .define('C', ItemTags.CANDLES)
@@ -82,8 +90,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("XDX")
                 .pattern("XCX")
                 .pattern(" F ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.YELLOW_SKY_LANTERN, 1)
                 .define('X', ModItems.XUAN_PAPER)
                 .define('C', ItemTags.CANDLES)
@@ -92,8 +100,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("XDX")
                 .pattern("XCX")
                 .pattern(" F ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RED_SKY_LANTERN, 1)
                 .define('X', ModItems.XUAN_PAPER)
                 .define('C', ItemTags.CANDLES)
@@ -102,8 +110,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("XDX")
                 .pattern("XCX")
                 .pattern(" F ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SMALL_RED_LANTERN, 1)
                 .define('S', Items.STICK)
                 .define('C', ItemTags.CANDLES)
@@ -112,8 +120,8 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern(" S ")
                 .pattern("PCP")
                 .pattern("DPD")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.STONE_LAMP, 1)
                 .define('S', Items.STONE)
                 .define('C', ItemTags.CANDLES)
@@ -122,29 +130,29 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern(" T ")
                 .pattern("WCW")
                 .pattern(" S ")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.RED_CANDLE, 1)
                 .define('C', Items.RED_CANDLE)
                 .define('P', ModItems.WOODEN_PARTS)
                 .pattern("C")
                 .pattern("P")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TRICOLOR_CANDLESTICK, 1)
                 .define('C', Items.WHITE_CANDLE)
                 .define('P', ModItems.PORCELAIN_PARTS)
                 .pattern("C")
                 .pattern("P")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.JADE_CANDLESTICK, 1)
                 .define('C', Items.WHITE_CANDLE)
                 .define('P', ModItems.JADE_PARTS)
                 .pattern("C")
                 .pattern("P")
-                .unlockedBy(itemUnlockName(Items.CANDLE), itemCriterion(Items.CANDLE))
-                .save(recipeConsumer);
+                .unlockedBy(itemUnlockName(Items.CANDLE), has(Items.CANDLE))
+                .save(recipeOutput);
     }
 
     @NotNull
@@ -152,87 +160,87 @@ public class ModRecipeProvider extends RecipeProvider {
         return "has_" + item;
     }
 
-    @NotNull
-    private static InventoryChangeTrigger.TriggerInstance itemCriterion(ItemLike item) {
+    public static InventoryChangeTrigger.TriggerInstance has(ItemLike item) {
         return InventoryChangeTrigger.TriggerInstance.hasItems(item);
     }
 
-    @SuppressWarnings("null")
-    private static void quadComposeRecipe(Item part, Item combined, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void quadComposeRecipe(Item part, Item combined, RecipeOutput recipeOutput) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, combined, 1)
                 .define('A', part)
                 .pattern("AA")
                 .pattern("AA")
-                .unlockedBy("has_" + RegistryHelper.getItemRegistryName(part).getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(part))
-                .save(pFinishedRecipeConsumer);
+                .unlockedBy("has_" + RegistryHelper.getItemRegistryName(part).getPath(), has(part))
+                .save(recipeOutput);
     }
 
-    private static void quadDecomposeRecipe(Item part, Item combined, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void quadDecomposeRecipe(Item part, Item combined, RecipeOutput recipeOutput) {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, part, 4).requires(combined)
-                .unlockedBy("has_" + RegistryHelper.getItemRegistryName(combined).getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(combined))
-                .save(pFinishedRecipeConsumer);
+                .unlockedBy("has_" + RegistryHelper.getItemRegistryName(combined).getPath(), has(combined))
+                .save(recipeOutput);
     }
 
-    private static void stonePolishing(Item raw, Item polished, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void stonePolishing(Item raw, Item polished, RecipeOutput recipeOutput) {
         String rawPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(raw)).getPath();
         String polishedPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(polished)).getPath();
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, polished, 4)
                 .define('A', raw)
                 .pattern("AA")
                 .pattern("AA")
-                .unlockedBy("has_" + rawPath, InventoryChangeTrigger.TriggerInstance.hasItems(raw))
-                .save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, polishedPath + "_from_crafting"));
+                .unlockedBy("has_" + rawPath, has(raw))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, polishedPath + "_from_crafting"));
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(raw), RecipeCategory.MISC, polished)
-                .unlockedBy("has_" + rawPath, InventoryChangeTrigger.TriggerInstance.hasItems(raw))
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, polishedPath + "_from_stonecutting"));
+                .unlockedBy("has_" + rawPath, has(raw))
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, polishedPath + "_from_stonecutting"));
     }
 
-    private static void blockDyeing(Item block, Item dye, Item output, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void blockDyeing(Item block, Item dye, Item output, RecipeOutput recipeOutput) {
         String blockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(block)).getPath();
         String dyePath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(dye)).getPath();
         String outputPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(output)).getPath();
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, output).requires(block).requires(dye)
-                .unlockedBy("has_" + blockPath, InventoryChangeTrigger.TriggerInstance.hasItems(block))
-                .save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, outputPath));
+                .unlockedBy("has_" + blockPath, has(block))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, outputPath));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, output, 8)
                 .define('B', block)
                 .define('D', dye)
                 .pattern("BBB")
                 .pattern("BDB")
                 .pattern("BBB")
-                .unlockedBy("has_" + blockPath, InventoryChangeTrigger.TriggerInstance.hasItems(block))
-                .save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, outputPath + "_batch"));
+                .unlockedBy("has_" + blockPath, has(block))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, outputPath + "_batch"));
     }
 
-    private static void dust(Item input, Item output, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void dust(Item input, Item output, RecipeOutput recipeOutput) {
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(input), RecipeCategory.MISC, output)
-                .unlockedBy("has_" + name(input), InventoryChangeTrigger.TriggerInstance.hasItems(input))
-                .save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, name(output)));
+                .unlockedBy("has_" + name(input), has(input))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, name(output)));
     }
 
-    private static void brickMixture(Item brick, int brickAmount, Item additive, Item output, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void brickMixture(Item brick, int brickAmount, Item additive, Item output, RecipeOutput recipeOutput) {
         String brickPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(brick)).getPath();
         String additivePath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(additive)).getPath();
         String outputPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(output)).getPath();
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, output, brickAmount).requires(brick, brickAmount).requires(additive)
-                .unlockedBy("has_" + brickPath, InventoryChangeTrigger.TriggerInstance.hasItems(brick))
-                .save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, outputPath));
+                .unlockedBy("has_" + brickPath, has(brick))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, outputPath));
     }
 
-    private static void smeltingAndBlasting(Item input, Item output, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void smeltingAndBlasting(Item input, Item output, RecipeOutput recipeOutput) {
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(input), RecipeCategory.MISC, output, 0.1F, 200)
-                .unlockedBy(itemUnlockName(input), itemCriterion(input)).save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, name(output) + "_from_smelting"));
+                .unlockedBy(itemUnlockName(input), has(input))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, name(output) + "_from_smelting"));
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, output, 0.05F, 100)
-                .unlockedBy(itemUnlockName(input), itemCriterion(input)).save(pFinishedRecipeConsumer, new ResourceLocation(UltramarineDataGenerators.MOD_ID, name(output) + "_from_blasting"));
+                .unlockedBy(itemUnlockName(input), has(input))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, name(output) + "_from_blasting"));
     }
 
-    private static void stoneSlabAndStairsRecipe(Item baseBlock, Item slabBlock, Item stairBlock, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void stoneSlabAndStairsRecipe(Item baseBlock, Item slabBlock, Item stairBlock, RecipeOutput recipeOutput) {
         String baseBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(baseBlock)).getPath();
         String stairsBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(stairBlock)).getPath();
         String slabBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(slabBlock)).getPath();
         String baseBlockAdvancement = "has_" + baseBlockPath;
-        InventoryChangeTrigger.TriggerInstance trigger = InventoryChangeTrigger.TriggerInstance.hasItems(baseBlock);
+        InventoryChangeTrigger.TriggerInstance trigger = has(baseBlock).triggerInstance();
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, stairBlock, 4)
                 .define('B', baseBlock)
@@ -240,30 +248,30 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("BB ")
                 .pattern("BBB")
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_crafting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_crafting"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, slabBlock, 6)
                 .define('B', baseBlock)
                 .pattern("BBB")
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_crafting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_crafting"));
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(baseBlock), RecipeCategory.MISC, stairBlock)
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_stonecutting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_stonecutting"));
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(baseBlock), RecipeCategory.MISC, slabBlock, 2)
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_stonecutting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_stonecutting"));
     }
 
-    private static void woodSlabAndStairsRecipe(Item baseBlock, Item slabBlock, Item stairBlock, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void woodSlabAndStairsRecipe(Item baseBlock, Item slabBlock, Item stairBlock, RecipeOutput recipeOutput) {
         String baseBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(baseBlock)).getPath();
         String stairsBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(stairBlock)).getPath();
         String slabBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(slabBlock)).getPath();
         String baseBlockAdvancement = "has_" + baseBlockPath;
-        InventoryChangeTrigger.TriggerInstance trigger = InventoryChangeTrigger.TriggerInstance.hasItems(baseBlock);
+        InventoryChangeTrigger.TriggerInstance trigger = has(baseBlock).triggerInstance();
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, stairBlock, 4)
                 .define('B', baseBlock)
@@ -271,118 +279,101 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("BB ")
                 .pattern("BBB")
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_crafting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_crafting"));
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, slabBlock, 6)
                 .define('B', baseBlock)
                 .pattern("BBB")
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_crafting"));
-        woodworking(Ingredient.of(baseBlock), stairBlock)
-                .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, stairsBlockPath + "_from_woodworking"));
-        woodworking(Ingredient.of(baseBlock), slabBlock, 2)
-                .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_woodworking"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, slabBlockPath + "_from_crafting"));
+        woodworking(Ingredient.of(baseBlock), stairBlock, 1, baseBlock, recipeOutput);
+        woodworking(Ingredient.of(baseBlock), slabBlock, 2, baseBlock, recipeOutput);
     }
 
-    private static void wallRecipe(Item baseBlock, Item wallBlock, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void wallRecipe(Item baseBlock, Item wallBlock, RecipeOutput recipeOutput) {
         String baseBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(baseBlock)).getPath();
         String wallBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(wallBlock)).getPath();
         String baseBlockAdvancement = "has_" + baseBlockPath;
-        InventoryChangeTrigger.TriggerInstance trigger = InventoryChangeTrigger.TriggerInstance.hasItems(baseBlock);
+        InventoryChangeTrigger.TriggerInstance trigger = has(baseBlock).triggerInstance();
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, wallBlock, 6)
                 .define('B', baseBlock)
                 .pattern("BBB")
                 .pattern("BBB")
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, wallBlockPath + "_from_crafting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, wallBlockPath + "_from_crafting"));
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(baseBlock), RecipeCategory.MISC, wallBlock)
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, wallBlockPath + "_from_stonecutting"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, wallBlockPath + "_from_stonecutting"));
     }
 
-    private static void fenceRecipe(Item baseBlock, Item fenceBlock, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
+    private static void fenceRecipe(Item baseBlock, Item fenceBlock, RecipeOutput recipeOutput) {
         String baseBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(baseBlock)).getPath();
         String fenceBlockPath = Objects.requireNonNull(RegistryHelper.getItemRegistryName(fenceBlock)).getPath();
         String baseBlockAdvancement = "has_" + baseBlockPath;
-        InventoryChangeTrigger.TriggerInstance trigger = InventoryChangeTrigger.TriggerInstance.hasItems(baseBlock);
+        InventoryChangeTrigger.TriggerInstance trigger = has(baseBlock).triggerInstance();
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, fenceBlock, 3)
                 .define('B', baseBlock)
                 .define('S', Items.STICK)
                 .pattern("BSB")
                 .pattern("BSB")
                 .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, fenceBlockPath + "_from_crafting"));
-        woodworking(Ingredient.of(baseBlock), fenceBlock)
-                .unlockedBy(baseBlockAdvancement, trigger)
-                .save(pFinishedRecipeConsumer,
-                        new ResourceLocation(UltramarineDataGenerators.MOD_ID, fenceBlockPath + "_from_woodworking"));
+                .save(recipeOutput,
+                        ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, fenceBlockPath + "_from_crafting"));
+        woodworking(Ingredient.of(baseBlock), fenceBlock, 1, baseBlock, recipeOutput);
     }
 
-    private static void polishedPlankRecipe(Item planks, Item polishedPlank, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
-        woodworking(Ingredient.of(planks), polishedPlank, 2)
-                .unlockedBy("has_" + RegistryHelper.getItemRegistryName(planks).getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(planks))
-                .save(pFinishedRecipeConsumer);
+    private static void polishedPlankRecipe(Item planks, Item polishedPlank, RecipeOutput recipeOutput) {
+        woodworking(Ingredient.of(planks), polishedPlank, 2, planks, recipeOutput);
     }
 
-    private static void roofTileBlocksRecipe(String color, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
-        Item tileBlock, tileItem;
-        tileItem = BuiltInRegistries.ITEM.get(new ResourceLocation(UltramarineDataGenerators.MOD_ID, color + "_roof_tile"));
-        assert (tileItem != null);
+    private static void roofTileBlocksRecipe(String color, RecipeOutput recipeOutput) {
+        Item tileItem = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, color + "_roof_tile"));
+        if (tileItem == null) return;
 
-        tileBlock = BuiltInRegistries.ITEM.get(new ResourceLocation(UltramarineDataGenerators.MOD_ID, color + "_roof_tiles"));
-        assert (tileBlock != null);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tileBlock, 1)
-                .define('T', tileItem)
-                .pattern("TTT")
-                .unlockedBy("has_" + color + "_roof_tile", InventoryChangeTrigger.TriggerInstance.hasItems(tileItem))
-                .save(pFinishedRecipeConsumer);
+        Item tileBlock = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, color + "_roof_tiles"));
+        if (tileBlock != null) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tileBlock, 1)
+                    .define('T', tileItem)
+                    .pattern("TTT")
+                    .unlockedBy("has_" + color + "_roof_tile", has(tileItem))
+                    .save(recipeOutput);
+        }
 
-        tileBlock = BuiltInRegistries.ITEM.get(new ResourceLocation(UltramarineDataGenerators.MOD_ID, color + "_roof_tile_stairs"));
-        assert (tileBlock != null);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tileBlock, 1)
-                .define('T', tileItem)
-                .pattern("T  ")
-                .pattern("TT ")
-                .pattern("TTT")
-                .unlockedBy("has_" + color + "_roof_tile", InventoryChangeTrigger.TriggerInstance.hasItems(tileItem))
-                .save(pFinishedRecipeConsumer);
+        tileBlock = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, color + "_roof_tile_stairs"));
+        if (tileBlock != null) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tileBlock, 1)
+                    .define('T', tileItem)
+                    .pattern("T  ")
+                    .pattern("TT ")
+                    .pattern("TTT")
+                    .unlockedBy("has_" + color + "_roof_tile", has(tileItem))
+                    .save(recipeOutput);
+        }
 
-        tileBlock = BuiltInRegistries.ITEM.get(new ResourceLocation(UltramarineDataGenerators.MOD_ID, color + "_roof_tile_edge"));
-        assert (tileBlock != null);
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tileBlock, 1)
-                .define('T', tileItem)
-                .pattern("T  ")
-                .pattern("TTT")
-                .unlockedBy("has_" + color + "_roof_tile", InventoryChangeTrigger.TriggerInstance.hasItems(tileItem))
-                .save(pFinishedRecipeConsumer);
+        tileBlock = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID, color + "_roof_tile_edge"));
+        if (tileBlock != null) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tileBlock, 1)
+                    .define('T', tileItem)
+                    .pattern("T  ")
+                    .pattern("TTT")
+                    .unlockedBy("has_" + color + "_roof_tile", has(tileItem))
+                    .save(recipeOutput);
+        }
     }
 
-    public static SingleItemRecipeBuilder woodworking(Ingredient pIngredient, ItemLike pResult) {
-        return new SingleItemRecipeBuilder(RecipeCategory.MISC, ModRecipeSerializers.WOODWORKING_SERIALIZER, pIngredient, pResult, 1);
-    }
-
-    public static SingleItemRecipeBuilder woodworking(Ingredient pIngredient, ItemLike pResult, int pCount) {
-        return new SingleItemRecipeBuilder(RecipeCategory.MISC, ModRecipeSerializers.WOODWORKING_SERIALIZER, pIngredient, pResult, pCount);
-    }
-
-    public static void woodworking(Item input, ItemLike pResult, int pCount, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
-        var recipe = new SingleItemRecipeBuilder(RecipeCategory.MISC, ModRecipeSerializers.WOODWORKING_SERIALIZER, Ingredient.of(input), pResult, pCount);
-        recipe.unlockedBy("has_" + BuiltInRegistries.ITEM.getKey(input).getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(input))
-                .save(pFinishedRecipeConsumer);
-    }
-
-    public static void woodworking(Ingredient ingredient, ItemLike pResult, int pCount, Item unlockItem, Consumer<FinishedRecipe> pFinishedRecipeConsumer) {
-        var recipe = new SingleItemRecipeBuilder(RecipeCategory.MISC, ModRecipeSerializers.WOODWORKING_SERIALIZER, ingredient, pResult, pCount);
-        recipe.unlockedBy("has_" + RegistryHelper.getItemRegistryName(unlockItem).getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(unlockItem))
-                .save(pFinishedRecipeConsumer);
+    private static void woodworking(Ingredient ingredient, ItemLike result, int count, Item unlockItem, RecipeOutput recipeOutput) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(UltramarineDataGenerators.MOD_ID,
+                RegistryHelper.getItemRegistryName(result).getPath() + "_from_woodworking");
+        WoodworkingRecipe recipe = new WoodworkingRecipe(
+                id,
+                "",
+                ingredient,
+                new ItemStack(result.asItem(), count)
+        );
+        recipe.finishRecipe(recipeOutput);
     }
 
     private static String name(Item item) {
@@ -390,90 +381,106 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    public void buildRecipes(@NotNull Consumer<FinishedRecipe> recipeConsumer) {
-
+    public void buildRecipes(RecipeOutput recipeOutput) {
         //BUILDING BLOCKS
-        quadComposeRecipe(ModItems.CYAN_BRICK, ModItems.CYAN_BRICKS, recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.CYAN_BRICKS, ModItems.CYAN_BRICK_SLAB, ModItems.CYAN_BRICK_STAIRS, recipeConsumer);
-        quadComposeRecipe(ModItems.BLACK_BRICK, ModItems.BLACK_BRICKS, recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.BLACK_BRICKS, ModItems.BLACK_BRICK_SLAB, ModItems.BLACK_BRICK_STAIRS, recipeConsumer);
-        wallRecipe(ModItems.BLACK_BRICKS, ModItems.BLACK_BRICK_WALL, recipeConsumer);
-        quadComposeRecipe(ModItems.BROWNISH_RED_STONE_BRICK, ModItems.BROWNISH_RED_STONE_BRICKS, recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.BROWNISH_RED_STONE_BRICKS, ModItems.BROWNISH_RED_STONE_BRICK_SLAB, ModItems.BROWNISH_RED_STONE_BRICK_STAIRS, recipeConsumer);
-        wallRecipe(ModItems.BROWNISH_RED_STONE_BRICKS, ModItems.BROWNISH_RED_STONE_BRICK_WALL, recipeConsumer);
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PALE_YELLOW_STONE, 2).requires(Items.STONE).requires(Items.SAND)
-                .unlockedBy("has_" + Items.STONE, InventoryChangeTrigger.TriggerInstance.hasItems(Items.STONE)).save(recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.PALE_YELLOW_STONE, ModItems.PALE_YELLOW_STONE_SLAB, ModItems.PALE_YELLOW_STONE_STAIRS, recipeConsumer);
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.VARIEGATED_ROCKS, 4).requires(Items.COBBLESTONE).requires(Items.GRANITE).requires(Items.DIORITE).requires(Items.ANDESITE)
-                .unlockedBy("has_" + Items.COBBLESTONE, InventoryChangeTrigger.TriggerInstance.hasItems(Items.STONE)).save(recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.VARIEGATED_ROCKS, ModItems.VARIEGATED_ROCK_SLAB, ModItems.VARIEGATED_ROCK_STAIRS, recipeConsumer);
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WEATHERED_STONE, 2).requires(Items.STONE).requires(Items.GRAVEL)
-                .unlockedBy("has_" + Items.STONE, InventoryChangeTrigger.TriggerInstance.hasItems(Items.STONE)).save(recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.WEATHERED_STONE, ModItems.WEATHERED_STONE_SLAB, ModItems.WEATHERED_STONE_STAIRS, recipeConsumer);
-        stonePolishing(ModItems.WEATHERED_STONE, ModItems.POLISHED_WEATHERED_STONE, recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.POLISHED_WEATHERED_STONE, ModItems.POLISHED_WEATHERED_STONE_SLAB, ModItems.POLISHED_WEATHERED_STONE_STAIRS, recipeConsumer);
-        wallRecipe(ModItems.POLISHED_WEATHERED_STONE, ModItems.POLISHED_WEATHERED_STONE_WALL, recipeConsumer);
-        blockDyeing(Items.SMOOTH_STONE, Items.CYAN_DYE, ModItems.CYAN_FLOOR_TILE, recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.CYAN_FLOOR_TILE, ModItems.CYAN_FLOOR_TILE_SLAB, ModItems.CYAN_FLOOR_TILE_STAIRS, recipeConsumer);
-        wallRecipe(ModItems.CYAN_FLOOR_TILE, ModItems.CYAN_FLOOR_TILE_WALL, recipeConsumer);
-        blockDyeing(ModItems.CYAN_FLOOR_TILE, Items.WHITE_DYE, ModItems.LIGHT_CYAN_FLOOR_TILE, recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.LIGHT_CYAN_FLOOR_TILE, ModItems.LIGHT_CYAN_FLOOR_TILE_SLAB, ModItems.LIGHT_CYAN_FLOOR_TILE_STAIRS, recipeConsumer);
-        wallRecipe(ModItems.LIGHT_CYAN_FLOOR_TILE, ModItems.LIGHT_CYAN_FLOOR_TILE_WALL, recipeConsumer);
-        roofTileBlocksRecipe("gray", recipeConsumer);
-        roofTileBlocksRecipe("yellow", recipeConsumer);
-        roofTileBlocksRecipe("green", recipeConsumer);
-        roofTileBlocksRecipe("blue", recipeConsumer);
-        roofTileBlocksRecipe("cyan", recipeConsumer);
-        roofTileBlocksRecipe("black", recipeConsumer);
+        quadComposeRecipe(ModItems.CYAN_BRICK, ModItems.CYAN_BRICKS, recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.CYAN_BRICKS, ModItems.CYAN_BRICK_SLAB, ModItems.CYAN_BRICK_STAIRS, recipeOutput);
+        quadComposeRecipe(ModItems.BLACK_BRICK, ModItems.BLACK_BRICKS, recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.BLACK_BRICKS, ModItems.BLACK_BRICK_SLAB, ModItems.BLACK_BRICK_STAIRS, recipeOutput);
+        wallRecipe(ModItems.BLACK_BRICKS, ModItems.BLACK_BRICK_WALL, recipeOutput);
+        quadComposeRecipe(ModItems.BROWNISH_RED_STONE_BRICK, ModItems.BROWNISH_RED_STONE_BRICKS, recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.BROWNISH_RED_STONE_BRICKS, ModItems.BROWNISH_RED_STONE_BRICK_SLAB, ModItems.BROWNISH_RED_STONE_BRICK_STAIRS, recipeOutput);
+        wallRecipe(ModItems.BROWNISH_RED_STONE_BRICKS, ModItems.BROWNISH_RED_STONE_BRICK_WALL, recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PALE_YELLOW_STONE, 2)
+                .requires(Items.STONE)
+                .requires(Items.SAND)
+                .unlockedBy("has_" + Items.STONE, has(Items.STONE))
+                .save(recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.PALE_YELLOW_STONE, ModItems.PALE_YELLOW_STONE_SLAB, ModItems.PALE_YELLOW_STONE_STAIRS, recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.VARIEGATED_ROCKS, 4)
+                .requires(Items.COBBLESTONE)
+                .requires(Items.GRANITE)
+                .requires(Items.DIORITE)
+                .requires(Items.ANDESITE)
+                .unlockedBy("has_" + Items.COBBLESTONE, has(Items.STONE))
+                .save(recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.VARIEGATED_ROCKS, ModItems.VARIEGATED_ROCK_SLAB, ModItems.VARIEGATED_ROCK_STAIRS, recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.WEATHERED_STONE, 2)
+                .requires(Items.STONE)
+                .requires(Items.GRAVEL)
+                .unlockedBy("has_" + Items.STONE, has(Items.STONE))
+                .save(recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.WEATHERED_STONE, ModItems.WEATHERED_STONE_SLAB, ModItems.WEATHERED_STONE_STAIRS, recipeOutput);
+        stonePolishing(ModItems.WEATHERED_STONE, ModItems.POLISHED_WEATHERED_STONE, recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.POLISHED_WEATHERED_STONE, ModItems.POLISHED_WEATHERED_STONE_SLAB, ModItems.POLISHED_WEATHERED_STONE_STAIRS, recipeOutput);
+        wallRecipe(ModItems.POLISHED_WEATHERED_STONE, ModItems.POLISHED_WEATHERED_STONE_WALL, recipeOutput);
+        blockDyeing(Items.SMOOTH_STONE, Items.CYAN_DYE, ModItems.CYAN_FLOOR_TILE, recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.CYAN_FLOOR_TILE, ModItems.CYAN_FLOOR_TILE_SLAB, ModItems.CYAN_FLOOR_TILE_STAIRS, recipeOutput);
+        wallRecipe(ModItems.CYAN_FLOOR_TILE, ModItems.CYAN_FLOOR_TILE_WALL, recipeOutput);
+        blockDyeing(ModItems.CYAN_FLOOR_TILE, Items.WHITE_DYE, ModItems.LIGHT_CYAN_FLOOR_TILE, recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.LIGHT_CYAN_FLOOR_TILE, ModItems.LIGHT_CYAN_FLOOR_TILE_SLAB, ModItems.LIGHT_CYAN_FLOOR_TILE_STAIRS, recipeOutput);
+        wallRecipe(ModItems.LIGHT_CYAN_FLOOR_TILE, ModItems.LIGHT_CYAN_FLOOR_TILE_WALL, recipeOutput);
+        roofTileBlocksRecipe("gray", recipeOutput);
+        roofTileBlocksRecipe("yellow", recipeOutput);
+        roofTileBlocksRecipe("green", recipeOutput);
+        roofTileBlocksRecipe("blue", recipeOutput);
+        roofTileBlocksRecipe("cyan", recipeOutput);
+        roofTileBlocksRecipe("black", recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GREEN_GLAZED_TILES, 2)
-                .define('B', Items.GREEN_GLAZED_TERRACOTTA).define('T', ModItems.GREEN_ROOF_TILE)
-                .pattern(" T ").pattern("TBT").pattern(" T ")
-                .unlockedBy("has_" + Items.GREEN_GLAZED_TERRACOTTA, InventoryChangeTrigger.TriggerInstance.hasItems(Items.GREEN_GLAZED_TERRACOTTA))
-                .save(recipeConsumer);
-        stoneSlabAndStairsRecipe(ModItems.GREEN_GLAZED_TILES, ModItems.GREEN_GLAZED_TILE_SLAB, ModItems.GREEN_GLAZED_TILE_STAIRS, recipeConsumer);
+                .define('B', Items.GREEN_GLAZED_TERRACOTTA)
+                .define('T', ModItems.GREEN_ROOF_TILE)
+                .pattern(" T ")
+                .pattern("TBT")
+                .pattern(" T ")
+                .unlockedBy("has_" + Items.GREEN_GLAZED_TERRACOTTA, has(Items.GREEN_GLAZED_TERRACOTTA))
+                .save(recipeOutput);
+        stoneSlabAndStairsRecipe(ModItems.GREEN_GLAZED_TILES, ModItems.GREEN_GLAZED_TILE_SLAB, ModItems.GREEN_GLAZED_TILE_STAIRS, recipeOutput);
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BAMBOO_MAT, 4)
-                .define('B', Items.BAMBOO).define('S', Items.STRING)
-                .pattern("BSB").pattern("BSB").pattern("BSB")
-                .unlockedBy("has_" + Items.BAMBOO, InventoryChangeTrigger.TriggerInstance.hasItems(Items.BAMBOO))
-                .save(recipeConsumer);
-        woodSlabAndStairsRecipe(ModItems.BAMBOO_MAT, ModItems.BAMBOO_MAT_SLAB, ModItems.BAMBOO_MAT_STAIRS, recipeConsumer);
-        woodSlabAndStairsRecipe(ModItems.ROSEWOOD_PLANKS, ModItems.ROSEWOOD_SLAB, ModItems.ROSEWOOD_STAIRS, recipeConsumer);
-        fenceRecipe(ModItems.ROSEWOOD_PLANKS, ModItems.ROSEWOOD_FENCE, recipeConsumer);
+                .define('B', Items.BAMBOO)
+                .define('S', Items.STRING)
+                .pattern("BSB")
+                .pattern("BSB")
+                .pattern("BSB")
+                .unlockedBy("has_" + Items.BAMBOO, has(Items.BAMBOO))
+                .save(recipeOutput);
+        woodSlabAndStairsRecipe(ModItems.BAMBOO_MAT, ModItems.BAMBOO_MAT_SLAB, ModItems.BAMBOO_MAT_STAIRS, recipeOutput);
+        woodSlabAndStairsRecipe(ModItems.ROSEWOOD_PLANKS, ModItems.ROSEWOOD_SLAB, ModItems.ROSEWOOD_STAIRS, recipeOutput);
+        fenceRecipe(ModItems.ROSEWOOD_PLANKS, ModItems.ROSEWOOD_FENCE, recipeOutput);
 
         //MATERIALS
-        woodworking(Ingredient.of(ItemTags.PLANKS), ModItems.WOODEN_FRAME, 2, Items.OAK_PLANKS, recipeConsumer);
-        polishedPlankRecipe(Items.OAK_PLANKS, ModItems.POLISHED_OAK_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.BIRCH_PLANKS, ModItems.POLISHED_BIRCH_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.SPRUCE_PLANKS, ModItems.POLISHED_SPRUCE_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.JUNGLE_PLANKS, ModItems.POLISHED_JUNGLE_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.ACACIA_PLANKS, ModItems.POLISHED_ACACIA_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.DARK_OAK_PLANKS, ModItems.POLISHED_DARK_OAK_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.CRIMSON_PLANKS, ModItems.POLISHED_CRIMSON_PLANK, recipeConsumer);
-        polishedPlankRecipe(Items.WARPED_PLANKS, ModItems.POLISHED_WARPED_PLANK, recipeConsumer);
-        polishedPlankRecipe(ModItems.ROSEWOOD_PLANKS, ModItems.POLISHED_ROSEWOOD_PLANK, recipeConsumer);
-        //polishedPlankRecipe(ItemRegistry.EBONY_PLANKS, ItemRegistry.POLISHED_EBONY_PLANK, recipeConsumer);
-        dust(ModItems.RAW_HEMATITE, ModItems.HEMATITE_DUST, recipeConsumer);
-        dust(ModItems.MAGNESITE, ModItems.MAGNESITE_DUST, recipeConsumer);
-        dust(Items.PRISMARINE_SHARD, ModItems.PRISMARINE_DUST, recipeConsumer);
+        woodworking(Ingredient.of(ItemTags.PLANKS), ModItems.WOODEN_FRAME, 2, Items.OAK_PLANKS, recipeOutput);
+        polishedPlankRecipe(Items.OAK_PLANKS, ModItems.POLISHED_OAK_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.BIRCH_PLANKS, ModItems.POLISHED_BIRCH_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.SPRUCE_PLANKS, ModItems.POLISHED_SPRUCE_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.JUNGLE_PLANKS, ModItems.POLISHED_JUNGLE_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.ACACIA_PLANKS, ModItems.POLISHED_ACACIA_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.DARK_OAK_PLANKS, ModItems.POLISHED_DARK_OAK_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.CRIMSON_PLANKS, ModItems.POLISHED_CRIMSON_PLANK, recipeOutput);
+        polishedPlankRecipe(Items.WARPED_PLANKS, ModItems.POLISHED_WARPED_PLANK, recipeOutput);
+        polishedPlankRecipe(ModItems.ROSEWOOD_PLANKS, ModItems.POLISHED_ROSEWOOD_PLANK, recipeOutput);
+        //polishedPlankRecipe(ItemRegistry.EBONY_PLANKS, ItemRegistry.POLISHED_EBONY_PLANK, recipeOutput);
+        dust(ModItems.RAW_HEMATITE, ModItems.HEMATITE_DUST, recipeOutput);
+        dust(ModItems.MAGNESITE, ModItems.MAGNESITE_DUST, recipeOutput);
+        dust(Items.PRISMARINE_SHARD, ModItems.PRISMARINE_DUST, recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.UNFIRED_CLAY_BRICK, 3)
-                .define('C', Items.CLAY_BALL).pattern("CCC")
-                .unlockedBy(itemUnlockName(Items.CLAY_BALL), itemCriterion(Items.CLAY_BALL))
-                .save(recipeConsumer);
-        brickMixture(ModItems.UNFIRED_CLAY_BRICK, 6, ModItems.PRISMARINE_DUST, ModItems.UNFIRED_RAW_CYAN_BRICK, recipeConsumer);
-        brickMixture(ModItems.UNFIRED_CLAY_BRICK, 6, ModItems.HEMATITE_DUST, ModItems.UNFIRED_BLACK_BRICK, recipeConsumer);
-        brickMixture(ModItems.UNFIRED_CLAY_BRICK, 6, Items.NETHER_WART, ModItems.UNFIRED_RAW_BROWNISH_RED_STONE_BRICK, recipeConsumer);
-        smeltingAndBlasting(ModItems.UNFIRED_CLAY_BRICK, ModItems.FIRED_BRICK, recipeConsumer);
-        smeltingAndBlasting(ModItems.UNFIRED_RAW_CYAN_BRICK, ModItems.CYAN_BRICK, recipeConsumer);
-        smeltingAndBlasting(ModItems.UNFIRED_BLACK_BRICK, ModItems.BLACK_BRICK, recipeConsumer);
-        smeltingAndBlasting(ModItems.UNFIRED_RAW_BROWNISH_RED_STONE_BRICK, ModItems.BROWNISH_RED_STONE_BRICK, recipeConsumer);
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.BRICK, 1).requires(ModItems.FIRED_BRICK)
-                .unlockedBy("has_" + ModItems.FIRED_BRICK, InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.FIRED_BRICK)).save(recipeConsumer);
-
+                .define('C', Items.CLAY_BALL)
+                .pattern("CCC")
+                .unlockedBy(itemUnlockName(Items.CLAY_BALL), has(Items.CLAY_BALL))
+                .save(recipeOutput);
+        brickMixture(ModItems.UNFIRED_CLAY_BRICK, 6, ModItems.PRISMARINE_DUST, ModItems.UNFIRED_RAW_CYAN_BRICK, recipeOutput);
+        brickMixture(ModItems.UNFIRED_CLAY_BRICK, 6, ModItems.HEMATITE_DUST, ModItems.UNFIRED_BLACK_BRICK, recipeOutput);
+        brickMixture(ModItems.UNFIRED_CLAY_BRICK, 6, Items.NETHER_WART, ModItems.UNFIRED_RAW_BROWNISH_RED_STONE_BRICK, recipeOutput);
+        smeltingAndBlasting(ModItems.UNFIRED_CLAY_BRICK, ModItems.FIRED_BRICK, recipeOutput);
+        smeltingAndBlasting(ModItems.UNFIRED_RAW_CYAN_BRICK, ModItems.CYAN_BRICK, recipeOutput);
+        smeltingAndBlasting(ModItems.UNFIRED_BLACK_BRICK, ModItems.BLACK_BRICK, recipeOutput);
+        smeltingAndBlasting(ModItems.UNFIRED_RAW_BROWNISH_RED_STONE_BRICK, ModItems.BROWNISH_RED_STONE_BRICK, recipeOutput);
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.BRICK, 1)
+                .requires(ModItems.FIRED_BRICK)
+                .unlockedBy("has_" + ModItems.FIRED_BRICK, has(ModItems.FIRED_BRICK))
+                .save(recipeOutput);
 
         //LAMPS
-        generateLampRecipes(recipeConsumer);
+        generateLampRecipes(recipeOutput);
     }
-
-
 }

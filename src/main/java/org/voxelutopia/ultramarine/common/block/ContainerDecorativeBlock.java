@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.common.tile.ContainerDecorativeBlockEntity;
 import org.voxelutopia.ultramarine.init.data.ContainerType;
 
@@ -33,7 +34,7 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
     }
 
     @Override
-    public void setPlacedBy(Level worldIn, BlockPos posIn, BlockState stateIn, LivingEntity entityIn, ItemStack stackIn) {
+    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos posIn, @NotNull BlockState stateIn, LivingEntity entityIn, ItemStack stackIn) {
         if (stackIn.hasCustomHoverName()) {
             BlockEntity blockEntity = worldIn.getBlockEntity(posIn);
             if (blockEntity instanceof ContainerDecorativeBlockEntity containerBlockEntity) {
@@ -43,17 +44,17 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
     }
 
     @Override
-    public boolean hasAnalogOutputSignal(BlockState stateIn) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState stateIn) {
         return true;
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState pState, Level pLevel, BlockPos pPos) {
+    public int getAnalogOutputSignal(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(pLevel.getBlockEntity(pPos));
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState state) {
         return new ContainerDecorativeBlockEntity(pPos, state, rowCount);
     }
 
@@ -71,7 +72,7 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
     }
 
     @Override
-    public void onRemove(BlockState pState, Level levelIn, BlockPos pos, BlockState pNewState, boolean pIsMoving) {
+    public void onRemove(BlockState pState, @NotNull Level levelIn, @NotNull BlockPos pos, BlockState pNewState, boolean pIsMoving) {
         if (!pState.is(pNewState.getBlock())) {
             BlockEntity blockEntity = levelIn.getBlockEntity(pos);
             if (blockEntity instanceof Container) {

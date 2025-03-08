@@ -31,6 +31,11 @@ public class SeatEntity extends Entity {
     }
 
     @Override
+    protected void defineSynchedData (SynchedEntityData.Builder builder) {
+
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -54,7 +59,7 @@ public class SeatEntity extends Entity {
 
     @Override
     protected void defineSynchedData() {
-        this.entityData.define(LIFE, 0);
+        this.entityData.set(LIFE, 0);
     }
 
     @Override

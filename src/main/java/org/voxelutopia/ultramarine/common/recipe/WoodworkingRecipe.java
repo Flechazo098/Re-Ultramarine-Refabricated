@@ -1,17 +1,14 @@
 package org.voxelutopia.ultramarine.common.recipe;
 
-import com.google.gson.JsonObject;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SingleItemRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.Ultramarine;
@@ -20,28 +17,13 @@ import org.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 
 public class WoodworkingRecipe extends SingleItemRecipe {
 
-
-    protected final Ingredient ingredient;
-    protected final ItemStack result;
-    protected final ResourceLocation id;
-    protected final String group;
-
     public WoodworkingRecipe(ResourceLocation pId, String pGroup, Ingredient pIngredient, ItemStack pResult) {
-        super(ModRecipeTypes.WOODWORKING, ModRecipeSerializers.WOODWORKING_SERIALIZER, pId, pGroup, pIngredient, pResult);
-        this.id = pId;
-        this.group = pGroup;
-        this.ingredient = pIngredient;
-        this.result = pResult;
+        super(ModRecipeTypes.WOODWORKING, ModRecipeSerializers.WOODWORKING_SERIALIZER, pGroup, pIngredient, pResult);
     }
 
     @Override
-    public boolean matches(Container pContainer, Level pLevel) {
-        return ingredient.test(pContainer.getItem(0));
-    }
-
-    @Override
-    public @NotNull ItemStack assemble(Container container, RegistryAccess registryAccess) {
-        return result.copy();
+    public boolean matches(SingleRecipeInput recipeInput, Level level) {
+        return this.ingredient.test(recipeInput.getItem(0));
     }
 
     @Override
@@ -50,72 +32,43 @@ public class WoodworkingRecipe extends SingleItemRecipe {
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) {
-        return result.copy();
-    }
-
-    @Override
     public boolean isSpecial() {
         return true;
     }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return ModRecipeTypes.WOODWORKING;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return ModRecipeSerializers.WOODWORKING_SERIALIZER;
-    }
-
 
     public static class Serializer implements RecipeSerializer<WoodworkingRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
         public static final ResourceLocation ID =
-                new ResourceLocation(Ultramarine.MOD_ID, "woodworking");
+            ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "woodworking");
 
-        protected Serializer() {
+        private final MapCodec<WoodworkingRecipe> codec = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                Codec.STRING.optionalFieldOf("group", "").forGetter(WoodworkingRecipe::getGroup),
+                Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+                ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
+            ).apply(instance, (group, ingredient, result) ->
+                new WoodworkingRecipe(ID, group, ingredient, result))
+        );
+
+        private final StreamCodec<RegistryFriendlyByteBuf, WoodworkingRecipe> streamCodec = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8,
+            WoodworkingRecipe::getGroup,
+            Ingredient.CONTENTS_STREAM_CODEC,
+            recipe -> recipe.ingredient,
+            ItemStack.STREAM_CODEC,
+            recipe -> recipe.result,
+            (group, ingredient, result) -> new WoodworkingRecipe(ID, group, ingredient, result)
+        );
+
+        @Override
+        public MapCodec<WoodworkingRecipe> codec() {
+            return this.codec;
         }
 
         @Override
-        public WoodworkingRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-            String s = GsonHelper.getAsString(pJson, "group", "");
-            Ingredient ingredient;
-            if (GsonHelper.isArrayNode(pJson, "ingredient")) {
-                ingredient = Ingredient.fromJson(GsonHelper.getAsJsonArray(pJson, "ingredient"));
-            } else {
-                ingredient = Ingredient.fromJson(GsonHelper.getAsJsonObject(pJson, "ingredient"));
-            }
-
-            String s1 = GsonHelper.getAsString(pJson, "result");
-            int i = GsonHelper.getAsInt(pJson, "count");
-            ItemStack itemstack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(s1)), i);
-            return new WoodworkingRecipe(pRecipeId, s, ingredient, itemstack);
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, WoodworkingRecipe> streamCodec() {
+            return this.streamCodec;
         }
-
-        @Override
-        public @NotNull WoodworkingRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-            String s = pBuffer.readUtf();
-            Ingredient ingredient = Ingredient.fromNetwork(pBuffer);
-            ItemStack itemstack = pBuffer.readItem();
-            return new WoodworkingRecipe(pRecipeId, s, ingredient, itemstack);
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, WoodworkingRecipe pRecipe) {
-            pBuffer.writeUtf(pRecipe.group);
-            pRecipe.ingredient.toNetwork(pBuffer);
-            pBuffer.writeItem(pRecipe.result);
-        }
-
-
     }
-
 }

@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 import org.voxelutopia.ultramarine.init.registry.ModBlocks;
 import org.voxelutopia.ultramarine.init.registry.ModMenuTypes;
@@ -158,7 +159,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
         this.broadcastChanges();
     }
 
-    public MenuType<?> getType() {
+    public @NotNull MenuType<?> getType() {
         return ModMenuTypes.WOODWORKING_WORKBENCH;
     }
 
@@ -170,7 +171,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
         return pSlot.container != this.resultContainer && super.canTakeItemForPickAll(pStack, pSlot);
     }
 
-    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
+    public @NotNull ItemStack quickMoveStack(Player pPlayer, int pIndex) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(pIndex);
         if (slot.hasItem()) {

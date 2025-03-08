@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,10 +12,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -47,7 +49,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
             return InteractionResult.PASS;
 
         if (item.is(Items.POTION)) {
-            Potion potion = PotionUtils.getPotion(item);
+            Potion potion = PotionContents.getPotion(item);
             if (blockEntity.addPotionCharge(potion)) {
                 if (!pLevel.isClientSide()) {
                     if (!pPlayer.getAbilities().instabuild) {
@@ -105,5 +107,10 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new BottleGourdBlockEntity(pPos, pState);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec () {
+        return null;
     }
 }

@@ -12,7 +12,7 @@ public class BaseOreBlock extends DropExperienceBlock {
             .requiresCorrectToolForDrops().strength(3.0F, 3.0F);
 
     public BaseOreBlock(UniformInt xpRange) {
-        super(PROPERTIES, xpRange);
+        super(xpRange, PROPERTIES);
     }
 
     public BaseOreBlock() {
