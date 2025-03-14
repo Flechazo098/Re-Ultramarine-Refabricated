@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.init.data;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.voxelutopia.ultramarine.common.menu.ContainerDecorativeBlockMenu;
@@ -12,8 +13,8 @@ public enum ContainerType {
     COMMON_REGULAR(3, i -> true, ContainerDecorativeBlockMenu::genericThreeRows),
     COMMON_SMALL(1, i -> true, ContainerDecorativeBlockMenu::genericOneRow),
     COMMON_LARGE(6, i -> true, ContainerDecorativeBlockMenu::genericSixRows),
-    FOOD_REGULAR(3, ItemStack::isEdible, ContainerDecorativeBlockMenu::foodThreeRows),
-    FOOD_LARGE(6, ItemStack::isEdible, ContainerDecorativeBlockMenu::foodSixRows);
+    FOOD_REGULAR(3, i -> i.get(DataComponents.FOOD) != null, ContainerDecorativeBlockMenu::foodThreeRows),
+    FOOD_LARGE(6, i -> i.get(DataComponents.FOOD) != null, ContainerDecorativeBlockMenu::foodSixRows);
 
     private final int rows;
     private final Predicate<ItemStack> filter;

@@ -53,7 +53,7 @@ public class WoodenHammer extends Item {
         }
         if (success) {
             player.ifPresent(player1 -> {
-                item.hurtAndBreak(1, player1, p -> p.broadcastBreakEvent(pContext.getHand()));
+                item.hurtAndBreak(1, player1, null);
                 player1.awardStat(Stats.ITEM_USED.get(item.getItem()));
                 level.playSound(player.get(), blockpos, ModSounds.WOOD_HAMMER, SoundSource.BLOCKS, 1, 0.75f);
             });

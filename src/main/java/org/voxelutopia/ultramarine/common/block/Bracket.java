@@ -6,7 +6,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.entity.Hopper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,7 +23,8 @@ public class Bracket extends BaseHorizontalDirectionalBlock implements SimpleWat
     private static final VoxelShape TOP = box(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape FUNNEL = box(4.0D, 4.0D, 4.0D, 12.0D, 10.0D, 12.0D);
     private static final VoxelShape CONVEX_BASE = Shapes.or(FUNNEL, TOP);
-    private static final VoxelShape BASE = Shapes.join(CONVEX_BASE, Hopper.INSIDE, BooleanOp.ONLY_FIRST);
+    private static final VoxelShape INSIDE = box(2.0D, 10.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+    private static final VoxelShape BASE = Shapes.join(CONVEX_BASE, INSIDE, BooleanOp.ONLY_FIRST);
     private static final VoxelShape EAST_SHAPE = Shapes.or(BASE, box(12.0D, 4.0D, 6.0D, 16.0D, 8.0D, 10.0D));
     private static final VoxelShape NORTH_SHAPE = Shapes.or(BASE, box(6.0D, 4.0D, 0.0D, 10.0D, 8.0D, 4.0D));
     private static final VoxelShape SOUTH_SHAPE = Shapes.or(BASE, box(6.0D, 4.0D, 12.0D, 10.0D, 8.0D, 16.0D));

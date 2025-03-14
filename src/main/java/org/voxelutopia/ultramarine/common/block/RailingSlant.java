@@ -11,7 +11,7 @@ public class RailingSlant extends SideAxialBlock {
     public static final BooleanProperty SHIFTED = ModBlockStateProperties.SHIFTED;
 
     public RailingSlant(BaseBlockProperty property, int thickness) {
-        super(property, thickness, 16, true);
+        super(property.properties, thickness, 16, true);
         BlockState state = this.stateDefinition.any()
                 .setValue(SHIFTED, Boolean.FALSE);
         this.registerDefaultState(state);
@@ -22,6 +22,4 @@ public class RailingSlant extends SideAxialBlock {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(SHIFTED);
     }
-
-
 }

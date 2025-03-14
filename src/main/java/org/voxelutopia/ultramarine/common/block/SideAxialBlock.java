@@ -27,7 +27,7 @@ public class SideAxialBlock extends BaseHorizontalDirectionalBlock implements Ax
 
     public static final MapCodec<SideAxialBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(SideAxialBlock::properties),
+                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties()),
                     Codec.INT.fieldOf("thickness").forGetter(block -> block.thickness),
                     Codec.INT.fieldOf("height").forGetter(block -> block.height),
                     Codec.BOOL.fieldOf("hasCollision").forGetter(block -> block.hasCollision)
@@ -69,14 +69,14 @@ public class SideAxialBlock extends BaseHorizontalDirectionalBlock implements Ax
     }
 
     @Override
-    public FluidState getFluidState(BlockState pState) {
-        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(WATERLOGGED);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState pState) {
+        return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
     }
 
     @Override
@@ -90,8 +90,8 @@ public class SideAxialBlock extends BaseHorizontalDirectionalBlock implements Ax
         return direction.getAxis();
     }
 
-    public BlockBehaviour.Properties properties () {
-        return super.properties();
+    public BlockBehaviour.Properties properties() {
+        return this.properties;
     }
 
     @Override

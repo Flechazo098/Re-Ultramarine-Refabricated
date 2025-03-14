@@ -2,17 +2,19 @@ package org.voxelutopia.ultramarine.common.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -39,48 +41,62 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        ItemStack item = pPlayer.getItemInHand(pHand);
-        var optionalBlockEntity = pLevel.getBlockEntity(pPos, ModBlockEntities.BOTTLE_GOURD);
-        BottleGourdBlockEntity blockEntity;
-        if (optionalBlockEntity.isPresent())
-            blockEntity = optionalBlockEntity.get();
-        else
-            return InteractionResult.PASS;
-
+    public ItemInteractionResult useItemOn(ItemStack item, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (item.is(Items.POTION)) {
-            Potion potion = PotionContents.getPotion(item);
-            if (blockEntity.addPotionCharge(potion)) {
-                if (!pLevel.isClientSide()) {
-                    if (!pPlayer.getAbilities().instabuild) {
-                        item.shrink(1);
-                        ItemHandlerHelper.giveItemToPlayer(pPlayer, new ItemStack(Items.GLASS_BOTTLE));
+            var components = item.getComponents();
+            var potionContents = components.get(DataComponents.POTION_CONTENTS);
+            if (potionContents != null) {
+                Optional<Holder<Potion>> optionalPotionHolder = potionContents.potion();
+                if (optionalPotionHolder.isPresent()) {
+                    var optionalBlockEntity = pLevel.getBlockEntity(pPos, ModBlockEntities.BOTTLE_GOURD);
+                    if (optionalBlockEntity.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+                    BottleGourdBlockEntity blockEntity = optionalBlockEntity.get();
+                    Holder<Potion> potionHolder = optionalPotionHolder.get();
+                    Potion potion = potionHolder.value();
+                    if (blockEntity.addPotionCharge(potion)) {
+                        if (!pLevel.isClientSide()) {
+                            if (!pPlayer.getAbilities().instabuild) {
+                                item.shrink(1);
+                                ItemHandlerHelper.giveItemToPlayer(pPlayer, new ItemStack(Items.GLASS_BOTTLE));
+                            }
+                        }
+                        pLevel.playSound(null, pPos, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 1.0f, 1.0f);
+                        return ItemInteractionResult.sidedSuccess(pLevel.isClientSide());
                     }
                 }
-                pLevel.playSound(null, pPos, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 1.0f, 1.0f);
-                return InteractionResult.sidedSuccess(pLevel.isClientSide);
             }
-        } else if (blockEntity.hasCharges()) {
-            Optional<Potion> potion1 = blockEntity.takePotionCharge();
-            if (potion1.isPresent()) {
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
+        var optionalBlockEntity = pLevel.getBlockEntity(pPos, ModBlockEntities.BOTTLE_GOURD);
+        if (optionalBlockEntity.isEmpty()) return InteractionResult.PASS;
+
+        BottleGourdBlockEntity blockEntity = optionalBlockEntity.get();
+        if (blockEntity.hasCharges()) {
+            Optional<Potion> potion = blockEntity.takePotionCharge();
+            if (potion.isPresent()) {
                 if (!pLevel.isClientSide()) {
-                    for (MobEffectInstance effectInstance : potion1.get().getEffects()) {
-                        if (effectInstance.getEffect().isInstantenous()) {
-                            effectInstance.getEffect().applyInstantenousEffect(pPlayer, pPlayer, pPlayer, effectInstance.getAmplifier(), 1.0D);
+                    for (MobEffectInstance effect : potion.get().getEffects()) {
+                        if (effect.getEffect().value().isInstantenous()) {
+                            effect.getEffect().value().applyInstantenousEffect(pPlayer, pPlayer, pPlayer, effect.getAmplifier(), 1.0D);
                         } else {
-                            pPlayer.addEffect(new MobEffectInstance(effectInstance));
+                            pPlayer.addEffect(new MobEffectInstance(effect));
                         }
                     }
                 }
                 pLevel.playSound(null, pPlayer, SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 1.0f);
-                return InteractionResult.sidedSuccess(pLevel.isClientSide);
-            } else return InteractionResult.PASS;
+                return InteractionResult.sidedSuccess(pLevel.isClientSide());
+            }
         }
         return InteractionResult.PASS;
     }
 
     @Override
-    public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+    public BlockState playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
         super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
         pLevel.getBlockEntity(pPos, ModBlockEntities.BOTTLE_GOURD).ifPresent(entity -> {
             if (entity.hasCharges() && !pLevel.isClientSide()) {
@@ -101,6 +117,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
                 }
             }
         });
+        return pState;
     }
 
     @Nullable

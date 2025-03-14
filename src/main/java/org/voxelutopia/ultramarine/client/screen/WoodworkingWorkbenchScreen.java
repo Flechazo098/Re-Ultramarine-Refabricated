@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.voxelutopia.ultramarine.common.menu.WoodworkingWorkbenchMenu;
 import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 
@@ -38,7 +39,6 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pX, int pY) {
-        this.renderBackground(guiGraphics, pX, pY, pPartialTick);
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(BG_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -64,7 +64,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int i = this.leftPos + 52;
             int j = this.topPos + 14;
             int k = this.startIndex + 12;
-            List<WoodworkingRecipe> list = this.menu.getRecipes();
+            List<RecipeHolder<WoodworkingRecipe>> list = this.menu.getRecipes();
             for (int l = this.startIndex; l < k && l < this.menu.getNumRecipes(); ++l) {
                 int i1 = l - this.startIndex;
                 int j1 = i + i1 % 4 * 16;
@@ -72,7 +72,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
                 if (pX >= j1 && pX < j1 + 16 && pY >= k1 && pY < k1 + 18) {
                     if (this.minecraft != null) {
                         if (this.minecraft.level != null) {
-                            guiGraphics.renderTooltip(this.font, list.get(l).getResultItem(this.minecraft.level.registryAccess()), pX, pY);
+                            guiGraphics.renderTooltip(this.font, list.get(l).value().getResultItem(this.minecraft.level.registryAccess()), pX, pY);
                         }
                     }
                 }
@@ -95,11 +95,10 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
 
             guiGraphics.blit(BG_LOCATION, k, i1 - 1, 0, j1, 16, 18);
         }
-
     }
 
     private void renderRecipes(GuiGraphics guiGraphics, int pLeft, int pTop, int pRecipeIndexOffsetMax) {
-        List<WoodworkingRecipe> list = this.menu.getRecipes();
+        List<RecipeHolder<WoodworkingRecipe>> list = this.menu.getRecipes();
 
         for (int i = this.startIndex; i < pRecipeIndexOffsetMax && i < this.menu.getNumRecipes(); ++i) {
             int j = i - this.startIndex;
@@ -108,11 +107,10 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int i1 = pTop + l * 18 + 2;
             if (this.minecraft != null) {
                 if (this.minecraft.level != null) {
-                    guiGraphics.renderItemDecorations(this.font, list.get(i).getResultItem(this.minecraft.level.registryAccess()), k, i1);
+                    guiGraphics.renderItemDecorations(this.font, list.get(i).value().getResultItem(this.minecraft.level.registryAccess()), k, i1);
                 }
             }
         }
-
     }
 
     @Override
@@ -161,7 +159,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
     }
 
     @Override
-    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta, double pDeltaY) {
         if (this.isScrollBarActive()) {
             int i = this.getOffscreenRows();
             float f = (float) pDelta / (float) i;
@@ -186,6 +184,5 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             this.scrollOffs = 0.0F;
             this.startIndex = 0;
         }
-
     }
 }

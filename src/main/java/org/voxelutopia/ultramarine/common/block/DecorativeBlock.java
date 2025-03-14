@@ -1,6 +1,8 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -26,6 +29,24 @@ import org.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("deprecation")
 public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseBlockPropertyHolder, DiagonallyPlaceable {
+
+    public static final MapCodec<DecorativeBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.property.properties),
+                    Codec.BOOL.fieldOf("directional").forGetter(block -> block.directional),
+                    Codec.BOOL.fieldOf("diagonallyPlaceable").forGetter(block -> block.diagonallyPlaceable),
+                    Codec.BOOL.fieldOf("luminous").forGetter(block -> block.luminous),
+                    Codec.BOOL.fieldOf("noCollision").forGetter(block -> block.noCollision),
+                    Codec.BOOL.fieldOf("noFenceConnect").forGetter(block -> block.noFenceConnect)
+            ).apply(instance, (properties, directional, diagonallyPlaceable, luminous, noCollision, noFenceConnect) ->
+                    new DecorativeBlock.Builder(new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE))
+                            .directional(directional)
+                            .diagonallyPlaceable(diagonallyPlaceable)
+                            .luminous(luminous)
+                            .noCollision(noCollision)
+                            .noFenceConnect(noFenceConnect)
+                            .build()
+            ));
 
     public static final VoxelShape FULL_BLOCK = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     public static final VoxelShape FULL_14 = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
@@ -88,6 +109,23 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     public DecorativeBlock(Builder builder) {
         this(builder.property, builder.shape, builder.directional, builder.diagonallyPlaceable,
                 builder.luminous, builder.noCollision, builder.noFenceConnect, builder.offset);
+    }
+
+    protected DecorativeBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.property = new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE);
+        this.shape = simpleShape(FULL_14);
+        this.directional = false;
+        this.diagonallyPlaceable = false;
+        this.luminous = false;
+        this.noCollision = false;
+        this.noFenceConnect = false;
+        this.offsetDirection = null;
+        
+        var stateDefinationBuilder = new StateDefinition.Builder<Block, BlockState>(this);
+        createBlockStateDefinition(stateDefinationBuilder);
+        stateDefinition = stateDefinationBuilder.create(Block::defaultBlockState, BlockState::new);
+        this.registerDefaultState(this.stateDefinition.any());
     }
 
     public static Builder with(BaseBlockProperty property) {
@@ -200,8 +238,8 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec () {
-        return null;
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 
     @FunctionalInterface
@@ -215,7 +253,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
-
         private final BaseBlockProperty property;
         private ShapeFunction shape = simpleShape(FULL_14);
         private boolean diagonallyPlaceable;
@@ -248,13 +285,33 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
+        public Builder directional(boolean directional) {
+            this.directional = directional;
+            return this;
+        }
+
+        public Builder diagonallyPlaceable(boolean diagonallyPlaceable) {
+            this.diagonallyPlaceable = diagonallyPlaceable;
+            return this;
+        }
+
         public Builder luminous() {
             this.luminous = true;
             return this;
         }
 
+        public Builder luminous(boolean luminous) {
+            this.luminous = luminous;
+            return this;
+        }
+
         public Builder noCollision() {
             this.noCollision = true;
+            return this;
+        }
+
+        public Builder noCollision(boolean noCollision) {
+            this.noCollision = noCollision;
             return this;
         }
 
@@ -270,6 +327,11 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
         public Builder noFenceConnect() {
             noFenceConnect = true;
+            return this;
+        }
+
+        public Builder noFenceConnect(boolean noFenceConnect) {
+            this.noFenceConnect = noFenceConnect;
             return this;
         }
 

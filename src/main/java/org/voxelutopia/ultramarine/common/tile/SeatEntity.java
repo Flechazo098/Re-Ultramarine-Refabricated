@@ -7,7 +7,9 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -27,12 +29,12 @@ public class SeatEntity extends Entity {
 
     public SeatEntity(Level level, Vec3 pos) {
         this(ModEntityTypes.SEAT, level);
-        this.moveTo(pos);
+        this.setPos(pos);
     }
 
     @Override
-    protected void defineSynchedData (SynchedEntityData.Builder builder) {
-
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(LIFE, 0);
     }
 
     @Override
@@ -47,9 +49,10 @@ public class SeatEntity extends Entity {
         }
     }
 
+    // 使用新的乘客位置调整方式
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.0;
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return new Vec3(0, 0, 0); // 调整乘客位置偏移
     }
 
     @Override
@@ -58,13 +61,8 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.entityData.set(LIFE, 0);
-    }
-
-    @Override
     protected void readAdditionalSaveData(CompoundTag pCompound) {
-        pCompound.getInt("Life");
+        this.life = pCompound.getInt("Life");
     }
 
     @Override
@@ -73,7 +71,7 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity serverEntity) {
+        return new ClientboundAddEntityPacket(this, serverEntity);
     }
 }

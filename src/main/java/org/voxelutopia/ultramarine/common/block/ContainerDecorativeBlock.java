@@ -1,6 +1,9 @@
 package org.voxelutopia.ultramarine.common.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +17,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.common.tile.ContainerDecorativeBlockEntity;
 import org.voxelutopia.ultramarine.init.data.ContainerType;
@@ -35,10 +39,16 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
 
     @Override
     public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos posIn, @NotNull BlockState stateIn, LivingEntity entityIn, ItemStack stackIn) {
-        if (stackIn.hasCustomHoverName()) {
+        if (stackIn.get(DataComponents.CUSTOM_NAME) != null) {
             BlockEntity blockEntity = worldIn.getBlockEntity(posIn);
             if (blockEntity instanceof ContainerDecorativeBlockEntity containerBlockEntity) {
-                containerBlockEntity.setCustomName(stackIn.getHoverName());
+                containerBlockEntity.applyComponents(
+                    DataComponentMap.builder()
+                        .set(DataComponents.CUSTOM_NAME, stackIn.get(DataComponents.CUSTOM_NAME))
+                        .build(),
+                    DataComponentPatch.EMPTY
+                );
+                containerBlockEntity.setChanged();
             }
         }
     }
@@ -59,7 +69,7 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayIn) {
+    public InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player, BlockHitResult rayIn) {
         if (worldIn.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {

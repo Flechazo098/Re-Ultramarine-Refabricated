@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -15,19 +16,21 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class RoofTiles extends ShiftableBlock {
+public class RoofTiles extends Block {
 
-    public static final BlockBehaviour.Properties PROPERTIES = BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
-            .requiresCorrectToolForDrops().strength(1.5F, 4.0F).sound(SoundType.DEEPSLATE_TILES);
+    public static final MapCodec<RoofTiles> CODEC = simpleCodec((properties) ->
+            new RoofTiles(new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE)));
+
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
+
+    public RoofTiles(BaseBlockProperty property) {
+        super(property.properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
 
     public RoofTiles() {
-        super(PROPERTIES);
-        this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(SHIFTED, Boolean.FALSE)
-                .setValue(WATERLOGGED, Boolean.FALSE));
+        this(BaseBlockProperty.STONE);
     }
 
     @Override
@@ -43,7 +46,7 @@ public class RoofTiles extends ShiftableBlock {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
+        return SHAPE;
     }
 
     public enum RoofTileType implements ShiftedTileType {

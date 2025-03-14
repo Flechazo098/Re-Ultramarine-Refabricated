@@ -39,9 +39,9 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
         if (pState.getBlock() instanceof ConsumableDecorativeBlock consumable) {
             var food = consumable.getFood();
             pPlayer.getFoodData().eat(food.nutrition(), food.saturation());
-            for (Pair<MobEffectInstance, Float> pair : food.geteffects()) {
-                if (!pLevel.isClientSide && pair.getFirst() != null && pLevel.random.nextFloat() < pair.getSecond()) {
-                    pPlayer.addEffect(new MobEffectInstance(pair.getFirst()));
+            for (FoodProperties.PossibleEffect effect : food.effects()) {
+                if (!pLevel.isClientSide && pLevel.random.nextFloat() < effect.probability()) {
+                    pPlayer.addEffect(new MobEffectInstance(effect.effect()));
                 }
             }
             pLevel.playSound(pPlayer, pPos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 1, 0.75f);
@@ -77,7 +77,7 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
 
     @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         int bitesRemaining = pState.hasProperty(BITES) ? pState.getValue(BITES) : 0;
         if (!pPlayer.canEat(false)) {
             return InteractionResult.PASS;
