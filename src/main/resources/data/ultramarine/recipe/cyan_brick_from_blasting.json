@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "ultramarine:unfired_cyan_brick"
+  },
+  "result": {
+    "id": "ultramarine:cyan_brick"
+  },
+  "experience": 0.05,
+  "cookingtime": 100
+}

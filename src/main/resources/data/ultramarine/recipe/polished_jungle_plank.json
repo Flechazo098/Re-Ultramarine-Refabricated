@@ -1,0 +1,11 @@
+{
+  "type": "ultramarine:woodworking",
+  "group":"",
+  "ingredient": {
+    "item": "minecraft:jungle_planks"
+  },
+  "result": {
+    "id": "ultramarine:polished_jungle_plank",
+    "count": 2
+  }
+}

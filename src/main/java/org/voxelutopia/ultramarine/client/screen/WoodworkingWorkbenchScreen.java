@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.voxelutopia.ultramarine.common.menu.WoodworkingWorkbenchMenu;
 import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
@@ -43,7 +44,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
         int j = this.topPos;
         guiGraphics.blit(BG_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight);
         int k = (int) (41.0F * this.scrollOffs);
-        guiGraphics.blit(BG_LOCATION, i + 119, j + 15 + k, 176 + (this.isScrollBarActive() ? 0 : 12), 0, 12, 15);
+        guiGraphics.blit(BG_LOCATION, i + 119, j + 15 + k, 176, this.isScrollBarActive() ? 0 : 15, 12, 15);
         int l = this.leftPos + 52;
         int i1 = this.topPos + 14;
         int j1 = this.startIndex + 12;
@@ -107,7 +108,9 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int i1 = pTop + l * 18 + 2;
             if (this.minecraft != null) {
                 if (this.minecraft.level != null) {
-                    guiGraphics.renderItemDecorations(this.font, list.get(i).value().getResultItem(this.minecraft.level.registryAccess()), k, i1);
+                    ItemStack resultStack = list.get(i).value().getResultItem(this.minecraft.level.registryAccess());
+                    guiGraphics.renderItem(resultStack, k, i1);
+                    guiGraphics.renderItemDecorations(this.font, resultStack, k, i1);
                 }
             }
         }

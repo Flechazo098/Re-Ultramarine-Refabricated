@@ -19,6 +19,7 @@ import org.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 import org.voxelutopia.ultramarine.init.registry.ModSounds;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
@@ -140,13 +141,13 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
     }
 
     private void setupRecipeList(Container pInventory, ItemStack pStack) {
-        this.recipes.clear();
         this.selectedRecipeIndex.set(-1);
         this.resultSlot.set(ItemStack.EMPTY);
         if (!pStack.isEmpty()) {
-            this.recipes = this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.WOODWORKING);
+            this.recipes = new ArrayList<>(this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.WOODWORKING));
+        } else {
+            this.recipes = new ArrayList<>();
         }
-
     }
 
     void setupResultSlot() {
