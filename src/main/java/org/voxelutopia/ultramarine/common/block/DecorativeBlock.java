@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,6 +26,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
+import org.voxelutopia.ultramarine.init.data.shape.BlockShapes;
+import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
+
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("deprecation")
@@ -71,7 +78,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     private final BaseBlockProperty property;
-    private final ShapeFunction shape;
+    private final ReShapeFunction shape;
     private final boolean diagonallyPlaceable;
     private final boolean directional;
     private final boolean noCollision;
@@ -80,7 +87,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     private final @Nullable Direction offsetDirection;
     protected StateDefinition<Block, BlockState> stateDefinition;
 
-    public DecorativeBlock(BaseBlockProperty property, ShapeFunction shape,
+    public DecorativeBlock(BaseBlockProperty property, ReShapeFunction shape,
                            boolean directional, boolean diagonallyPlaceable,
                            boolean luminous, boolean noCollision, boolean noFenceConnect,
                            @Nullable Direction offset) {
@@ -114,14 +121,14 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     protected DecorativeBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.property = new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE);
-        this.shape = simpleShape(FULL_14);
+        this.shape = BlockShapes.S16_H16;
         this.directional = false;
         this.diagonallyPlaceable = false;
         this.luminous = false;
         this.noCollision = false;
         this.noFenceConnect = false;
         this.offsetDirection = null;
-        
+
         var stateDefinationBuilder = new StateDefinition.Builder<Block, BlockState>(this);
         createBlockStateDefinition(stateDefinationBuilder);
         stateDefinition = stateDefinationBuilder.create(Block::defaultBlockState, BlockState::new);
@@ -189,8 +196,8 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
-        return shape.getShape(pState, pLevel, pPos, pContext);
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return this.shape.apply(pState);
     }
 
     @Override
@@ -246,6 +253,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     public interface ShapeFunction {
 
         VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext);
+
     }
 
     public static abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
@@ -254,7 +262,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
     public static class Builder extends AbstractBuilder<Builder> {
         private final BaseBlockProperty property;
-        private ShapeFunction shape = simpleShape(FULL_14);
+        private ReShapeFunction shape = BlockShapes.S16_H16;
         private boolean diagonallyPlaceable;
         private boolean directional;
         private boolean luminous;
@@ -266,11 +274,26 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             this.property = property.copy();
         }
 
-        public Builder shaped(VoxelShape shape) {
-            return shaped(simpleShape(shape));
+        public Builder lightLevel(int level) {
+            this.property.properties.lightLevel((state) -> level);
+            return this;
         }
 
-        public Builder shaped(ShapeFunction shape) {
+        public Block lightLevel(ToIntFunction<BlockState> lightEmission) {
+            this.property.properties.lightLevel(lightEmission);
+            return this.build();
+        }
+
+        public Builder properties(BlockBehaviour.Properties properties) {
+            this.property.properties = properties;
+            return this;
+        }
+
+        public Builder shaped(VoxelShape shape) {
+            return shaped(ReShapeFunction.simpleShape(shape));
+        }
+
+        public Builder shaped(ReShapeFunction shape) {
             this.shape = shape;
             return this;
         }

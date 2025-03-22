@@ -4,9 +4,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import org.voxelutopia.ultramarine.init.registry.ModCreativeTabs;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public enum CreativeTabData {
     MATERIALS(ModCreativeTabs.MATERIALS),
@@ -19,17 +17,13 @@ public enum CreativeTabData {
     PLANTS(ModCreativeTabs.PLANTS),
     LAMPS(ModCreativeTabs.LAMPS);
 
-    public static final Map<CreativeTabData, Set<Item>> itemSets = Map.of(
-            MATERIALS, new HashSet<>(),
-            TOOLS, new HashSet<>(),
-            BUILDING_BLOCKS, new HashSet<>(),
-            DECORATIVE_BLOCKS, new HashSet<>(),
-            DECORATIONS, new HashSet<>(),
-            FURNITURE, new HashSet<>(),
-            WINDOWS_AND_DOORS, new HashSet<>(),
-            PLANTS, new HashSet<>(),
-            LAMPS, new HashSet<>()
-    );
+    public static final Map<CreativeTabData, Set<Item>> itemSets = new LinkedHashMap<>();
+
+    static {
+        Arrays.stream(CreativeTabData.values()).forEach(tab ->
+                itemSets.put(tab, new LinkedHashSet<>())
+        );
+    }
     final CreativeModeTab tab;
 
     CreativeTabData(CreativeModeTab tab) {

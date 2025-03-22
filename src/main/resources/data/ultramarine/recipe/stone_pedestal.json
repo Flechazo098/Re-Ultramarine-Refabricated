@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 1,
+  "ingredient": {
+    "item": "ultramarine:pale_yellow_stone"
+  },
+  "result": {
+    "id": "ultramarine:stone_pedestal"
+  }
+}

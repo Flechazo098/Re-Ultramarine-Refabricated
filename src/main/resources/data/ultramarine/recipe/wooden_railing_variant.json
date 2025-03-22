@@ -1,0 +1,10 @@
+{
+  "type": "ultramarine:woodworking",
+  "count": 1,
+  "ingredient": {
+    "tag": "minecraft:planks"
+  },
+  "result": {
+    "id": "ultramarine:wooden_railing_variant"
+  }
+}

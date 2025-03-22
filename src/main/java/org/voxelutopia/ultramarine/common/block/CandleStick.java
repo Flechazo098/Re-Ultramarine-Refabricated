@@ -12,12 +12,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.voxelutopia.ultramarine.init.registry.ModBlocks;
 
 public class CandleStick extends DecorativeBlock {
 
@@ -31,12 +33,16 @@ public class CandleStick extends DecorativeBlock {
     @Override
     public @NotNull BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
-        return isLuminous() ? state.setValue(LIT, false) : state;
+        if (isLuminous()) {
+            return state.setValue(LIT, false);
+        }
+        return state;
     }
 
     @Override
     public ItemInteractionResult useItemOn(ItemStack item, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (item.is(Items.FLINT_AND_STEEL) && pState.hasProperty(LIT) && !pState.getValue(LIT)) {
+        ItemStack stack = pPlayer.getItemInHand(pHand);
+        if (stack.is(Items.FLINT_AND_STEEL) && pState.hasProperty(LIT) && !pState.getValue(LIT)) {
             item.hurtAndBreak(1, pPlayer, pHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             pLevel.setBlock(pPos, pState.setValue(LIT, true), Block.UPDATE_ALL);
             return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
@@ -55,5 +61,10 @@ public class CandleStick extends DecorativeBlock {
                     pPos.getZ() + flameOffset.z,
                     0.0D, pRandom.nextDouble() * 0.01d, 0.0D);
         }
+    }
+
+    @Override
+    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
+        return 0;
     }
 }

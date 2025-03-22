@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 1,
+  "ingredient": {
+    "item": "ultramarine:cyan_floor_tile"
+  },
+  "result": {
+    "id": "ultramarine:mixed_cyan_floor_tiles"
+  }
+}

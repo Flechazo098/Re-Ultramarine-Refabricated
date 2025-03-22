@@ -24,7 +24,7 @@ public class ModCreativeTabs {
 
     public static void registerModGroups() {
         MATERIALS = register("materials_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".materials"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".materials"))
                 .icon(() -> new ItemStack(ModItems.CYAN_BRICK))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.MATERIALS)) {
@@ -33,8 +33,8 @@ public class ModCreativeTabs {
                 })
                 .build());
         TOOLS = register("tools_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".tools"))
-                .icon(() -> new ItemStack(ModItems.WOODEN_HAMMER))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".tools"))
+                .icon(() -> new ItemStack(ModItems.WOODEN_MALLET))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.TOOLS)) {
                         output.accept(item);
@@ -42,7 +42,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         BUILDING_BLOCKS = register("building_blocks_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".building_blocks"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".building_blocks"))
                 .icon(() -> new ItemStack(ModItems.CYAN_BRICKS))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.BUILDING_BLOCKS)) {
@@ -51,7 +51,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         DECORATIVE_BLOCKS = register("decorative_blocks_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".decorative_blocks"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".decorative_blocks"))
                 .icon(() -> new ItemStack(ModItems.CARVED_RED_PILLAR_BASE))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.DECORATIVE_BLOCKS)) {
@@ -60,7 +60,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         DECORATIONS = register("decorations_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".decorations"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".decorations"))
                 .icon(() -> new ItemStack(ModItems.LARGE_BLUE_AND_WHITE_PORCELAIN_VASE))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.DECORATIONS)) {
@@ -69,7 +69,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         FURNITURE = register("furniture_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".furniture"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".furniture"))
                 .icon(() -> new ItemStack(ModItems.OAK_CABINET))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.FURNITURE)) {
@@ -78,7 +78,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         WINDOWS_AND_DOORS = register("windows_and_doors_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".windows_and_doors"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".windows_and_doors"))
                 .icon(() -> new ItemStack(ModItems.CARVED_WOODEN_DOOR))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.WINDOWS_AND_DOORS)) {
@@ -87,7 +87,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         PLANTS = register("plants_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".plants"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".plants"))
                 .icon(() -> new ItemStack(ModItems.MEDIUM_LOTUS))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.PLANTS)) {
@@ -96,7 +96,7 @@ public class ModCreativeTabs {
                 })
                 .build());
         LAMPS = register("lamps_tab", FabricItemGroup.builder()
-                .title(Component.translatable("itemGroup." + Ultramarine.MOD_ID + ".lamps"))
+                .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".lamps"))
                 .icon(() -> new ItemStack(ModItems.OCTAGONAL_PALACE_LANTERN))
                 .displayItems((itemDisplayParameters, output) -> {
                     for (Item item : CreativeTabData.itemSets.get(CreativeTabData.LAMPS)) {

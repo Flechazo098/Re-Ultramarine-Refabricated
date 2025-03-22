@@ -1,5 +1,6 @@
 package org.voxelutopia.ultramarine.common.block;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -8,7 +9,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import org.voxelutopia.ultramarine.init.data.ModBlockTags;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 public final class BaseBlockProperty {
+
 
 
     public static BaseBlockProperty STONE = new BaseBlockProperty(BlockBehaviour.Properties.of()
@@ -104,8 +109,38 @@ public final class BaseBlockProperty {
             .mapColor(MapColor.WOOL)
             .sound(SoundType.WOOL)
             .strength(1F, 1F), BlockMaterial.PAPER);
+    public static BaseBlockProperty ICE = new BaseBlockProperty(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.ICE)
+            .sound(SoundType.CROP)
+            .strength(0.5F, 1.0F),
+            BlockMaterial.ICE);
 
-    final BlockBehaviour.Properties properties;
+    // 新增 Codec 定义（基于枚举名称）
+    public static final Codec<BaseBlockProperty> CODEC = Codec.STRING.xmap(
+            name -> {
+                try {
+                    Field field = BaseBlockProperty.class.getDeclaredField(name);
+                    return (BaseBlockProperty) field.get(null);
+                } catch (Exception e) {
+                    return STONE; // 默认值
+                }
+            },
+            prop -> {
+                for (Field field : BaseBlockProperty.class.getDeclaredFields()) {
+                    if (field.getType() == BaseBlockProperty.class
+                            && Modifier.isStatic(field.getModifiers())) {
+                        try {
+                            if (field.get(null) == prop) {
+                                return field.getName();
+                            }
+                        } catch (IllegalAccessException ignored) {}
+                    }
+                }
+                return "STONE";
+            }
+    );
+
+    BlockBehaviour.Properties properties;
     final BlockMaterial material;
 
     BaseBlockProperty(final BlockBehaviour.Properties properties, final BlockMaterial material) {
@@ -124,6 +159,7 @@ public final class BaseBlockProperty {
     public enum BlockMaterial {
         STONE(BlockTags.MINEABLE_WITH_PICKAXE),
         METAL(BlockTags.MINEABLE_WITH_PICKAXE),
+        ICE(BlockTags.MINEABLE_WITH_PICKAXE),
         WOOD(BlockTags.MINEABLE_WITH_AXE),
         PORCELAIN(BlockTags.MINEABLE_WITH_PICKAXE),
         BAMBOO(BlockTags.MINEABLE_WITH_AXE),

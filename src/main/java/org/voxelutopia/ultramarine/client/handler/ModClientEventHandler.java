@@ -6,6 +6,8 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.WanderingTraderRenderer;
 import org.voxelutopia.ultramarine.client.render.SeatEntityRenderer;
+import org.voxelutopia.ultramarine.client.screen.BrickKilnScreen;
+import org.voxelutopia.ultramarine.client.screen.ChiselTableScreen;
 import org.voxelutopia.ultramarine.client.screen.ContainerDecorativeBlockScreen;
 import org.voxelutopia.ultramarine.client.screen.WoodworkingWorkbenchScreen;
 import org.voxelutopia.ultramarine.init.registry.ModBlocks;
@@ -153,8 +155,10 @@ public class ModClientEventHandler {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LARGE_GREETING_PINE_BONSAI, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SMALL_WHITE_PORCELAIN_VASE_BONSAI, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.MEDIUM_GREETING_PINE_BONSAI, RenderType.cutout());
-
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WOODWORKING_WORKBENCH, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BRICK_KILN, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CHISEL_TABLE, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RED_LANTERN_STREETLIGHT, RenderType.cutout());
     }
 
     private static void registerMenuScreens() {
@@ -163,6 +167,8 @@ public class ModClientEventHandler {
         MenuScreens.register(ModMenuTypes.CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X6, ContainerDecorativeBlockScreen::new);
         MenuScreens.register(ModMenuTypes.CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X3, ContainerDecorativeBlockScreen::new);
         MenuScreens.register(ModMenuTypes.CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X6, ContainerDecorativeBlockScreen::new);
+        MenuScreens.register(ModMenuTypes.BRICK_KILN, BrickKilnScreen::new);
+        MenuScreens.register(ModMenuTypes.CHISEL_TABLE, ChiselTableScreen::new);
         MenuScreens.register(ModMenuTypes.WOODWORKING_WORKBENCH, WoodworkingWorkbenchScreen::new);
     }
 

@@ -3,6 +3,7 @@ package org.voxelutopia.ultramarine;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.voxelutopia.ultramarine.common.world.gen.ModWorldGeneration;
 import org.voxelutopia.ultramarine.init.handler.CommonEventHandler;
 import org.voxelutopia.ultramarine.init.registry.*;
 
@@ -23,8 +24,11 @@ public class Ultramarine implements ModInitializer {
         LOGGER.info(format, data);
     }
 
+    public static Logger getLogger() {return LOGGER;}
+
     @Override
     public void onInitialize() {
+        ModWorldGeneration.registerWorldGenerations();
         ModFoods.registerModFoods();
         ModBlocks.registerModBlocks();
         ModItems.registerModItems();

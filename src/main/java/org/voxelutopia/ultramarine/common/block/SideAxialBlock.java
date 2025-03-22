@@ -20,46 +20,47 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import java.util.Map;
+import org.voxelutopia.ultramarine.init.data.RawVoxelShape;
+import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
 public class SideAxialBlock extends BaseHorizontalDirectionalBlock implements AxialBlock, SimpleWaterloggedBlock {
 
     public static final MapCodec<SideAxialBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties()),
-                    Codec.INT.fieldOf("thickness").forGetter(block -> block.thickness),
-                    Codec.INT.fieldOf("height").forGetter(block -> block.height),
-                    Codec.BOOL.fieldOf("hasCollision").forGetter(block -> block.hasCollision)
+                    BaseBlockProperty.CODEC.fieldOf("properties").forGetter(block -> block.property),
+                    Codec.BOOL.fieldOf("hasCollision").forGetter(block -> block.hasCollision),
+                    ReShapeFunction.CODEC.fieldOf("shapeFunction").forGetter(block -> block.shapeFunction)
             ).apply(instance, SideAxialBlock::new));
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    private final int thickness;
     private final boolean hasCollision;
-    private final int height;
-    protected Map<Direction.Axis, VoxelShape> shapeByAxis;
+    private final ReShapeFunction shapeFunction;
 
-    public SideAxialBlock(BlockBehaviour.Properties properties, int thickness, int height, boolean hasCollision) {
-        super(new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE));
+    public SideAxialBlock(BaseBlockProperty property, boolean hasCollision, ReShapeFunction shapeFunction ) {
+        super(property);
         BlockState state = this.stateDefinition.any()
                 .setValue(WATERLOGGED, Boolean.FALSE)
                 .setValue(FACING, Direction.NORTH);
         this.registerDefaultState(state);
-        this.thickness = thickness;
-        this.shapeByAxis = this.makeAxialShapes(thickness, height);
-        this.height = height;
+        this.shapeFunction = shapeFunction;
         this.hasCollision = hasCollision;
     }
 
+    public SideAxialBlock(BaseBlockProperty property, int thickness, int height, boolean hasCollision) {
+        this(property, hasCollision, ReShapeFunction.cardinalRotations(new RawVoxelShape((16-thickness)/2f,0,0,16-(16-thickness)/2f,height,16)));
+    }
+
     public SideAxialBlock(BaseBlockProperty property, int thickness) {
-        this(property.properties, thickness, 16, false);
+        this(property, thickness, 16, false);
+    }
+
+    public SideAxialBlock(BaseBlockProperty property, ReShapeFunction shape) {
+        this(property, false, shape);
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction direction = pState.getValue(FACING);
-        if (direction == Direction.EAST || direction == Direction.WEST) return this.shapeByAxis.get(Direction.Axis.X);
-        else return this.shapeByAxis.get(Direction.Axis.Z);
+        return this.shapeFunction.apply(pState);
     }
 
     @Override

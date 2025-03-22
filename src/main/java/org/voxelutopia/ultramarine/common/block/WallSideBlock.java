@@ -21,6 +21,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
 import java.util.Map;
 
@@ -28,37 +29,48 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
 
     public static final MapCodec<WallSideBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties()),
+                    BaseBlockProperty.CODEC.fieldOf("property").forGetter(block -> block.property),
                     Codec.INT.fieldOf("sideThickness").forGetter(block -> block.sideThickness)
-            ).apply(instance, WallSideBlock::new));
-
+            ).apply(instance, WallSideBlock::new) // 使用主构造函数
+    );
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     protected final BaseBlockProperty property;
-    private final Map<Direction, VoxelShape> shapeByDirection;
+    private final ReShapeFunction shapeFunction;
     private final int sideThickness;
 
-    public WallSideBlock(BlockBehaviour.Properties properties, int sideThickness) {
-        super(properties);
-        this.property = new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE);
+    public WallSideBlock(BaseBlockProperty property, int sideThickness) {
+        super(property.copy().properties.noOcclusion().noCollission());
+        this.property = property;
         this.sideThickness = sideThickness;
+        this.shapeFunction = ReShapeFunction.sideShape(sideThickness);
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(WATERLOGGED, false));
-        this.shapeByDirection = faceShapeByDirection(sideThickness);
     }
+
+
+    public WallSideBlock(BaseBlockProperty property, ReShapeFunction shapeFunction) {
+        super(property.copy().properties.noOcclusion().noCollission());
+        this.property = property;
+        this.sideThickness = 1;
+        this.shapeFunction = shapeFunction;
+        this.registerDefaultState(this.getStateDefinition().any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(WATERLOGGED, false));
+    }
+
+//    public WallSideBlock(BaseBlockProperty property, int sideThickness) {
+//        this(property, ReShapeFunction.sideShape(sideThickness));
+//    }
 
     public WallSideBlock(BaseBlockProperty property) {
-        this(property.properties, 1);
-    }
-
-    public WallSideBlock(BaseBlockProperty property, int sideThickness) {
-        this(property.properties, sideThickness);
+        this(property, 1);
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return this.shapeByDirection.get(pState.getValue(FACING));
+        return this.shapeFunction.apply(pState);
     }
 
     @Nullable

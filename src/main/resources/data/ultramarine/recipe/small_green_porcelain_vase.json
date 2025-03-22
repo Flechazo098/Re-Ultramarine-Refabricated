@@ -1,0 +1,15 @@
+{
+  "id": "ultramarine:small_green_porcelain_vase",
+  "type": "ultramarine:composite_smelting",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "primary_ingredient": {
+    "item": "ultramarine:small_clay_vase"
+  },
+  "result": {
+    "id": "ultramarine:small_green_porcelain_vase"
+  },
+  "secondary_ingredient": {
+    "item": "minecraft:green_dye"
+  }
+}

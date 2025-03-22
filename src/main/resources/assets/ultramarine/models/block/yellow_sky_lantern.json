@@ -1,7 +1,0 @@
-{
-  "parent": "ultramarine:block/sky_lantern",
-  "textures": {
-    "2": "ultramarine:block/yellow_sky_lantern",
-    "particle": "block/yellow_stained_glass"
-  }
-}

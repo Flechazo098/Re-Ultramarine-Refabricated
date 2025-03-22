@@ -15,6 +15,10 @@ public class ModVillagerProfessions {
 
 
     public static void registerModVillagerProfession() {
-        COOK = Registry.register(BuiltInRegistries.VILLAGER_PROFESSION, "cook", new VillagerProfession("cook", (holder) -> holder.is(Objects.requireNonNull(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(ModPoiTypes.COOKING_POI))), (holder) -> holder.is(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(ModPoiTypes.COOKING_POI)), ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_BUTCHER));
+        COOK = Registry.register(BuiltInRegistries.VILLAGER_PROFESSION, "cook",
+                new VillagerProfession("cook",
+                        (holder) -> holder.is(Objects.requireNonNull(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(ModPoiTypes.COOKING_POI))),
+                        (holder) -> holder.is(Objects.requireNonNull(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(ModPoiTypes.COOKING_POI))),
+                        ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_BUTCHER));
     }
 }

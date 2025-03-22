@@ -1,0 +1,15 @@
+{
+  "id": "ultramarine:tall_blue_porcelain_vase",
+  "type": "ultramarine:composite_smelting",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "primary_ingredient": {
+    "item": "ultramarine:tall_clay_vase"
+  },
+  "result": {
+    "id": "ultramarine:tall_blue_porcelain_vase"
+  },
+  "secondary_ingredient": {
+    "item": "minecraft:blue_dye"
+  }
+}

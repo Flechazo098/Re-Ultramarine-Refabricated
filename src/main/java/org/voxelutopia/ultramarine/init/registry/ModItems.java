@@ -1,17 +1,23 @@
 package org.voxelutopia.ultramarine.init.registry;
 
+import com.google.common.base.Supplier;
+import dev.architectury.platform.Mod;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.voxelutopia.ultramarine.Ultramarine;
-import org.voxelutopia.ultramarine.common.item.AquaticPlantBlockItem;
-import org.voxelutopia.ultramarine.common.item.BaseFood;
-import org.voxelutopia.ultramarine.common.item.WoodenHammer;
+import org.voxelutopia.ultramarine.common.item.*;
 import org.voxelutopia.ultramarine.init.data.CreativeTabData;
+import org.voxelutopia.ultramarine.init.data.ModTiers;
+
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class ModItems {
@@ -27,16 +33,26 @@ public class ModItems {
     public static final Item CYAN_BRICK_SLAB = fromBlock(ModBlocks.CYAN_BRICK_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CYAN_BRICK_STAIRS = fromBlock(ModBlocks.CYAN_BRICK_STAIRS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CYAN_BRICK_WALL = fromBlock(ModBlocks.CYAN_BRICK_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item BLACK_BRICKS = fromBlock(ModBlocks.BLACK_BRICKS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BLACK_BRICK_SLAB = fromBlock(ModBlocks.BLACK_BRICK_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BLACK_BRICK_STAIRS = fromBlock(ModBlocks.BLACK_BRICK_STAIRS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BLACK_BRICK_WALL = fromBlock(ModBlocks.BLACK_BRICK_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item BROWNISH_RED_STONE_BRICKS = fromBlock(ModBlocks.BROWNISH_RED_STONE_BRICKS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BROWNISH_RED_STONE_BRICK_SLAB = fromBlock(ModBlocks.BROWNISH_RED_STONE_BRICK_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BROWNISH_RED_STONE_BRICK_STAIRS = fromBlock(ModBlocks.BROWNISH_RED_STONE_BRICK_STAIRS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BROWNISH_RED_STONE_BRICK_WALL = fromBlock(ModBlocks.BROWNISH_RED_STONE_BRICK_WALL, CreativeTabData.BUILDING_BLOCKS);
-    public static final Item WHITE_AMD_PINK_MIXED_BRICKS = fromBlock(ModBlocks.WHITE_AMD_PINK_MIXED_BRICKS, CreativeTabData.BUILDING_BLOCKS);
+
+    public static final Item WHITE_AND_PINK_MIXED_BRICKS = fromBlock(ModBlocks.WHITE_AND_PINK_MIXED_BRICKS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item WHITE_AND_PINK_MIXED_BRICK_SLAB = fromBlock(ModBlocks.WHITE_AND_PINK_MIXED_BRICK_SLAB, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item WHITE_AND_PINK_MIXED_BRICK_STAIRS = fromBlock(ModBlocks.WHITE_AND_PINK_MIXED_BRICK_STAIRS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item WHITE_AND_PINK_MIXED_BRICK_WALL = fromBlock(ModBlocks.WHITE_AND_PINK_MIXED_BRICK_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item GREEN_WEATHERED_BRICKS = fromBlock(ModBlocks.GREEN_WEATHERED_BRICKS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item GREEN_WEATHERED_BRICK_SLAB = fromBlock(ModBlocks.GREEN_WEATHERED_BRICK_SLAB, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item GREEN_WEATHERED_BRICK_STAIRS = fromBlock(ModBlocks.GREEN_WEATHERED_BRICK_STAIRS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item GREEN_WEATHERED_BRICK_WALL = fromBlock(ModBlocks.GREEN_WEATHERED_BRICK_WALL, CreativeTabData.BUILDING_BLOCKS);
 
     // STONES
 
@@ -61,21 +77,37 @@ public class ModItems {
     public static final Item LIGHT_CYAN_FLOOR_TILE_SLAB = fromBlock(ModBlocks.LIGHT_CYAN_FLOOR_TILE_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item LIGHT_CYAN_FLOOR_TILE_STAIRS = fromBlock(ModBlocks.LIGHT_CYAN_FLOOR_TILE_STAIRS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item LIGHT_CYAN_FLOOR_TILE_WALL = fromBlock(ModBlocks.LIGHT_CYAN_FLOOR_TILE_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item CYAN_FLOOR_TILE = fromBlock(ModBlocks.CYAN_FLOOR_TILE, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CYAN_FLOOR_TILE_SLAB = fromBlock(ModBlocks.CYAN_FLOOR_TILE_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CYAN_FLOOR_TILE_STAIRS = fromBlock(ModBlocks.CYAN_FLOOR_TILE_STAIRS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CYAN_FLOOR_TILE_WALL = fromBlock(ModBlocks.CYAN_FLOOR_TILE_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item DARK_CYAN_FLOOR_TILE = fromBlock(ModBlocks.DARK_CYAN_FLOOR_TILE, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item DARK_CYAN_FLOOR_TILE_SLAB = fromBlock(ModBlocks.DARK_CYAN_FLOOR_TILE_SLAB, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item DARK_CYAN_FLOOR_TILE_STAIRS = fromBlock(ModBlocks.DARK_CYAN_FLOOR_TILE_STAIRS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item DARK_CYAN_FLOOR_TILE_WALL = fromBlock(ModBlocks.DARK_CYAN_FLOOR_TILE_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item LAYERED_CYAN_FLOOR_TILES = fromBlock(ModBlocks.LAYERED_CYAN_FLOOR_TILES, CreativeTabData.BUILDING_BLOCKS);
     public static final Item VERTICAL_CYAN_FLOOR_TILES = fromBlock(ModBlocks.VERTICAL_CYAN_FLOOR_TILES, CreativeTabData.BUILDING_BLOCKS);
     public static final Item MIXED_CYAN_FLOOR_TILES = fromBlock(ModBlocks.MIXED_CYAN_FLOOR_TILES, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CHISELED_CYAN_FLOOR_TILE = fromBlock(ModBlocks.CHISELED_CYAN_FLOOR_TILE, CreativeTabData.BUILDING_BLOCKS);
     public static final Item CUT_CYAN_FLOOR_TILES = fromBlock(ModBlocks.CUT_CYAN_FLOOR_TILES, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item WEATHERED_RED_STONE_TILE = fromBlock(ModBlocks.WEATHERED_RED_STONE_TILE, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item WEATHERED_RED_STONE_TILE_SLAB = fromBlock(ModBlocks.WEATHERED_RED_STONE_TILE_SLAB, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item WEATHERED_RED_STONE_TILE_STAIRS = fromBlock(ModBlocks.WEATHERED_RED_STONE_TILE_STAIRS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item WEATHERED_RED_STONE_TILE_WALL = fromBlock(ModBlocks.WEATHERED_RED_STONE_TILE_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item BLUE_AND_BLACK_TILE = fromBlock(ModBlocks.BLUE_AND_BLACK_TILE, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item BLUE_AND_BLACK_TILE_SLAB = fromBlock(ModBlocks.BLUE_AND_BLACK_TILE_SLAB, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item BLUE_AND_BLACK_TILE_STAIRS = fromBlock(ModBlocks.BLUE_AND_BLACK_TILE_STAIRS, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item BLUE_AND_BLACK_TILE_WALL = fromBlock(ModBlocks.BLUE_AND_BLACK_TILE_WALL, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item GREEN_GLAZED_TILES = fromBlock(ModBlocks.GREEN_GLAZED_TILES, CreativeTabData.BUILDING_BLOCKS);
     public static final Item GREEN_GLAZED_TILE_SLAB = fromBlock(ModBlocks.GREEN_GLAZED_TILE_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item GREEN_GLAZED_TILE_STAIRS = fromBlock(ModBlocks.GREEN_GLAZED_TILE_STAIRS, CreativeTabData.BUILDING_BLOCKS);
+
     public static final Item BLACK_FLOOR_TILES = fromBlock(ModBlocks.BLACK_FLOOR_TILES, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BLACK_FLOOR_TILES_LITTLE_MOSSY = fromBlock(ModBlocks.BLACK_FLOOR_TILES_LITTLE_MOSSY, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BLACK_FLOOR_TILES_MODERATE_MOSSY = fromBlock(ModBlocks.BLACK_FLOOR_TILES_MODERATE_MOSSY, CreativeTabData.BUILDING_BLOCKS);
@@ -87,6 +119,7 @@ public class ModItems {
     public static final Item ROSEWOOD_SLAB = fromBlock(ModBlocks.ROSEWOOD_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item ROSEWOOD_STAIRS = fromBlock(ModBlocks.ROSEWOOD_STAIRS, CreativeTabData.BUILDING_BLOCKS);
     public static final Item ROSEWOOD_FENCE = fromBlock(ModBlocks.ROSEWOOD_FENCE, CreativeTabData.BUILDING_BLOCKS);
+    public static final Item VARNISHED_ROSEWOOD = fromBlock(ModBlocks.VARNISHED_ROSEWOOD, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BAMBOO_MAT = fromBlock(ModBlocks.BAMBOO_MAT, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BAMBOO_MAT_SLAB = fromBlock(ModBlocks.BAMBOO_MAT_SLAB, CreativeTabData.BUILDING_BLOCKS);
     public static final Item BAMBOO_MAT_STAIRS = fromBlock(ModBlocks.BAMBOO_MAT_STAIRS, CreativeTabData.BUILDING_BLOCKS);
@@ -137,6 +170,21 @@ public class ModItems {
      * DECORATIVE BLOCKS
      */
 
+    // SIMPLE WOODEN
+
+    public static final Item OAK_BRACKET = fromBlock(ModBlocks.OAK_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item SPRUCE_BRACKET = fromBlock(ModBlocks.SPRUCE_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item BIRCH_BRACKET = fromBlock(ModBlocks.BIRCH_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item JUNGLE_BRACKET = fromBlock(ModBlocks.JUNGLE_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item ACACIA_BRACKET = fromBlock(ModBlocks.ACACIA_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item DARK_OAK_BRACKET = fromBlock(ModBlocks.DARK_OAK_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item CRIMSON_BRACKET = fromBlock(ModBlocks.CRIMSON_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item WARPED_BRACKET = fromBlock(ModBlocks.WARPED_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MANGROVE_BRACKET = fromBlock(ModBlocks.MANGROVE_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item CHERRY_BRACKET = fromBlock(ModBlocks.CHERRY_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item VARNISHED_ROSEWOOD_BRACKET = fromBlock(ModBlocks.VARNISHED_ROSEWOOD_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
+
+
     // SIMPLE CARVED WOOD
 
     public static final Item RED_CARVED_WOOD = fromBlock(ModBlocks.RED_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
@@ -166,7 +214,7 @@ public class ModItems {
     public static final Item BLACK_WHITE_GREEN_CARVED_WOOD = fromBlock(ModBlocks.BLACK_WHITE_GREEN_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item BLACK_WHITE_BLUE_CARVED_WOOD = fromBlock(ModBlocks.BLACK_WHITE_BLUE_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item RED_AND_GREEN_CARVED_WOOD = fromBlock(ModBlocks.RED_AND_GREEN_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
-    public static final Item BLUE_AND_WHITE_CARVED_WOOD = fromBlock(ModBlocks.BLUE_AND_WHITE_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item BLUE_AND_RED_CARVED_WOOD = fromBlock(ModBlocks.BLUE_AND_RED_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item BLUE_WHITE_RED_CARVED_WOOD = fromBlock(ModBlocks.BLUE_WHITE_RED_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item GREEN_WHITE_RED_CARVED_WOOD = fromBlock(ModBlocks.GREEN_WHITE_RED_CARVED_WOOD, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item BLUE_AND_YELLOW_CARVED_WOOD_VARIANT_1 = fromBlock(ModBlocks.BLUE_AND_YELLOW_CARVED_WOOD_VARIANT_1, CreativeTabData.DECORATIVE_BLOCKS);
@@ -231,6 +279,22 @@ public class ModItems {
     public static final Item CYAN_BLUE_CYAN_FANGXIN = fromBlock(ModBlocks.CYAN_BLUE_CYAN_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item RED_BLUE_RED_FANGXIN = fromBlock(ModBlocks.RED_BLUE_RED_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item CYAN_AND_YELLOW_FANGXIN_EDGE = fromBlock(ModBlocks.CYAN_AND_YELLOW_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_BLUE_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN_EDGE = fromBlock(ModBlocks.MING_BLUE_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_BLUE_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN = fromBlock(ModBlocks.MING_BLUE_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_BLUE_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN_EDGE = fromBlock(ModBlocks.MING_BLUE_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_GREEN_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN = fromBlock(ModBlocks.MING_GREEN_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_GREEN_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN_EDGE = fromBlock(ModBlocks.MING_GREEN_GILDED_JINZHUOMO_SHINIANYU_XUANZI_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item QING_BLUE_PLAIN_JINZHUOMO_SHINIANYU_FANGXIN = fromBlock(ModBlocks.QING_BLUE_PLAIN_JINZHUOMO_SHINIANYU_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_NIANYUZHUANG_FANGXIN = fromBlock(ModBlocks.YUAN_NIANYUZHUANG_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_NIANYUZHUANG_FANGXIN_EDGE = fromBlock(ModBlocks.YUAN_NIANYUZHUANG_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_PATTERNED_NIANYUZHUANG_FANGXIN = fromBlock(ModBlocks.YUAN_PATTERNED_NIANYUZHUANG_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_PATTERNED_NIANYUZHUANG_FANGXIN_EDGE = fromBlock(ModBlocks.YUAN_PATTERNED_NIANYUZHUANG_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_GREEN_NIANYUZHUANG_FANGXIN = fromBlock(ModBlocks.YUAN_GREEN_NIANYUZHUANG_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_GREEN_NIANYUZHUANG_FANGXIN_EDGE = fromBlock(ModBlocks.YUAN_GREEN_NIANYUZHUANG_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_PATTERNED_WUCHAIZHUANG_FANGXIN = fromBlock(ModBlocks.YUAN_PATTERNED_WUCHAIZHUANG_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_PATTERNED_WUCHAIZHUANG_FANGXIN_EDGE = fromBlock(ModBlocks.YUAN_PATTERNED_WUCHAIZHUANG_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_GREEN_WUCHAIZHUANG_FANGXIN = fromBlock(ModBlocks.YUAN_GREEN_WUCHAIZHUANG_FANGXIN, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_GREEN_WUCHAIZHUANG_FANGXIN_EDGE = fromBlock(ModBlocks.YUAN_GREEN_WUCHAIZHUANG_FANGXIN_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
 
     // ZHAOTOU
 
@@ -246,12 +310,18 @@ public class ModItems {
     public static final Item GREEN_AND_YELLOW_ZHAOTOU = fromBlock(ModBlocks.GREEN_AND_YELLOW_ZHAOTOU, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item RED_GREEN_BLUE_ZHAOTOU = fromBlock(ModBlocks.RED_GREEN_BLUE_ZHAOTOU, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item WHITE_BLUE_GREEN_ZHAOTOU = fromBlock(ModBlocks.WHITE_BLUE_GREEN_ZHAOTOU, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_YANZHUOMO_SHINIANYU_OUTER_ZHAOTOU = fromBlock(ModBlocks.MING_YANZHUOMO_SHINIANYU_OUTER_ZHAOTOU, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_YANZHUOMO_SHINIANYU_OUTER_ZHAOTOU_EDGE = fromBlock(ModBlocks.MING_YANZHUOMO_SHINIANYU_OUTER_ZHAOTOU_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_NIANYUZHUANG_ZHAOTOU = fromBlock(ModBlocks.YUAN_NIANYUZHUANG_ZHAOTOU, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_NIANYUZHUANG_ZHAOTOU_CONNECTION = fromBlock(ModBlocks.YUAN_NIANYUZHUANG_ZHAOTOU_CONNECTION, CreativeTabData.DECORATIVE_BLOCKS);
 
     // GUTOU
 
     public static final Item GREEN_BLUE_BLACK_GUTOU = fromBlock(ModBlocks.GREEN_BLUE_BLACK_GUTOU, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item BLUE_GREEN_YELLOW_GUTOU = fromBlock(ModBlocks.BLUE_GREEN_YELLOW_GUTOU, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item BLUE_AND_YELLOW_GUTOU = fromBlock(ModBlocks.BLUE_AND_YELLOW_GUTOU, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item MING_YANZHUOMO_SHINIANYU_OUTER_GUTOU_EDGE = fromBlock(ModBlocks.MING_YANZHUOMO_SHINIANYU_OUTER_GUTOU_EDGE, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item YUAN_NIANYUZHUANG_GUTOU = fromBlock(ModBlocks.YUAN_NIANYUZHUANG_GUTOU, CreativeTabData.DECORATIVE_BLOCKS);
 
     // RAFTERS
 
@@ -347,6 +417,7 @@ public class ModItems {
     public static final Item GOLDEN_GLAZED_ROOF_CHARM = fromBlock(ModBlocks.GOLDEN_GLAZED_ROOF_CHARM, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item GOLDEN_GLAZED_ROOF_CHARM_ACCESSORY = fromBlock(ModBlocks.GOLDEN_GLAZED_ROOF_CHARM_ACCESSORY, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item GREEN_GLAZED_ROOF_CHARM = fromBlock(ModBlocks.GREEN_GLAZED_ROOF_CHARM, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item DARK_PRISMARINE_CHIWEI = fromBlock(ModBlocks.DARK_PRISMARINE_CHIWEI, CreativeTabData.DECORATIVE_BLOCKS);
 
     // CEILING
 
@@ -416,6 +487,7 @@ public class ModItems {
     public static final Item JADE_PENDANT = fromBlock(ModBlocks.JADE_PENDANT, CreativeTabData.DECORATIONS);
     public static final Item IMPERIAL_JADE_SEAL = fromBlock(ModBlocks.IMPERIAL_JADE_SEAL, CreativeTabData.DECORATIONS);
     public static final Item LONG_PILLOW = fromBlock(ModBlocks.LONG_PILLOW, CreativeTabData.DECORATIONS);
+    public static final Item WIND_CHIME = fromBlock(ModBlocks.WIND_CHIME, CreativeTabData.DECORATIONS);
 
     // MISC OBJECTS
 
@@ -478,6 +550,17 @@ public class ModItems {
     public static final Item WINE_POT = fromBlock(ModBlocks.WINE_POT, CreativeTabData.DECORATIONS);
     public static final Item XIAOLONGBAO = fromBlock(ModBlocks.XIAOLONGBAO, CreativeTabData.DECORATIONS);
 
+    //ICE
+
+    public static final Item ICICLE = fromBlock(ModBlocks.ICICLE, CreativeTabData.DECORATIONS);
+    public static final Item LARGE_ICICLE = fromBlock(ModBlocks.LARGE_ICICLE, CreativeTabData.DECORATIONS);
+
+    //CELEBRATION
+
+    public static final Item COUPLET = fromBlock(ModBlocks.COUPLET, CreativeTabData.DECORATIONS);
+    public static final Item COUPLET_TOP= fromBlock(ModBlocks.COUPLET_TOP, CreativeTabData.DECORATIONS);
+    public static final Item FU_MARK = fromBlock(ModBlocks.FU_MARK, CreativeTabData.DECORATIONS);
+
     /**
      * FURNITURE
      */
@@ -498,6 +581,7 @@ public class ModItems {
     public static final Item SMALL_TABLE = fromBlock(ModBlocks.SMALL_TABLE, CreativeTabData.FURNITURE);
     public static final Item SMALL_EBONY_TABLE = fromBlock(ModBlocks.SMALL_EBONY_TABLE, CreativeTabData.FURNITURE);
     public static final Item LARGE_TABLE = fromBlock(ModBlocks.LARGE_TABLE, CreativeTabData.FURNITURE);
+    public static final Item LONG_TABLE = fromBlock(ModBlocks.LONG_TABLE, CreativeTabData.FURNITURE);
 
     // CHAIR
 
@@ -508,6 +592,7 @@ public class ModItems {
     public static final Item PORCELAIN_INLAID_GRAND_CHAIR = fromBlock(ModBlocks.PORCELAIN_INLAID_GRAND_CHAIR, CreativeTabData.FURNITURE);
     public static final Item YELLOW_CUSHION = fromBlock(ModBlocks.YELLOW_CUSHION, CreativeTabData.FURNITURE);
     public static final Item OAK_BED = fromBlock(ModBlocks.OAK_BED, CreativeTabData.FURNITURE);
+    public static final Item EBONY_BED = fromBlock(ModBlocks.EBONY_BED, CreativeTabData.FURNITURE);
 
     // SCREEN
 
@@ -622,6 +707,11 @@ public class ModItems {
     public static final Item SMALL_STANDING_LAMP = fromBlock(ModBlocks.SMALL_STANDING_LAMP, CreativeTabData.LAMPS);
     public static final Item STONE_LAMP = fromBlock(ModBlocks.STONE_LAMP, CreativeTabData.LAMPS);
 
+    // STREETLIGHT //todo rewrite collision logic
+    public static final Item RED_LANTERN_STREETLIGHT = fromBlock(ModBlocks.RED_LANTERN_STREETLIGHT, CreativeTabData.LAMPS);
+    public static final Item HANGING_RED_LANTERN_STREETLIGHT = fromBlock(ModBlocks.HANGING_RED_LANTERN_STREETLIGHT, CreativeTabData.LAMPS);
+    public static final Item STREETLIGHT_POLE = fromBlock(ModBlocks.STREETLIGHT_POLE, CreativeTabData.LAMPS);
+
     // CANDLESTICK
 
     public static final Item RED_CANDLE = fromBlock(ModBlocks.RED_CANDLE, CreativeTabData.LAMPS);
@@ -635,8 +725,12 @@ public class ModItems {
     // ORE BLOCK
 
     public static final Item JADE_ORE = fromBlock(ModBlocks.JADE_ORE, CreativeTabData.MATERIALS);
+    public static final Item DEEPSLATE_JADE_ORE = fromBlock(ModBlocks.DEEPSLATE_JADE_ORE, CreativeTabData.MATERIALS);
     public static final Item MAGNESITE_ORE = fromBlock(ModBlocks.MAGNESITE_ORE, CreativeTabData.MATERIALS);
+    public static final Item DEEPSLATE_MAGNESITE_ORE = fromBlock(ModBlocks.DEEPSLATE_MAGNESITE_ORE, CreativeTabData.MATERIALS);
     public static final Item HEMATITE_ORE = fromBlock(ModBlocks.HEMATITE_ORE, CreativeTabData.MATERIALS);
+    public static final Item DEEPSLATE_HEMATITE_ORE = fromBlock(ModBlocks.DEEPSLATE_HEMATITE_ORE, CreativeTabData.MATERIALS);
+    public static final Item NETHER_COBALT_ORE = fromBlock(ModBlocks.NETHER_COBALT_ORE, CreativeTabData.MATERIALS);
 
     // ORE PRODUCT
 
@@ -645,6 +739,8 @@ public class ModItems {
     public static final Item MAGNESITE_DUST = simpleItem("magnesite_dust", CreativeTabData.MATERIALS);
     public static final Item RAW_HEMATITE = simpleItem("raw_hematite", CreativeTabData.MATERIALS);
     public static final Item HEMATITE_DUST = simpleItem("hematite_dust", CreativeTabData.MATERIALS);
+    public static final Item RAW_COBALT = simpleItem("raw_cobalt", CreativeTabData.MATERIALS);
+    public static final Item COBALT_DUST = simpleItem("cobalt_dust", CreativeTabData.MATERIALS);
 
     // BRICK
 
@@ -663,6 +759,7 @@ public class ModItems {
 
     // ROOF TILE
 
+    public static final Item UNFIRED_ROOF_TILE = simpleItem("unfired_roof_tile", CreativeTabData.MATERIALS);
     public static final Item GRAY_ROOF_TILE = simpleItem("gray_roof_tile", CreativeTabData.MATERIALS);
     public static final Item YELLOW_ROOF_TILE = simpleItem("yellow_roof_tile", CreativeTabData.MATERIALS);
     public static final Item GREEN_ROOF_TILE = simpleItem("green_roof_tile", CreativeTabData.MATERIALS);
@@ -680,14 +777,39 @@ public class ModItems {
     public static final Item POLISHED_DARK_OAK_PLANK = simpleItem("polished_dark_oak_plank", CreativeTabData.MATERIALS);
     public static final Item POLISHED_WARPED_PLANK = simpleItem("polished_warped_plank", CreativeTabData.MATERIALS);
     public static final Item POLISHED_CRIMSON_PLANK = simpleItem("polished_crimson_plank", CreativeTabData.MATERIALS);
+    public static final Item POLISHED_MANGROVE_PLANK = simpleItem("polished_mangrove_plank", CreativeTabData.MATERIALS);
+    public static final Item POLISHED_CHERRY_PLANK = simpleItem("polished_cherry_plank", CreativeTabData.MATERIALS);
     public static final Item POLISHED_ROSEWOOD_PLANK = simpleItem("polished_rosewood_plank", CreativeTabData.MATERIALS);
     public static final Item POLISHED_EBONY_PLANK = simpleItem("polished_ebony_plank", CreativeTabData.MATERIALS);
     public static final Item WOODEN_FRAME = simpleItem("wooden_frame", CreativeTabData.MATERIALS);
+
+    // PORCELAIN MATERIAL
+
+    public static final Item CALCITE_DUST = simpleItem("calcite_dust", CreativeTabData.MATERIALS);
+    public static final Item BLUE_AND_WHITE_GLAZE_POWDER = simpleItem("blue_and_white_glaze_powder", CreativeTabData.MATERIALS);
+    public static final Item SMALL_CLAY_VASE = simpleItem("small_clay_vase", CreativeTabData.MATERIALS);
+    public static final Item MEDIUM_CLAY_VASE = simpleItem("medium_clay_vase", CreativeTabData.MATERIALS);
+    public static final Item LARGE_CLAY_VASE = simpleItem("large_clay_vase", CreativeTabData.MATERIALS);
+    public static final Item TALL_CLAY_VASE = simpleItem("tall_clay_vase", CreativeTabData.MATERIALS);
+    public static final Item CLAY_POT = simpleItem("clay_pot", CreativeTabData.MATERIALS);
+    public static final Item TALL_CLAY_POT = simpleItem("tall_clay_pot", CreativeTabData.MATERIALS);
+    public static final Item CLAY_PLATE = simpleItem("clay_plate", CreativeTabData.MATERIALS);
+    public static final Item CLAY_BOWL = simpleItem("clay_bowl", CreativeTabData.MATERIALS);
+    public static final Item SMALL_WHITE_PORCELAIN_VASE = simpleItem("small_white_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item MEDIUM_WHITE_PORCELAIN_VASE = simpleItem("medium_white_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item LARGE_WHITE_PORCELAIN_VASE = simpleItem("large_white_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item SMALL_GREEN_PORCELAIN_VASE = simpleItem("small_green_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item MEDIUM_GREEN_PORCELAIN_VASE = simpleItem("medium_green_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item TALL_BLUE_PORCELAIN_VASE = simpleItem("tall_blue_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item TALL_BLUE_AND_WHITE_PORCELAIN_VASE = simpleItem("tall_blue_and_white_porcelain_vase", CreativeTabData.MATERIALS);
+    public static final Item BLACK_PORCELAIN_PLATE = simpleItem("black_porcelain_plate", CreativeTabData.MATERIALS);
+    public static final Item BLUE_AND_WHITE_PORCELAIN_PLATE = simpleItem("blue_and_white_porcelain_plate", CreativeTabData.MATERIALS);
 
     // PORCELAIN
 
     public static final Item BLUE_AND_WHITE_PORCELAIN_PIECE = simpleItem("blue_and_white_porcelain_piece", CreativeTabData.MATERIALS);
     public static final Item BLUE_AND_WHITE_PORCELAIN_SHARDS = simpleItem("blue_and_white_porcelain_shards", CreativeTabData.MATERIALS);
+    public static final Item PORCELAIN_PIECE = simpleItem("porcelain_piece", CreativeTabData.MATERIALS);
 
     // PARTS
 
@@ -695,6 +817,39 @@ public class ModItems {
     public static final Item GOLD_PARTS = simpleItem("gold_parts", CreativeTabData.MATERIALS);
     public static final Item JADE_PARTS = simpleItem("jade_parts", CreativeTabData.MATERIALS);
     public static final Item PORCELAIN_PARTS = simpleItem("porcelain_parts", CreativeTabData.MATERIALS);
+    public static final Item BRONZE_PARTS = simpleItem("bronze_parts", CreativeTabData.MATERIALS);
+
+    // DYE POWDERS
+
+    public static final Item WHITE_DYE_POWDER = dyePowderItem("white_dye_powder", DyeColor.WHITE);
+    public static final Item ORANGE_DYE_POWDER = dyePowderItem("orange_dye_powder", DyeColor.ORANGE);
+    public static final Item MAGENTA_DYE_POWDER = dyePowderItem("magenta_dye_powder", DyeColor.MAGENTA);
+    public static final Item LIGHT_BLUE_DYE_POWDER = dyePowderItem("light_blue_dye_powder", DyeColor.LIGHT_BLUE);
+    public static final Item YELLOW_DYE_POWDER = dyePowderItem("yellow_dye_powder", DyeColor.YELLOW);
+    public static final Item LIME_DYE_POWDER = dyePowderItem("lime_dye_powder", DyeColor.LIME);
+    public static final Item PINK_DYE_POWDER = dyePowderItem("pink_dye_powder", DyeColor.PINK);
+    public static final Item GRAY_DYE_POWDER = dyePowderItem("gray_dye_powder", DyeColor.GRAY);
+    public static final Item LIGHT_GRAY_DYE_POWDER = dyePowderItem("light_gray_dye_powder", DyeColor.LIGHT_GRAY);
+    public static final Item CYAN_DYE_POWDER = dyePowderItem("cyan_dye_powder", DyeColor.CYAN);
+    public static final Item PURPLE_DYE_POWDER = dyePowderItem("purple_dye_powder", DyeColor.PURPLE);
+    public static final Item BLUE_DYE_POWDER = dyePowderItem("blue_dye_powder", DyeColor.BLUE);
+    public static final Item BROWN_DYE_POWDER = dyePowderItem("brown_dye_powder", DyeColor.BROWN);
+    public static final Item GREEN_DYE_POWDER = dyePowderItem("green_dye_powder", DyeColor.GREEN);
+    public static final Item RED_DYE_POWDER = dyePowderItem("red_dye_powder", DyeColor.RED);
+    public static final Item BLACK_DYE_POWDER = dyePowderItem("black_dye_powder", DyeColor.BLACK);
+    public static final Item GOLD_DYE_POWDER = dyePowderItem("gold_dye_powder", DyeColor.YELLOW);
+
+    // TEMPLATES
+
+    public static final Item CARVED_WOOD_TEMPLATE = simpleItem("carved_wood_template", CreativeTabData.MATERIALS);
+    public static final Item FANGXIN_TEMPLATE = simpleItem("fangxin_template", CreativeTabData.MATERIALS);
+    public static final Item FANGXIN_EDGE_TEMPLATE = simpleItem("fangxin_edge_template", CreativeTabData.MATERIALS);
+    public static final Item ZHAOTOU_TEMPLATE = simpleItem("zhaotou_template", CreativeTabData.MATERIALS);
+    public static final Item GUTOU_TEMPLATE = simpleItem("gutou_template", CreativeTabData.MATERIALS);
+    public static final Item RAFTER_TEMPLATE = simpleItem("rafter_template", CreativeTabData.MATERIALS);
+    public static final Item RAFTER_END_TEMPLATE = simpleItem("rafter_end_template", CreativeTabData.MATERIALS);
+    public static final Item ARCHITRAVE_TEMPLATE = simpleItem("architrave_template", CreativeTabData.MATERIALS);
+    public static final Item CAIHUA_TEMPLATE = simpleItem("caihua_template", CreativeTabData.MATERIALS);
 
     // MATERIALS
 
@@ -704,6 +859,10 @@ public class ModItems {
     public static final Item SILK = simpleItem("silk", CreativeTabData.MATERIALS);
     public static final Item XUAN_PAPER = simpleItem("xuan_paper", CreativeTabData.MATERIALS);
     public static final Item COPPER_CASH_COIN = simpleItem("copper_cash_coin", CreativeTabData.MATERIALS);
+    public static final Item BRONZE_INGOT = simpleItem("bronze_ingot", CreativeTabData.MATERIALS);
+    public static final Item BRONZE_DUST = simpleItem("bronze_dust", CreativeTabData.MATERIALS);
+    public static final Item JADE_BLOCK = fromBlock(ModBlocks.JADE_BLOCK, CreativeTabData.MATERIALS);
+    public static final Item BRONZE_BLOCK = fromBlock(ModBlocks.BRONZE_BLOCK, CreativeTabData.MATERIALS);
 
     // FOOD
 
@@ -717,8 +876,20 @@ public class ModItems {
      * TOOLS
      */
 
-    public static final Item WOODEN_HAMMER = registerItem("wooden_hammer", new WoodenHammer());
+    public static final Item WOODEN_MALLET = toolItem("wooden_mallet", WoodenHammer::new);
+    public static final Item BLUE_AND_WHITE_PORCELAIN_SWORD = toolItem("blue_and_white_porcelain_sword",
+            () -> new SwordItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(SwordItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 3, -2.4F))));
+    public static final Item BLUE_AND_WHITE_PORCELAIN_SHOVEL = toolItem("blue_and_white_porcelain_shovel",
+            () -> new ShovelItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(ShovelItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 1.5F, -3.0F))));
+    public static final Item BLUE_AND_WHITE_PORCELAIN_PICKAXE = toolItem("blue_and_white_porcelain_pickaxe",
+            () -> new PickaxeItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(PickaxeItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 1.0F, -2.8F))));
+    public static final Item BLUE_AND_WHITE_PORCELAIN_AXE = toolItem("blue_and_white_porcelain_axe",
+            () -> new AxeItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(AxeItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 6.0F, -3.2F))));
+    public static final Item BLUE_AND_WHITE_PORCELAIN_UPGRADE_SMITHING_TEMPLATE = toolItem("blue_and_white_porcelain_upgrade_smithing_template",
+            BlueAndWhitePorcelainUpgradeSmithingTemplate::new);
     public static final Item WOODWORKING_WORKBENCH = fromBlock(ModBlocks.WOODWORKING_WORKBENCH, CreativeTabData.TOOLS);
+    public static final Item BRICK_KILN = fromBlock(ModBlocks.BRICK_KILN, CreativeTabData.TOOLS);
+    public static final Item CHISEL_TABLE = fromBlock(ModBlocks.CHISEL_TABLE, CreativeTabData.TOOLS);
 
     private static <B extends Block> Item fromBlock(Block block, CreativeTabData tabDef) {
         Item registryObject = registerItem(BuiltInRegistries.BLOCK.getKey(block).getPath(), new BlockItem(block, new Item.Properties()));
@@ -748,6 +919,19 @@ public class ModItems {
         Item registryObject = registerItem(name, new BaseFood(food));
         CreativeTabData.putItemInSet(registryObject, CreativeTabData.MATERIALS);
         return registryObject;
+    }
+
+
+    private static Item dyePowderItem(String name, DyeColor color) {
+        Item registryObject = registerItem(name, new DyePowder(color));
+        CreativeTabData.putItemInSet(registryObject, CreativeTabData.MATERIALS);
+        return registryObject;
+    }
+
+    private static Item toolItem(String name, Supplier<Item> toolItemSupplier) {
+        Item item = registerItem(name, toolItemSupplier.get());
+        CreativeTabData.putItemInSet(item, CreativeTabData.TOOLS);
+        return item;
     }
 
     private static Item registerItem(String name, Item item) {

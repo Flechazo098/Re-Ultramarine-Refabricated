@@ -13,16 +13,14 @@
                 {
                   "condition": "minecraft:match_tool",
                   "predicate": {
-                    "predicates": {
-                      "minecraft:enchantments": [
-                        {
-                          "enchantments": "minecraft:silk_touch",
-                          "levels": {
-                            "min": 1
-                          }
+                    "enchantments": [
+                      {
+                        "enchantment": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
                         }
-                      ]
-                    }
+                      }
+                    ]
                   }
                 }
               ],
@@ -45,8 +43,9 @@
           ]
         }
       ],
+      "name": "jade_ore",
       "rolls": 1.0
     }
   ],
-  "random_sequence": "ultramarine:jade_ore"
+  "random_sequence": "ultramarine:blocks/jade_ore"
 }

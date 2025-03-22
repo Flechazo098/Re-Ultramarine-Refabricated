@@ -20,6 +20,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.voxelutopia.ultramarine.init.data.RawVoxelShape;
+import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
 import java.util.Map;
 
@@ -27,43 +29,48 @@ public class CentralAxialBlock extends Block implements AxialBlock, SimpleWaterl
 
     public static final MapCodec<CentralAxialBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(CentralAxialBlock::properties),
-                    Codec.INT.fieldOf("thickness").forGetter(block -> block.thickness),
-                    Codec.INT.fieldOf("height").forGetter(block -> block.height),
+                    BaseBlockProperty.CODEC.fieldOf("properties").forGetter(block -> block.property),
+                    ReShapeFunction.CODEC.fieldOf("shapeFunction").forGetter(block -> block.shapeFunction),
                     Codec.BOOL.fieldOf("hasCollision").forGetter(block -> block.hasCollision)
             ).apply(instance, CentralAxialBlock::new));
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
-    private final int thickness;
     private final boolean hasCollision;
-    private final int height;
     protected Map<Direction.Axis, VoxelShape> shapeByAxis;
+    private final ReShapeFunction shapeFunction;
+    private final BaseBlockProperty property;
 
-    public CentralAxialBlock(BlockBehaviour.Properties properties, int thickness, int height, boolean hasCollision) {
-        super(properties);
+    public CentralAxialBlock(BaseBlockProperty property, ReShapeFunction shapeFunction, boolean hasCollision) {
+        super(property.properties);
+        this.property = property;
         BlockState state = this.stateDefinition.any()
                 .setValue(WATERLOGGED, Boolean.FALSE)
                 .setValue(AXIS, Direction.Axis.X);
         this.registerDefaultState(state);
-        this.thickness = thickness;
-        this.shapeByAxis = this.makeAxialShapes(thickness, height);
-        this.height = height;
+        this.shapeFunction = shapeFunction;
         this.hasCollision = hasCollision;
     }
 
+    public CentralAxialBlock(BaseBlockProperty property, int thickness, int height, boolean hasCollision) {
+        this(property, ReShapeFunction.axialRotations(new RawVoxelShape(0, 0, (16-thickness)/2f, 16, height, 16-(16-thickness)/2f)), hasCollision);
+    }
+
     public CentralAxialBlock(BaseBlockProperty property, int thickness) {
-        this(property.properties, thickness, 16, false);
+        this(property, thickness, 16, false);
     }
 
     public CentralAxialBlock(BaseBlockProperty property, int thickness, int height) {
-        this(property.properties, thickness, height, true);
+        this(property, thickness, height, true);
+    }
+
+    public CentralAxialBlock(BaseBlockProperty property, ReShapeFunction shapeFunction){
+        this(property, shapeFunction, false);
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction.Axis axis = pState.getValue(AXIS);
-        return this.shapeByAxis.get(axis);
+        return shapeFunction.apply(pState);
     }
 
     @Override
@@ -92,7 +99,11 @@ public class CentralAxialBlock extends Block implements AxialBlock, SimpleWaterl
         return pState.getValue(AXIS);
     }
 
-    public BlockBehaviour.Properties properties () {
+    public BaseBlockProperty getProperty() {
+        return property;
+    }
+
+    public BlockBehaviour.Properties properties() {
         return super.properties();
     }
 

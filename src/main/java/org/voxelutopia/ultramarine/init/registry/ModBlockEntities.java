@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.tile.BottleGourdBlockEntity;
+import org.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
 import org.voxelutopia.ultramarine.common.tile.CenserBlockEntity;
 import org.voxelutopia.ultramarine.common.tile.ContainerDecorativeBlockEntity;
 
@@ -15,12 +16,11 @@ import java.util.Set;
 
 public class ModBlockEntities {
 
-    public static BlockEntityType<ContainerDecorativeBlockEntity>
-            CONTAINER_DECORATIVE_BLOCK;
-    public static BlockEntityType<CenserBlockEntity>
-            CENSER;
-    public static BlockEntityType<BottleGourdBlockEntity>
-            BOTTLE_GOURD;
+    public static BlockEntityType<ContainerDecorativeBlockEntity> CONTAINER_DECORATIVE_BLOCK;
+    public static BlockEntityType<CenserBlockEntity> CENSER;
+    public static BlockEntityType<BottleGourdBlockEntity> BOTTLE_GOURD;
+    public static BlockEntityType<BrickKilnBlockEntity> BRICK_KILN;
+
     static Set<Block> CONTAINER_BLOCKS = Set.of(
             ModBlocks.GUNNY_SACK, ModBlocks.FRUIT_BOX, ModBlocks.WOODEN_CRATE, ModBlocks.FOOD_HAMPER,
             ModBlocks.OAK_CABINET, ModBlocks.WARPED_CABINET, ModBlocks.EBONY_CABINET);
@@ -41,5 +41,10 @@ public class ModBlockEntities {
             ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "bottle_gourd_entity"),
             BlockEntityType.Builder.of(BottleGourdBlockEntity::new, 
                 ModBlocks.BOTTLE_GOURD).build());
+
+        BRICK_KILN = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "brick_kiln_block_entity"),
+            BlockEntityType.Builder.of(BrickKilnBlockEntity::new,
+                ModBlocks.BRICK_KILN).build(null));
     }
 }

@@ -1,5 +1,9 @@
 package org.voxelutopia.ultramarine;
 
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
+import org.voxelutopia.ultramarine.common.world.ModConfiguredFeatures;
+import org.voxelutopia.ultramarine.common.world.ModPlacedFeatures;
 import org.voxelutopia.ultramarine.init.datagen.*;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -11,13 +15,12 @@ public class UltramarineDataGenerators implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack generator = fabricDataGenerator.createPack();
-//        ExistingFileHelper fh = ExistingFileHelper.withResourcesFromArg();
-        generator.addProvider(ModBlockTagProvider::new);
-        generator.addProvider(ModItemTagProvider::new);
-//        generator.addProvider(ModRecipeProvider::new);
-//        generator.addProvider((output, registriesFuture) -> new ModBlockModelProvider(output, fh));
-//        generator.addProvider((output, registriesFuture) -> new ModItemModelProvider(output, fh));
-//        generator.addProvider((output, registriesFuture) -> new ModLootTables(output));
+        generator.addProvider(ModWorldGen::new);
+    }
 
+    @Override
+    public void buildRegistry(RegistrySetBuilder registryBuilder) {
+        registryBuilder.add(Registries.CONFIGURED_FEATURE, ModConfiguredFeatures::bootstrap);
+        registryBuilder.add(Registries.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
     }
 }

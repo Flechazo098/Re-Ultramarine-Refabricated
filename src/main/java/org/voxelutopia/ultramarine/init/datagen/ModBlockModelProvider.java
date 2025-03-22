@@ -406,7 +406,7 @@ public class ModBlockModelProvider extends FabricModelProvider {
             diagonallyPlaceableBlock(block);
         } else if (block.isDirectional() && !block.isDiagonallyPlaceable()) {
             directionalBlock(block);
-        } else {
+            } else {
             directionalAndDiagonalBlock(block);
         }
     }
@@ -475,7 +475,7 @@ public class ModBlockModelProvider extends FabricModelProvider {
                     return Variant.variant()
                         .with(VariantProperties.MODEL, modelLoc)
                         .with(VariantProperties.Y_ROT, VariantProperties.Rotation.values()[(int)facing.toYRot() / 90]);
-                } else {
+            } else {
                     Pair<Direction, Direction> directions = Pair.of(facing, shiftedFacing);
                     int rotation = rotations.getOrDefault(directions, 0);
                     return Variant.variant()

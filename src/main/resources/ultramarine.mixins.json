@@ -4,8 +4,7 @@
   "package": "org.voxelutopia.ultramarine.init.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BlockBehaviourMixin",
-    "ItemEntityMixin",
+    "BlockBehaviourMixin"
   ],
   "client": [
   ],

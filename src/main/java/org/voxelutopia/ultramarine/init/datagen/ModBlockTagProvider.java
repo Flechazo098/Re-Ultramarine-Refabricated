@@ -38,6 +38,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocks.HEMATITE_ORE);
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.JADE_ORE);
+        tag(BlockTags.NEEDS_DIAMOND_TOOL)
+                .add(ModBlocks.JADE_ORE)
+                .add(ModBlocks.MAGNESITE_ORE)
+                .add(ModBlocks.HEMATITE_ORE);
         tag(BlockTags.MINEABLE_WITH_AXE)
                 .add(ModBlocks.OCTAGONAL_PALACE_LANTERN)
                 .add(ModBlocks.SQUARE_PALACE_LANTERN)
