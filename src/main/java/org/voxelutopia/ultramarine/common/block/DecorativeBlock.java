@@ -1,6 +1,5 @@
 package org.voxelutopia.ultramarine.common.block;
 
-import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,8 +28,6 @@ import org.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 import org.voxelutopia.ultramarine.init.data.shape.BlockShapes;
 import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
-import java.util.Map;
-import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 @MethodsReturnNonnullByDefault
@@ -39,7 +36,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
     public static final MapCodec<DecorativeBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    BlockBehaviour.Properties.CODEC.fieldOf("properties").forGetter(block -> block.property.properties),
+                    Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties),
                     Codec.BOOL.fieldOf("directional").forGetter(block -> block.directional),
                     Codec.BOOL.fieldOf("diagonallyPlaceable").forGetter(block -> block.diagonallyPlaceable),
                     Codec.BOOL.fieldOf("luminous").forGetter(block -> block.luminous),
@@ -49,30 +46,11 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                     new DecorativeBlock.Builder(new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE))
                             .directional(directional)
                             .diagonallyPlaceable(diagonallyPlaceable)
-                            .luminous(luminous)
+                            .luminous()
                             .noCollision(noCollision)
                             .noFenceConnect(noFenceConnect)
                             .build()
             ));
-
-    public static final VoxelShape FULL_BLOCK = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    public static final VoxelShape FULL_14 = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
-    public static final VoxelShape FULL_12 = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-    public static final VoxelShape FULL_10 = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 16.0D, 13.0D);
-    public static final VoxelShape FULL_8 = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
-    public static final VoxelShape FULL_6 = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 16.0D, 11.0D);
-    public static final VoxelShape FULL_4 = Block.box(6.0D, 0.0D, 6.0D, 10.0D, 16.0D, 10.0D);
-
-    public static final VoxelShape HALF_BLOCK = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
-    public static final VoxelShape HALF_14 = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 8.0D, 14.0D);
-    public static final VoxelShape HALF_12 = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 8.0D, 13.0D);
-    public static final VoxelShape HALF_6 = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 8.0D, 11.0D);
-    public static final VoxelShape QUARTER_16 = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D);
-    public static final VoxelShape QUARTER_12 = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 4.0D, 13.0D);
-    public static final VoxelShape FLAT_16 = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
-    public static final VoxelShape DOUBLE_FLAT_14 = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 2.0D, 14.0D);
-
-    public static final VoxelShape VASE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 14.0D, 13.0D);
 
     public static final DirectionProperty HORIZONTAL_FACING_SHIFT = ModBlockStateProperties.HORIZONTAL_FACING_SHIFT;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -137,10 +115,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
     public static Builder with(BaseBlockProperty property) {
         return new Builder(property);
-    }
-
-    protected static ShapeFunction simpleShape(VoxelShape shape) {
-        return ($1, $2, $3, $4) -> shape;
     }
 
     @Override
@@ -235,8 +209,8 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public VoxelShape getBlockSupportShape(@NotNull BlockState pState, @NotNull BlockGetter pReader, @NotNull BlockPos pPos) {
-        return noFenceConnect ? FULL_14 : super.getBlockSupportShape(pState, pReader, pPos);
+    public VoxelShape getBlockSupportShape(BlockState pState, BlockGetter pReader, BlockPos pPos) {
+        return noFenceConnect ? BlockShapes.S16_H12.apply(pState) : super.getBlockSupportShape(pState, pReader, pPos);
     }
 
     @Override
@@ -247,13 +221,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
-    }
-
-    @FunctionalInterface
-    public interface ShapeFunction {
-
-        VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext);
-
     }
 
     public static abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
@@ -323,10 +290,10 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
-        public Builder luminous(boolean luminous) {
-            this.luminous = luminous;
-            return this;
-        }
+//        public Builder luminous(boolean luminous) {
+//            this.luminous = luminous;
+//            return this;
+//        }
 
         public Builder noCollision() {
             this.noCollision = true;

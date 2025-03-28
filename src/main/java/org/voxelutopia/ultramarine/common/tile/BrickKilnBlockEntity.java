@@ -27,13 +27,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +52,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.getFuel;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -109,10 +114,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         super(ModBlockEntities.BRICK_KILN, blockPos, blockState);
     }
 
-    public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity){
+    public static void serverTick (Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity){
         boolean lit = pBlockEntity.isLit();
         boolean changed = false;
-
+    
         ItemStack fuelItem = pBlockEntity.storage.getFuel().getItem(0);
         ItemStack primaryItem = pBlockEntity.storage.getPrimaryInput().getItem(0);
         ItemStack secondaryItem = pBlockEntity.storage.getSecondaryInput().getItem(0);
@@ -120,22 +125,45 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         Optional<RecipeHolder<CompositeSmeltingRecipe>> recipeHolder = pLevel.getRecipeManager()
                 .getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, new RecipeWrapper(pBlockEntity.storage), pLevel);
         CompositeSmeltingRecipe recipe = recipeHolder.map(RecipeHolder::value).orElse(null);
-
+    
         if (pBlockEntity.isLit()) {
             --pBlockEntity.litTime;
         }
-
+    
         if (recipe != null){
             pBlockEntity.cookingTotalTime = recipe.getCookingTime();
         }
 
-        if (pBlockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
+        // 检查是否需要消耗新的燃料
+        if (!pBlockEntity.isLit() && !fuelItem.isEmpty() && recipe != null &&
+                !primaryItem.isEmpty() && !secondaryItem.isEmpty()) {
+            // 获取燃料燃烧时间
+            int burnTime = pBlockEntity.getBurnDuration(fuelItem);
+            if (burnTime > 0) {
+                // 设置燃烧时间和持续时间
+                pBlockEntity.litTime = burnTime;
+                pBlockEntity.litDuration = burnTime;
+                
+                Item remainingItem = fuelItem.getItem().getCraftingRemainingItem();
+                if (remainingItem != null) {
+                    // 如果有剩余物品，设置为剩余物品
+                    pBlockEntity.storage.getFuel().setItem(0, new ItemStack(remainingItem));
+                } else {
+                    // 否则减少燃料数量
+                    fuelItem.shrink(1);
+                    pBlockEntity.storage.getFuel().setItem(0, fuelItem);
+                }
 
+                changed = true;
+            }
+        }
+    
+        if (pBlockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
             int maxStack = 64;
             if (! pBlockEntity.isLit() && recipe != null) {
                 pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack);
             }
-
+    
             if (pBlockEntity.isLit() && pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
                 ++pBlockEntity.cookingProgress;
                 if (pBlockEntity.cookingProgress == pBlockEntity.cookingTotalTime) {
@@ -144,7 +172,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
                     if (pBlockEntity.burn(recipe, pBlockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
                         pBlockEntity.setRecipeUsed(recipeHolder.orElse(null));
                     }
-
+    
                     changed = true;
                 }
             } else {
@@ -153,15 +181,24 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         } else if (!pBlockEntity.isLit() && pBlockEntity.cookingProgress > 0) {
             pBlockEntity.cookingProgress = Mth.clamp(pBlockEntity.cookingProgress - 2, 0, pBlockEntity.cookingTotalTime);
         }
-
+    
         if (lit != pBlockEntity.isLit()) {
             changed = true;
             pState = pState.setValue(AbstractFurnaceBlock.LIT, pBlockEntity.isLit());
             pLevel.setBlock(pPos, pState, 3);
         }
-
+    
         if (changed) {
             setChanged(pLevel, pPos, pState);
+        }
+    }
+
+    private int getBurnDuration(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            return 0;
+        } else {
+            Item item = itemStack.getItem();
+            return (Integer)getFuel().getOrDefault(item, 0);
         }
     }
 

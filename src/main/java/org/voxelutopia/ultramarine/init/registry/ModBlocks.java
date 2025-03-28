@@ -444,7 +444,7 @@ public class ModBlocks {
     // CEILING
 
     public static final Block QING_GOLDEN_DRAGON_CEILING = registerBlock("qing_golden_dragon_ceiling",
-            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(DecorativeBlock.HALF_BLOCK).build());
+            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(BlockShapes.S16_H8).build());
 
     // RAILING
 
@@ -459,15 +459,15 @@ public class ModBlocks {
     // GUARDIAN LION
 
     public static final Block SMALL_WOODEN_GUARDIAN_LION = registerBlock("small_wooden_guardian_lion",
-            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(DecorativeBlock.FULL_BLOCK).directional().noOcclusion().noFenceConnect().build());
+            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(BlockShapes.BACKWARD_3B_L).directional().noOcclusion().noFenceConnect().build());
     public static final Block SMALL_STONE_GUARDIAN_LION = registerBlock("small_stone_guardian_lion",
-            DecorativeBlock.with(BaseBlockProperty.STONE).shaped(DecorativeBlock.FULL_BLOCK).directional().noOcclusion().noFenceConnect().build());
+            DecorativeBlock.with(BaseBlockProperty.STONE).shaped(BlockShapes.BACKWARD_3B_L).directional().noOcclusion().noFenceConnect().build());
     public static final Block SMALL_JADE_GUARDIAN_LION = registerBlock("small_jade_guardian_lion",
-            DecorativeBlock.with(BaseBlockProperty.JADE).shaped(DecorativeBlock.FULL_BLOCK).directional().noOcclusion().noFenceConnect().build());
+            DecorativeBlock.with(BaseBlockProperty.JADE).shaped(BlockShapes.BACKWARD_3B_L).directional().noOcclusion().noFenceConnect().build());
     public static final Block SMALL_YELLOW_GLAZED_GUARDIAN_LION = registerBlock("small_yellow_glazed_guardian_lion",
-            DecorativeBlock.with(BaseBlockProperty.GLAZED).shaped(DecorativeBlock.FULL_BLOCK).directional().noOcclusion().noFenceConnect().build());
+            DecorativeBlock.with(BaseBlockProperty.GLAZED).shaped(BlockShapes.BACKWARD_3B_L).directional().noOcclusion().noFenceConnect().build());
     public static final Block SMALL_GREEN_GLAZED_GUARDIAN_LION = registerBlock("small_green_glazed_guardian_lion",
-            DecorativeBlock.with(BaseBlockProperty.GLAZED).shaped(DecorativeBlock.FULL_BLOCK).directional().noOcclusion().noFenceConnect().build());
+            DecorativeBlock.with(BaseBlockProperty.GLAZED).shaped(BlockShapes.BACKWARD_3B_L).directional().noOcclusion().noFenceConnect().build());
     public static final Block XUMI_STONE_MONOLITH = registerBlock("xumi_stone_monolith",
             DecorativeBlock.with(BaseBlockProperty.STONE).shaped(ReShapeFunction.cardinalRotations(new RawVoxelShape(-8,0,-1,24,32,17))).directional().noOcclusion().noFenceConnect().build());
 
@@ -493,17 +493,17 @@ public class ModBlocks {
     public static final Block BRUSH_TOOLS = registerBlock("brush_tools",
             DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(ReShapeFunction.eightRotations(new RawVoxelShape(0.5,0,4,15.5,13,10))).directional().diagonallyPlaceable().noCollision().build());
     public static final Block BRUSH_AND_INKSTONE = registerBlock("brush_and_inkstone",
-            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(DecorativeBlock.QUARTER_16).directional().noCollision().noOcclusion().build());
+            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(BlockShapes.S16_H4).directional().noCollision().noOcclusion().build());
     public static final Block RULER = registerBlock("ruler",
-            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(DecorativeBlock.FLAT_16).directional().diagonallyPlaceable().noCollision().build());
+            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(BlockShapes.S16_H1).directional().diagonallyPlaceable().noCollision().build());
     public static final Block PAINTING_SCROLL = registerBlock("painting_scroll",
-            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(DecorativeBlock.QUARTER_16).directional().diagonallyPlaceable().noCollision().build());
+            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(BlockShapes.S16_H4).directional().diagonallyPlaceable().noCollision().build());
     public static final Block BOOK_STACK = registerBlock("book_stack",
-            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(DecorativeBlock.QUARTER_16).directional().noOcclusion().build());
+            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(BlockShapes.S16_H4).directional().noOcclusion().build());
     public static final Block PAPER = registerBlock("paper",
-            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(DecorativeBlock.FLAT_16).directional().diagonallyPlaceable().noOcclusion().noCollision().build());
+            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(BlockShapes.S16_H1).directional().diagonallyPlaceable().noOcclusion().noCollision().build());
     public static final Block BLUE_BOOK = registerBlock("blue_book",
-            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(DecorativeBlock.QUARTER_16).directional().noOcclusion().noCollision().build());
+            DecorativeBlock.with(BaseBlockProperty.PAPER).shaped(BlockShapes.S16_H2).directional().noOcclusion().noCollision().build());
     public static final Block BAMBOO_SLIPS = registerBlock("bamboo_slips",
             DecorativeBlock.with(BaseBlockProperty.SILK).shaped(ReShapeFunction.eightRotations(new RawVoxelShape(7,0,2,14,6,14))).directional().diagonallyPlaceable().noCollision().noOcclusion().build());
 

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,7 @@ import org.voxelutopia.ultramarine.init.registry.ModSounds;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
@@ -140,13 +142,16 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
 
     }
 
-    private void setupRecipeList(Container pInventory, ItemStack pStack) {
+    private static SingleRecipeInput createRecipeInput(Container container) {
+        return new SingleRecipeInput(container.getItem(0));
+    }
+
+    private void setupRecipeList(Container container, ItemStack itemStack) {
+        this.recipes.clear();
         this.selectedRecipeIndex.set(-1);
         this.resultSlot.set(ItemStack.EMPTY);
-        if (!pStack.isEmpty()) {
-            this.recipes = new ArrayList<>(this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.WOODWORKING));
-        } else {
-            this.recipes = new ArrayList<>();
+        if (!itemStack.isEmpty()) {
+            this.recipes = this.level.getRecipeManager().getRecipesFor(ModRecipeTypes.WOODWORKING, createRecipeInput(container), this.level);
         }
     }
 

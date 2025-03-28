@@ -47,6 +47,6 @@ public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockP
 
     @Override
     protected MapCodec<? extends DirectionalBlock> codec () {
-        return null;
+        return CODEC;
     }
 }

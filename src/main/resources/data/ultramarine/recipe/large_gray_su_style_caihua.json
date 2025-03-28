@@ -9,10 +9,10 @@
       "item": "ultramarine:blue_dye_powder"
     },
     {
-      "tag": "forge:dyes/gray"
+      "item": "minecraft:gray_dye"
     },
     {
-      "tag": "forge:dyes/gray"
+      "item": "minecraft:gray_dye"
     }
   ],
   "material": {

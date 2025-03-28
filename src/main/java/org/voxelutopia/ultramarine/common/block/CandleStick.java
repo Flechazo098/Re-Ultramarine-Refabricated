@@ -33,10 +33,7 @@ public class CandleStick extends DecorativeBlock {
     @Override
     public @NotNull BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
-        if (isLuminous()) {
-            return state.setValue(LIT, false);
-        }
-        return state;
+        return isLuminous() ? state.setValue(LIT, false) : state;
     }
 
     @Override
@@ -61,10 +58,5 @@ public class CandleStick extends DecorativeBlock {
                     pPos.getZ() + flameOffset.z,
                     0.0D, pRandom.nextDouble() * 0.01d, 0.0D);
         }
-    }
-
-    @Override
-    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
-        return 0;
     }
 }

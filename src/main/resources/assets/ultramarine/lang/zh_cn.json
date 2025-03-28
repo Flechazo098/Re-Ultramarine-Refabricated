@@ -625,11 +625,13 @@
   "item.ultramarine.blue_and_white_porcelain_shovel": "青花瓷锹",
   "item.ultramarine.blue_and_white_porcelain_pickaxe": "青花瓷镐",
   "item.ultramarine.blue_and_white_porcelain_axe": "青花瓷斧",
+  "item.blue_and_white_porcelain_upgrade_smithing_template": "锻造模板",
   "upgrade.ultramarine.blue_and_white_porcelain_upgrade": "青花瓷升级",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.additions_slot_description": "放入青花瓷片",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.applies_to": "金质武器与工具",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.base_slot_description": "放入金质武器或工具",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.ingredients": "青花瓷片",
+
 
 
   "__comment12__": "Plants",
@@ -679,6 +681,8 @@
   "container.oak_cabinet": "橡木橱柜",
   "container.warped_cabinet": "诡异木橱柜",
   "container.ebony_cabinet": "乌木橱柜",
+  "container.empty_bamboo_tea_basket": "茶框（空）",
+  "container.bamboo_tea_basket": "茶框",
 
   "container.woodworking_workbench": "木工桌",
   "container.brick_kiln": "砖窑",

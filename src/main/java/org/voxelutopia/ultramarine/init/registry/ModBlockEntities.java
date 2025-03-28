@@ -6,10 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.voxelutopia.ultramarine.Ultramarine;
-import org.voxelutopia.ultramarine.common.tile.BottleGourdBlockEntity;
-import org.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
-import org.voxelutopia.ultramarine.common.tile.CenserBlockEntity;
-import org.voxelutopia.ultramarine.common.tile.ContainerDecorativeBlockEntity;
+import org.voxelutopia.ultramarine.common.tile.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +17,7 @@ public class ModBlockEntities {
     public static BlockEntityType<CenserBlockEntity> CENSER;
     public static BlockEntityType<BottleGourdBlockEntity> BOTTLE_GOURD;
     public static BlockEntityType<BrickKilnBlockEntity> BRICK_KILN;
+    public static BlockEntityType<ChiselTableBlockEntity> CHISEL_TABLE;
 
     static Set<Block> CONTAINER_BLOCKS = Set.of(
             ModBlocks.GUNNY_SACK, ModBlocks.FRUIT_BOX, ModBlocks.WOODEN_CRATE, ModBlocks.FOOD_HAMPER,
@@ -46,5 +44,10 @@ public class ModBlockEntities {
             ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "brick_kiln_block_entity"),
             BlockEntityType.Builder.of(BrickKilnBlockEntity::new,
                 ModBlocks.BRICK_KILN).build(null));
+
+        CHISEL_TABLE = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "chisel_table_block_entity"),
+                BlockEntityType.Builder.of(ChiselTableBlockEntity::new,
+                        ModBlocks.CHISEL_TABLE).build(null));
     }
 }

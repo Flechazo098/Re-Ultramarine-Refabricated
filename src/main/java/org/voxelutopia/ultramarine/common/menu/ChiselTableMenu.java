@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
@@ -40,7 +41,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
 
     private static final Predicate<ItemStack> IS_WOOD = i -> i.is(ItemTags.LOGS) || i.is(ModItemTags.POLISHED_PLANKS);
     private static final Predicate<ItemStack> IS_TEMPLATE = i -> i.is(ModItemTags.CHISEL_TEMPLATES);
-    private static final Predicate<ItemStack> IS_COLOR = i -> i.is(ModItemTags.FORGE_DYES) || i.is(ModItemTags.DYE_POWDER);
+    private static final Predicate<ItemStack> IS_COLOR = i -> i.is(ModItemTags.DYES) || i.is(ModItemTags.DYE_POWDER);
 
     private final ContainerLevelAccess access;
     private final Player player;
@@ -76,6 +77,32 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         }
     }
 
+    // 添加新的构造函数，接受ChiselTableCombinedStorage
+    public ChiselTableMenu(int id, Inventory inventory, ChiselTableCombinedStorage storage) {
+        super(ModMenuTypes.CHISEL_TABLE, id);
+        this.access = ContainerLevelAccess.NULL;
+        this.player = inventory.player;
+        this.storage = storage;
+        this.inventory = new InventoryFabricWrapper(inventory);
+
+        this.addSlot(new MaterialSlot(storage, SLOT_MATERIAL, 26, 25));
+        this.addSlot(new TemplateSlot(storage, SLOT_TEMPLATE, 53, 25));
+        for (int i = SLOT_COLOR_START, j = 0; i < SLOT_COLOR_END; i++, j++){
+            this.addSlot(new DyeSlot(storage, i, 26 + j * 18,52));
+        }
+        this.addSlot(new OutputSlot(storage, SLOT_RESULT, 130, 34));
+
+        for(int r = 0; r < 3; ++r) {
+            for(int c = 0; c < 9; ++c) {
+                this.addSlot(new SlotFabricItemStorage(this.inventory, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
+            }
+        }
+
+        for(int k = 0; k < 9; ++k) {
+            this.addSlot(new SlotFabricItemStorage(this.inventory, k, 8 + k * 18, 142));
+        }
+    }
+
     public void slotsChanged(SlotFabricItemStorage slot) {
         this.broadcastChanges();
         if (slot.index <= SLOT_RESULT){
@@ -86,18 +113,68 @@ public class ChiselTableMenu extends AbstractContainerMenu {
     public void createResult() {
         Level level = player.level();
         RecipeInput ingredients = this.wrapIngredients();
+    
         List<RecipeHolder<ChiselTableRecipe>> list = level.getRecipeManager().getRecipesFor(ModRecipeTypes.CHISEL_TABLE, ingredients, level);
+    
         if (list.size() > 1) {
             Ultramarine.getLogger().warn("Duplicate chisel table recipe: ");
             list.forEach(holder -> Ultramarine.getLogger().warn(holder.id().getPath()));
+            
+            // Sort recipes by specificity (more specific recipes first)
+            list.sort((a, b) -> {
+                ChiselTableRecipe recipeA = a.value();
+                ChiselTableRecipe recipeB = b.value();
+                
+                // Calculate recipe specificity based on ingredients
+                int specificityA = calculateRecipeSpecificity(recipeA, ingredients);
+                int specificityB = calculateRecipeSpecificity(recipeB, ingredients);
+                
+                // Higher specificity comes first
+                return Integer.compare(specificityB, specificityA);
+            });
         }
         if (list.isEmpty()) {
             this.storage.getResult().setItem(0, ItemStack.EMPTY);
         } else {
-            ChiselTableRecipe recipe = list.get(0).value();
+            ChiselTableRecipe recipe = list.getFirst().value();
             ItemStack resultItemStack = recipe.assemble(ingredients, level.registryAccess());
             this.storage.getResult().setItem(0, resultItemStack);
         }
+    }
+
+    /**
+     * Calculates how specific a recipe is based on its ingredients.
+     * Higher values mean more specific recipes.
+     */
+    private int calculateRecipeSpecificity(ChiselTableRecipe recipe, RecipeInput ingredients) {
+        int specificity = 0;
+        
+        // Check if material uses specific items rather than tags
+        if (recipe.getMaterial().getItems().length == 1) {
+            specificity += 2;
+        }
+        
+        // Check if template uses specific items rather than tags
+        if (recipe.getTemplate().getItems().length == 1) {
+            specificity += 2;
+        }
+        
+        // Check colors - more colors and specific items increase specificity
+        for (int i = 0; i < recipe.getColors().size(); i++) {
+            Ingredient color = recipe.getColors().get(i);
+            
+            // Non-empty color slot increases specificity
+            if (i < ingredients.size() && !ingredients.getItem(ChiselTableMenu.SLOT_COLOR_START + i).isEmpty()) {
+                specificity += 1;
+                
+                // Specific item rather than tag adds more specificity
+                if (color.getItems().length == 1) {
+                    specificity += 1;
+                }
+            }
+        }
+        
+        return specificity;
     }
 
     private RecipeInput wrapIngredients() {

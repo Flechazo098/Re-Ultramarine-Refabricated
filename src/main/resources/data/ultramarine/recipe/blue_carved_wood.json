@@ -3,10 +3,10 @@
   "type": "ultramarine:chisel_table",
   "colors": [
     {
-      "tag": "forge:dyes/blue"
+      "item": "minecraft:blue_dye"
     },
     {
-      "tag": "forge:dyes/blue"
+      "item": "minecraft:blue_dye"
     }
   ],
   "material": {

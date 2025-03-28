@@ -626,6 +626,7 @@
   "item.ultramarine.blue_and_white_porcelain_shovel": "Blue and White Porcelain Shovel",
   "item.ultramarine.blue_and_white_porcelain_pickaxe": "Blue and White Porcelain Pickaxe",
   "item.ultramarine.blue_and_white_porcelain_axe": "Blue and White Porcelain Axe",
+  "item.blue_and_white_porcelain_upgrade_smithing_template": "Forged formwork",
   "upgrade.ultramarine.blue_and_white_porcelain_upgrade": "Blue and White Porcelain Upgrade",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.additions_slot_description": "Add Blue and White Porcelain Piece",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.applies_to": "Gold Weapons & Tools",
@@ -679,6 +680,8 @@
   "container.oak_cabinet": "Oak Cabinet",
   "container.warped_cabinet": "Warped Cabinet",
   "container.ebony_cabinet": "Ebony Cabinet",
+  "container.empty_bamboo_tea_basket": "Empty Bamboo Tea Basket",
+  "container.bamboo_tea_basket": "Bamboo Tea Basket",
 
   "container.woodworking_workbench": "Woodworking Workbench",
   "container.brick_kiln": "Brick Kiln",

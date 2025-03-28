@@ -6,6 +6,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -26,11 +27,12 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
 
     public ContainerDecorativeBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CONTAINER_DECORATIVE_BLOCK, pos, state);
+        this.block = state.getBlock();
+        this.items = NonNullList.withSize(this.rows * 9, ItemStack.EMPTY);
     }
 
     public ContainerDecorativeBlockEntity(BlockPos pos, BlockState state, int rows) {
         this(pos, state);
-        block = state.getBlock();
         this.rows = rows;
         this.items = NonNullList.withSize(rows * 9, ItemStack.EMPTY);
     }
@@ -69,11 +71,37 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
         if (!this.trySaveLootTable(nbt)) {
             ContainerHelper.saveAllItems(nbt, this.items, provider);
         }
+
+        // 保存行数
+        nbt.putInt("Rows", this.rows);
+
+        // 保存方块信息
+        if (this.block != null) {
+            nbt.putString("BlockId", BuiltInRegistries.BLOCK.getKey(this.block).toString());
+        }
     }
+
 
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
         super.loadAdditional(nbt, provider);
+
+        // 加载行数
+        if (nbt.contains("Rows")) {
+            this.rows = nbt.getInt("Rows");
+        }
+
+        // 加载方块信息
+        if (nbt.contains("BlockId")) {
+            String blockId = nbt.getString("BlockId");
+            this.block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(blockId));
+        } else {
+            // 如果没有保存的方块信息，使用当前方块状态
+            if (this.level != null) {
+                this.block = this.level.getBlockState(this.worldPosition).getBlock();
+            }
+        }
+
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (!this.tryLoadLootTable(nbt)) {
             ContainerHelper.loadAllItems(nbt, this.items, provider);

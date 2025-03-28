@@ -6,13 +6,13 @@
       "item": "ultramarine:cyan_dye_powder"
     },
     {
-      "tag": "forge:dyes/white"
+      "item": "minecraft:white_dye"
     },
     {
-      "tag": "forge:dyes/blue"
+      "item": "minecraft:blue_dye"
     },
     {
-      "tag": "forge:dyes/blue"
+      "item": "minecraft:blue_dye"
     }
   ],
   "material": {

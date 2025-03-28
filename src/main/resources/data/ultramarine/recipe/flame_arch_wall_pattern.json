@@ -3,7 +3,7 @@
   "type": "ultramarine:chisel_table",
   "colors": [
     {
-      "tag": "forge:dyes/orange"
+      "item": "minecraft:orange_dye"
     },
     {
       "item": "ultramarine:white_dye_powder"

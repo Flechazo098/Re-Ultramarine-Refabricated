@@ -6,10 +6,10 @@
       "item": "ultramarine:yellow_dye_powder"
     },
     {
-      "tag": "forge:dyes/green"
+      "item": "minecraft:green_dye"
     },
     {
-      "tag": "forge:dyes/blue"
+      "item": "minecraft:blue_dye"
     },
     {
       "item": "ultramarine:gold_dye_powder"

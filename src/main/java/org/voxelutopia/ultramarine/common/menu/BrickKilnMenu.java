@@ -49,9 +49,9 @@ public class BrickKilnMenu extends AbstractContainerMenu {
                 new BrickKilnCombinedStorage(),
                 new SimpleContainerData(4));
 
-        // 添加调试日志
-        Ultramarine.LOGGER.debug("[客户端] 创建砖窑菜单，位置：{}",
-                extraData != null && extraData.readableBytes() > 0 ? "有效数据" : "无数据");
+//        // 添加调试日志
+//        Ultramarine.LOGGER.debug("[客户端] 创建砖窑菜单，位置：{}",
+//                extraData != null && extraData.readableBytes() > 0 ? "有效数据" : "无数据");
     }
 
     public BrickKilnMenu(int id, Inventory inventory, BlockPos pos, BrickKilnCombinedStorage container, ContainerData containerData) {
@@ -60,16 +60,14 @@ public class BrickKilnMenu extends AbstractContainerMenu {
         this.playerEntity = inventory.player;
         Level level = playerEntity.getCommandSenderWorld();
 
-        // 添加调试日志
-        Ultramarine.LOGGER.debug("创建砖窑菜单，位置：{}", pos);
+//        // 添加调试日志
+//        Ultramarine.LOGGER.debug("创建砖窑菜单，位置：{}", pos);
 
         // 先获取方块实体
         this.blockEntity = level.getBlockEntity(pos);
 
         // 如果方块实体不存在则记录错误
-        if (this.blockEntity == null) {
-            Ultramarine.LOGGER.error("无法在位置 {} 找到砖窑方块实体", pos);
-        } else if (this.blockEntity instanceof BrickKilnBlockEntity kilnEntity) {
+            if (this.blockEntity instanceof BrickKilnBlockEntity kilnEntity) {
             // 如果在服务端且有有效的方块实体，使用其存储和数据
             if (!level.isClientSide() && container == null) {
                 container = kilnEntity.wrapHandlers();

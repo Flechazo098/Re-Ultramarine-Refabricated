@@ -23,14 +23,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.menu.ChiselTableMenu;
+import org.voxelutopia.ultramarine.init.data.ModItemTags;
 import org.voxelutopia.ultramarine.init.registry.ModRecipeSerializers;
 import org.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ChiselTableRecipe implements Recipe<RecipeInput> {
@@ -102,15 +101,69 @@ public class ChiselTableRecipe implements Recipe<RecipeInput> {
     }
 
     @Override
-    public boolean matches (RecipeInput recipeInput, Level level) {
-        ItemStack usedMaterial = recipeInput.getItem(ChiselTableMenu.SLOT_MATERIAL);
-        ItemStack usedTemplate = recipeInput.getItem(ChiselTableMenu.SLOT_TEMPLATE);
-        List<ItemStack> usedColors = Arrays.asList(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
-        for (int i = 0, j = 2; j < recipeInput.size(); i++, j++){
-            usedColors.set(i, recipeInput.getItem(j));
+    public boolean matches(RecipeInput container, Level level) {
+        // 检查材料和模板
+        if (!this.material.test(container.getItem(ChiselTableMenu.SLOT_MATERIAL)) ||
+                !this.template.test(container.getItem(ChiselTableMenu.SLOT_TEMPLATE))) {
+            return false;
         }
-        usedColors = usedColors.stream().filter(item -> !item.isEmpty()).collect(Collectors.toList());
-        return material.test(usedMaterial) && template.test(usedTemplate) && compareColors(this.colors, usedColors);
+
+        // 收集容器中所有非空颜色物品
+        List<ItemStack> colorItems = new ArrayList<>();
+        for (int i = ChiselTableMenu.SLOT_COLOR_START; i < ChiselTableMenu.SLOT_COLOR_END; i++) {
+            ItemStack slotItem = container.getItem(i);
+            if (!slotItem.isEmpty()) {
+                colorItems.add(slotItem);
+            }
+        }
+
+        // 配方颜色列表
+        List<Ingredient> requiredColors = this.colors.stream()
+                .filter(ingredient -> !ingredient.isEmpty())
+                .collect(Collectors.toList());
+
+        // 如果配方需要颜色但容器中没有颜色，则不匹配
+        if (!requiredColors.isEmpty() && colorItems.isEmpty()) {
+            return false;
+        }
+
+        // 如果容器有颜色但配方不需要颜色，则不匹配
+        if (requiredColors.isEmpty() && !colorItems.isEmpty()) {
+            return false;
+        }
+
+        // 如果配方和容器都不需要颜色，直接返回true
+        if (requiredColors.isEmpty()) {
+            return true;
+        }
+
+        // 检查颜色数量是否匹配
+        if (colorItems.size() != requiredColors.size()) {
+            return false;
+        }
+
+        // 允许颜色顺序任意排列匹配
+        // 创建一个可修改的配方颜色列表副本
+        List<Ingredient> remainingColors = new ArrayList<>(requiredColors);
+
+        // 对于每个槽位中的颜色物品，尝试在配方中找到匹配项
+        for (ItemStack colorItem : colorItems) {
+            boolean found = false;
+            for (Iterator<Ingredient> iterator = remainingColors.iterator(); iterator.hasNext();) {
+                Ingredient colorIngredient = iterator.next();
+                if (colorIngredient.test(colorItem)) {
+                    iterator.remove(); // 移除已匹配的配方颜色
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false; // 如果有颜色物品无法匹配任何配方颜色，则不匹配
+            }
+        }
+
+        // 如果所有配方颜色都找到了匹配项，则匹配成功
+        return remainingColors.isEmpty();
     }
 
     @Override

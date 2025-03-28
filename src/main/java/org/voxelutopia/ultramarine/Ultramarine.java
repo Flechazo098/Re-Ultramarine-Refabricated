@@ -1,6 +1,7 @@
 package org.voxelutopia.ultramarine;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.voxelutopia.ultramarine.common.world.gen.ModWorldGeneration;
@@ -18,6 +19,10 @@ public class Ultramarine implements ModInitializer {
 
     public static void warn(String format, Object... data) {
         LOGGER.warn(format, data);
+    }
+
+    public static boolean isDevelopmentEnvironment() {
+        return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static void info(String format, Object... data) {
