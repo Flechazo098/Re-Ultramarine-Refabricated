@@ -58,7 +58,7 @@ import static net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
-public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, RecipeCraftingHolder {
+public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, RecipeCraftingHolder, Container {
 
     public static final int SLOT_INPUT_PRIMARY = 0;
     public static final int SLOT_INPUT_SECONDARY = 1;
@@ -113,6 +113,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     public BrickKilnBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(ModBlockEntities.BRICK_KILN, blockPos, blockState);
     }
+
 
     public static void serverTick (Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity){
         boolean lit = pBlockEntity.isLit();
@@ -362,6 +363,73 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
             }
         }
         pTag.put("Items", itemListTag);
+    }
+
+    @Override
+    public int getContainerSize() {
+        return NUM_SLOTS;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return storage.getPrimaryInput().getItem(0).isEmpty() &&
+                storage.getSecondaryInput().getItem(0).isEmpty() &&
+                storage.getFuel().getItem(0).isEmpty() &&
+                storage.getResult().getItem(0).isEmpty();
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return switch (slot) {
+            case SLOT_INPUT_PRIMARY -> storage.getPrimaryInput().getItem(0);
+            case SLOT_INPUT_SECONDARY -> storage.getSecondaryInput().getItem(0);
+            case SLOT_FUEL -> storage.getFuel().getItem(0);
+            case SLOT_RESULT -> storage.getResult().getItem(0);
+            default -> ItemStack.EMPTY;
+        };
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        ItemStack result = getItem(slot);
+        if (result.isEmpty()) return ItemStack.EMPTY;
+
+        ItemStack split = result.split(amount);
+        setItem(slot, result);
+        return split;
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack stack = getItem(slot);
+        setItem(slot, ItemStack.EMPTY);
+        return stack;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        switch (slot) {
+            case SLOT_INPUT_PRIMARY -> storage.getPrimaryInput().setItem(0, stack);
+            case SLOT_INPUT_SECONDARY -> storage.getSecondaryInput().setItem(0, stack);
+            case SLOT_FUEL -> storage.getFuel().setItem(0, stack);
+            case SLOT_RESULT -> storage.getResult().setItem(0, stack);
+        }
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        if (level.getBlockEntity(worldPosition) != this) {
+            return false;
+        }
+        return player.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) <= 64.0;
+    }
+
+    @Override
+    public void clearContent() {
+        storage.getPrimaryInput().setItem(0, ItemStack.EMPTY);
+        storage.getSecondaryInput().setItem(0, ItemStack.EMPTY);
+        storage.getFuel().setItem(0, ItemStack.EMPTY);
+        storage.getResult().setItem(0, ItemStack.EMPTY);
     }
 //    @Override
 //    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {

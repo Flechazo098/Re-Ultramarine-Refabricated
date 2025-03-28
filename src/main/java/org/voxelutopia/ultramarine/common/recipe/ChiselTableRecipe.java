@@ -120,7 +120,7 @@ public class ChiselTableRecipe implements Recipe<RecipeInput> {
         // 配方颜色列表
         List<Ingredient> requiredColors = this.colors.stream()
                 .filter(ingredient -> !ingredient.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
 
         // 如果配方需要颜色但容器中没有颜色，则不匹配
         if (!requiredColors.isEmpty() && colorItems.isEmpty()) {

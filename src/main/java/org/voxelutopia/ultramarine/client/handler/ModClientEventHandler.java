@@ -174,6 +174,6 @@ public class ModClientEventHandler {
 
     private static void registerEntityRenderers() {
         EntityRendererRegistry.register(ModEntityTypes.SEAT, SeatEntityRenderer::new);
-        EntityRendererRegistry.register(ModEntityTypes.CUSTOM_WANDERING_TRADER, WanderingTraderRenderer::new);
+        EntityRendererRegistry.register(ModEntityTypes.TRAVELLING_MERCHANT, WanderingTraderRenderer::new);
     }
 }

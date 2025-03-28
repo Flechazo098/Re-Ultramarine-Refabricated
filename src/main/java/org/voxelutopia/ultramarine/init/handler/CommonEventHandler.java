@@ -5,7 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
-import org.voxelutopia.ultramarine.common.tile.CustomWanderingTrader;
+import org.voxelutopia.ultramarine.common.tile.TravellingMerchant;
 import org.voxelutopia.ultramarine.init.data.ModBlockTags;
 import org.voxelutopia.ultramarine.init.event.EntityEvents;
 import org.voxelutopia.ultramarine.init.event.PlayerEvents;
@@ -33,7 +33,7 @@ public class CommonEventHandler {
     }
 
     private static void registerEntityAttributes() {
-        FabricDefaultAttributeRegistry.register(ModEntityTypes.CUSTOM_WANDERING_TRADER, CustomWanderingTrader.setCustomAttributes());
+        FabricDefaultAttributeRegistry.register(ModEntityTypes.TRAVELLING_MERCHANT, TravellingMerchant.setCustomAttributes());
     }
 
 //    @SubscribeEvent

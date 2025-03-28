@@ -12,5 +12,4 @@ public class BlockShapes {
     public static final ReShapeFunction S16_H16 = ReShapeFunction.centeredSquare(16, 16);
 
     public static final ReShapeFunction BACKWARD_3B_L = ReShapeFunction.or(ReShapeFunction.cardinalRotations(new RawVoxelShape(0,0,0,16,16,32)), ReShapeFunction.cardinalRotations(new RawVoxelShape(0,16,0,16,32,16)));
-
 }

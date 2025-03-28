@@ -6,12 +6,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import org.voxelutopia.ultramarine.Ultramarine;
-import org.voxelutopia.ultramarine.common.tile.CustomWanderingTrader;
+import org.voxelutopia.ultramarine.common.tile.TravellingMerchant;
 import org.voxelutopia.ultramarine.common.tile.SeatEntity;
 
 public class ModEntityTypes {
     public static EntityType<SeatEntity> SEAT;
-    public static EntityType<CustomWanderingTrader> CUSTOM_WANDERING_TRADER;
+    public static EntityType<TravellingMerchant> TRAVELLING_MERCHANT;
 
     public static void registerModEntities() {
         SEAT = Registry.register(
@@ -24,10 +24,10 @@ public class ModEntityTypes {
                 .build()
         );
 
-        CUSTOM_WANDERING_TRADER = Registry.register(
+        TRAVELLING_MERCHANT = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
-            ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "custom_wandering_trader"),
-            EntityType.Builder.<CustomWanderingTrader>of(CustomWanderingTrader::new, MobCategory.MISC)
+            ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "travelling_merchant"),
+            EntityType.Builder.<TravellingMerchant>of(TravellingMerchant::new, MobCategory.MISC)
                 .sized(0.6F, 0.2F)
                 .clientTrackingRange(64)
                 .updateInterval(20)

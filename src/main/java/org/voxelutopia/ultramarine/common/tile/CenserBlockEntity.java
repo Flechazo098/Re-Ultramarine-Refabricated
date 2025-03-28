@@ -51,6 +51,10 @@ public class CenserBlockEntity extends BlockEntity {
         this.setChanged();
     }
 
+    public int getRemainingTime(){
+        return this.remainingTime;
+    }
+
     @Override
     public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
         super.loadAdditional(pTag, provider);
