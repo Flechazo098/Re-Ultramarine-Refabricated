@@ -1,10 +1,8 @@
 package org.voxelutopia.ultramarine.common.block;
 
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +20,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
-import org.voxelutopia.ultramarine.util.ItemHandlerHelper;
+import org.voxelutopia.ultramarine.util.helper.ItemHandlerHelper;
 
 import java.util.function.Supplier;
 

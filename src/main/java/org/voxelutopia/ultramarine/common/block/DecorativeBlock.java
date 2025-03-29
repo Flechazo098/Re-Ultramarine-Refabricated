@@ -46,7 +46,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                     new DecorativeBlock.Builder(new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE))
                             .directional(directional)
                             .diagonallyPlaceable(diagonallyPlaceable)
-                            .luminous()
+                            .luminous(luminous)
                             .noCollision(noCollision)
                             .noFenceConnect(noFenceConnect)
                             .build()
@@ -69,7 +69,9 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                            boolean directional, boolean diagonallyPlaceable,
                            boolean luminous, boolean noCollision, boolean noFenceConnect,
                            @Nullable Direction offset) {
-        super(property.properties);
+        super(luminous ?
+                property.properties.lightLevel((state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0) :
+                property.properties);
         this.property = property;
         this.shape = shape;
         this.directional = directional;
@@ -96,22 +98,22 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                 builder.luminous, builder.noCollision, builder.noFenceConnect, builder.offset);
     }
 
-    protected DecorativeBlock(BlockBehaviour.Properties properties) {
-        super(properties);
-        this.property = new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE);
-        this.shape = BlockShapes.S16_H16;
-        this.directional = false;
-        this.diagonallyPlaceable = false;
-        this.luminous = false;
-        this.noCollision = false;
-        this.noFenceConnect = false;
-        this.offsetDirection = null;
-
-        var stateDefinationBuilder = new StateDefinition.Builder<Block, BlockState>(this);
-        createBlockStateDefinition(stateDefinationBuilder);
-        stateDefinition = stateDefinationBuilder.create(Block::defaultBlockState, BlockState::new);
-        this.registerDefaultState(this.stateDefinition.any());
-    }
+//    protected DecorativeBlock(BlockBehaviour.Properties properties) {
+//        super(properties);
+//        this.property = new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE);
+//        this.shape = BlockShapes.S16_H16;
+//        this.directional = false;
+//        this.diagonallyPlaceable = false;
+//        this.luminous = false;
+//        this.noCollision = false;
+//        this.noFenceConnect = false;
+//        this.offsetDirection = null;
+//
+//        var stateDefinationBuilder = new StateDefinition.Builder<Block, BlockState>(this);
+//        createBlockStateDefinition(stateDefinationBuilder);
+//        stateDefinition = stateDefinationBuilder.create(Block::defaultBlockState, BlockState::new);
+//        this.registerDefaultState(this.stateDefinition.any());
+//    }
 
     public static Builder with(BaseBlockProperty property) {
         return new Builder(property);
@@ -151,22 +153,23 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
     @Override
     public void onPlace(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pOldState, boolean pIsMoving) {
-        if (offsetDirection != null) {
-            switch (offsetDirection) {
-                case DOWN -> {
-                    if (!pLevel.getBlockState(pPos.above()).isAir() && pLevel.getBlockState(pPos.below()).isAir()) {
-                        pLevel.removeBlock(pPos, pIsMoving);
-                        pLevel.setBlock(pPos.below(), pState, Block.UPDATE_ALL);
-                    }
-                }
-                case UP -> {
-                    if (!pLevel.getBlockState(pPos.below()).isAir() && pLevel.getBlockState(pPos.above()).isAir()) {
-                        pLevel.removeBlock(pPos, pIsMoving);
-                        pLevel.setBlock(pPos.above(), pState, Block.UPDATE_ALL);
-                    }
-                }
-            }
-        }
+//        if (offsetDirection != null) {
+//            switch (offsetDirection) {
+//                case DOWN -> {
+//                    if (!pLevel.getBlockState(pPos.above()).isAir() && pLevel.getBlockState(pPos.below()).isAir()) {
+//                        pLevel.removeBlock(pPos, pIsMoving);
+//                        pLevel.setBlock(pPos.below(), pState, Block.UPDATE_ALL);
+//                    }
+//                }
+//                case UP -> {
+//                    if (!pLevel.getBlockState(pPos.below()).isAir() && pLevel.getBlockState(pPos.above()).isAir()) {
+//                        pLevel.removeBlock(pPos, pIsMoving);
+//                        pLevel.setBlock(pPos.above(), pState, Block.UPDATE_ALL);
+//                    }
+//                }
+//            }
+//        }
+        //todo add config or toggle
     }
 
     @Override
@@ -184,11 +187,10 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         return RenderShape.MODEL;
     }
 
-    @Override
-    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
-        if (isLuminous()) return state.getValue(LIT) ? 14 : 0;
-        else return 0;
-    }
+//    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+//        if (isLuminous()) return state.getValue(LIT) ? 14 : 0;
+//        else return 0;
+//    }
 
     @Override
     public BaseBlockProperty getProperty() {
@@ -228,6 +230,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     public static class Builder extends AbstractBuilder<Builder> {
+
         private final BaseBlockProperty property;
         private ReShapeFunction shape = BlockShapes.S16_H16;
         private boolean diagonallyPlaceable;
@@ -239,16 +242,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
         public Builder(BaseBlockProperty property) {
             this.property = property.copy();
-        }
-
-        public Builder lightLevel(int level) {
-            this.property.properties.lightLevel((state) -> level);
-            return this;
-        }
-
-        public Block lightLevel(ToIntFunction<BlockState> lightEmission) {
-            this.property.properties.lightLevel(lightEmission);
-            return this.build();
         }
 
         public Builder properties(BlockBehaviour.Properties properties) {
@@ -265,11 +258,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
-        public Builder diagonallyPlaceable() {
-            this.diagonallyPlaceable = true;
-            return this;
-        }
-
         public Builder directional() {
             this.directional = true;
             return this;
@@ -280,6 +268,11 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
+        public Builder diagonallyPlaceable() {
+            this.diagonallyPlaceable = true;
+            return this;
+        }
+
         public Builder diagonallyPlaceable(boolean diagonallyPlaceable) {
             this.diagonallyPlaceable = diagonallyPlaceable;
             return this;
@@ -287,13 +280,23 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
         public Builder luminous() {
             this.luminous = true;
+            // 确保在这里设置lightLevel
+            this.property.properties = this.property.properties.lightLevel(
+                    (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
+            );
             return this;
         }
 
-//        public Builder luminous(boolean luminous) {
-//            this.luminous = luminous;
-//            return this;
-//        }
+        public Builder luminous(boolean luminous) {
+            this.luminous = luminous;
+            if (luminous) {
+                // 确保在这里设置lightLevel
+                this.property.properties = this.property.properties.lightLevel(
+                        (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
+                );
+            }
+            return this;
+        }
 
         public Builder noCollision() {
             this.noCollision = true;

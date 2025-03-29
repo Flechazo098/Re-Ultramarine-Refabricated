@@ -1,4 +1,4 @@
-package org.voxelutopia.ultramarine.util;
+package org.voxelutopia.ultramarine.util.helper;
 
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

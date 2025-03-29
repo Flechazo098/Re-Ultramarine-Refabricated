@@ -695,11 +695,13 @@
   "entity.minecraft.villager.ultramarine.cook": "Cook",
   "entity.minecraft.villager.cook": "Cook",
 
-  "__comment24__": "JEI Categories",
-  "gui.jei.category.woodworking": "Woodworking",
-  "gui.jei.category.composite_smelting": "Composite Smelting",
-  "gui.jei.category.chisel_table": "Chisel Table",
-  "gui.jei.category.travelling_merchant": "Travelling Merchant",
+  "__comment24__": "REI Categories",
+  "gui.rei.category.woodworking": "Woodworking",
+  "gui.rei.category.composite_smelting": "Composite Smelting",
+  "gui.rei.category.chisel_table": "Chisel Table",
+  "gui.rei.category.travelling_merchant": "Travelling Merchant",
+  "gui.rei.experience": "%s xp",
+
 
   "__comment25__": "Patchouli Strings",
   "guide.patchouli.tiangong_kaiwu.title": "Tiangong Kaiwu",

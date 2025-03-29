@@ -22,12 +22,8 @@ public interface AxialBlock {
         return builder.build();
     }
 
-    default Map<Direction.Axis, VoxelShape> makeAxialShapes(int thickness, int height) {
+    default Map<Direction.Axis, VoxelShape> makeAxialShapes(int thickness, int height){
         return makeAxialShapes(thickness, 0, height);
-    }
-
-    default Map<Direction.Axis, VoxelShape> makeAxialShapes(int thickness) {
-        return makeAxialShapes(thickness, 16);
     }
 
     Direction.Axis getAxis(BlockState pState);

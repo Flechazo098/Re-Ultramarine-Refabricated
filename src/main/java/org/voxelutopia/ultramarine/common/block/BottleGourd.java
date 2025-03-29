@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.voxelutopia.ultramarine.common.tile.BottleGourdBlockEntity;
 import org.voxelutopia.ultramarine.init.registry.ModBlockEntities;
-import org.voxelutopia.ultramarine.util.ItemHandlerHelper;
+import org.voxelutopia.ultramarine.util.helper.ItemHandlerHelper;
 
 import java.util.List;
 import java.util.Optional;

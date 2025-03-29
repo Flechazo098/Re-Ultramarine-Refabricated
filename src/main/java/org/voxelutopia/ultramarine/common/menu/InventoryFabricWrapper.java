@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.voxelutopia.ultramarine.common.inventory.FabricItemStorage;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import java.util.List;
  */
 public class InventoryFabricWrapper implements FabricItemStorage {
     private final Inventory inventory;
+    @Nullable
+    private BlockEntity blockEntity; // 添加方块实体引用
 
     public InventoryFabricWrapper(Inventory inventory) {
         this.inventory = inventory;
@@ -174,9 +178,29 @@ public class InventoryFabricWrapper implements FabricItemStorage {
         return new SingleSlotStorage(this, 2);
     }
 
+    /**
+     * 设置关联的方块实体
+     * @param blockEntity 方块实体
+     */
+    @Override
+    public void setBlockEntity(BlockEntity blockEntity) {
+        this.blockEntity = blockEntity;
+    }
+
+    /**
+     * 获取关联的方块实体
+     * @return 关联的方块实体
+     */
+    @Override
+    public BlockEntity getBlockEntity() {
+        return this.blockEntity;
+    }
+
     private static class SingleSlotStorage implements FabricItemStorage {
         private final FabricItemStorage parent;
         private final int slot;
+        @Nullable
+        private BlockEntity blockEntity; // 添加方块实体引用
 
         public SingleSlotStorage(FabricItemStorage parent, int slot) {
             this.parent = parent;
@@ -317,6 +341,24 @@ public class InventoryFabricWrapper implements FabricItemStorage {
         @Override
         public FabricItemStorage getSecondaryInput() {
             return null;
+        }
+
+        /**
+         * 设置关联的方块实体
+         * @param blockEntity 方块实体
+         */
+        @Override
+        public void setBlockEntity(BlockEntity blockEntity) {
+            this.blockEntity = blockEntity;
+        }
+
+        /**
+         * 获取关联的方块实体
+         * @return 关联的方块实体
+         */
+        @Override
+        public BlockEntity getBlockEntity() {
+            return this.blockEntity;
         }
     }
 }

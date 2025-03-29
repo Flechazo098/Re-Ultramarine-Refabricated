@@ -923,32 +923,32 @@ public class ModBlocks {
     public static final Block OCTAGONAL_PALACE_LANTERN = registerBlock("octagonal_palace_lantern",
             DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(
                             ReShapeFunction.or(ReShapeFunction.simpleShape(new RawVoxelShape(2.5,4.5,2.5,13.5,18,13.5)), ReShapeFunction.simpleShape(new RawVoxelShape(0,18,0,16,25,16))))
-                    .luminous().noOcclusion().placeOffset(Direction.DOWN).lightLevel(15).build());
+                    .luminous().noOcclusion().placeOffset(Direction.DOWN).build());
     public static final Block SQUARE_PALACE_LANTERN = registerBlock("square_palace_lantern",
             DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(
-                    ReShapeFunction.or(ReShapeFunction.diagonal(new RawVoxelShape(2,-8.5,2,14,6,14)), ReShapeFunction.diagonal(new RawVoxelShape(0,6,0,16,11.5,16)))).diagonallyPlaceable().luminous().noOcclusion().lightLevel(15).build());
+                    ReShapeFunction.or(ReShapeFunction.diagonal(new RawVoxelShape(2,-8.5,2,14,6,14)), ReShapeFunction.diagonal(new RawVoxelShape(0,6,0,16,11.5,16)))).diagonallyPlaceable().luminous().noOcclusion().build());
     public static final Block SMALL_RED_LANTERN = registerBlock("small_red_lantern",
-            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(ReShapeFunction.diagonalSquare(10, 10)).diagonallyPlaceable().luminous().lightLevel(15).build());
+            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(ReShapeFunction.diagonalSquare(10, 10)).diagonallyPlaceable().luminous().build());
     public static final Block WHITE_SKY_LANTERN = registerBlock("white_sky_lantern",
-            DecorativeBlock.with(BaseBlockProperty.BAMBOO).shaped(ReShapeFunction.centeredSquare(16, 24)).luminous().lightLevel(15).build());
+            DecorativeBlock.with(BaseBlockProperty.BAMBOO).shaped(ReShapeFunction.centeredSquare(16, 24)).luminous().build());
     public static final Block RED_SKY_LANTERN = registerBlock("red_sky_lantern",
-            DecorativeBlock.with(BaseBlockProperty.BAMBOO).shaped(ReShapeFunction.centeredSquare(16, 24)).luminous().lightLevel(15).build());
+            DecorativeBlock.with(BaseBlockProperty.BAMBOO).shaped(ReShapeFunction.centeredSquare(16, 24)).luminous().build());
     public static final Block YELLOW_SKY_LANTERN = registerBlock("yellow_sky_lantern",
-            DecorativeBlock.with(BaseBlockProperty.BAMBOO).shaped(ReShapeFunction.centeredSquare(16, 24)).luminous().lightLevel(15).build());
+            DecorativeBlock.with(BaseBlockProperty.BAMBOO).shaped(ReShapeFunction.centeredSquare(16, 24)).luminous().build());
 
     // LAMP
 
     public static final Block STANDING_LAMP = registerBlock("standing_lamp",
             DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(
                             ReShapeFunction.or(ReShapeFunction.diagonal(new RawVoxelShape(5,0,5,11,2,11)), ReShapeFunction.diagonal(new RawVoxelShape(7,2,7,9,21,9)), ReShapeFunction.diagonal(new RawVoxelShape(4,21,4,12,32,12))))
-                    .diagonallyPlaceable().luminous().noOcclusion().lightLevel(15).build());
+                    .diagonallyPlaceable().luminous().noOcclusion().build());
     public static final Block SMALL_STANDING_LAMP = registerBlock("small_standing_lamp",
-            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(ReShapeFunction.or(ReShapeFunction.diagonal(new RawVoxelShape(7,0,7,9,5,9)), ReShapeFunction.diagonal(new RawVoxelShape(6,5,6,10,12,10)))).diagonallyPlaceable().luminous().lightLevel(15).build());
+            DecorativeBlock.with(BaseBlockProperty.WOOD).shaped(ReShapeFunction.or(ReShapeFunction.diagonal(new RawVoxelShape(7,0,7,9,5,9)), ReShapeFunction.diagonal(new RawVoxelShape(6,5,6,10,12,10)))).diagonallyPlaceable().luminous().build());
     public static final Block STONE_LAMP = registerBlock("stone_lamp",
             DecorativeBlock.with(BaseBlockProperty.STONE).shaped(
                             ReShapeFunction.or(ReShapeFunction.simpleShape(new RawVoxelShape(4,0,4,12,7,12)), ReShapeFunction.simpleShape(new RawVoxelShape(2,7,2,14,9,14)),
                                     ReShapeFunction.simpleShape(new RawVoxelShape(4,9,4,12,16,12)), ReShapeFunction.simpleShape(new RawVoxelShape(0,16,0,16,21.5,16))))
-                    .luminous().lightLevel(15).build());
+                    .luminous().build());
 
 
     // STREETLIGHT //todo rewrite collision logic

@@ -1,4 +1,4 @@
-package org.voxelutopia.ultramarine.util;
+package org.voxelutopia.ultramarine.util.type;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;

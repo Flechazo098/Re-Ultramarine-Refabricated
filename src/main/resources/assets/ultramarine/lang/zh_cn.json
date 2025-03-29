@@ -696,11 +696,12 @@
   "entity.minecraft.villager.ultramarine.cook": "厨师",
   "entity.minecraft.villager.cook": "厨师",
 
-  "__comment24__": "JEI Categories",
-  "gui.jei.category.woodworking": "木工桌",
-  "gui.jei.category.composite_smelting": "复合烧炼",
-  "gui.jei.category.chisel_table": "雕刻桌",
-  "gui.jei.category.travelling_merchant": "行商",
+  "__comment24__": "REI Categories",
+  "gui.rei.category.woodworking": "木工桌",
+  "gui.rei.category.composite_smelting": "复合烧炼",
+  "gui.rei.category.chisel_table": "雕刻桌",
+  "gui.rei.category.travelling_merchant": "行商",
+  "gui.rei.experience": "%s 经验",
 
   "__comment25__": "Patchouli Strings",
   "guide.patchouli.tiangong_kaiwu.title": "天工开物",

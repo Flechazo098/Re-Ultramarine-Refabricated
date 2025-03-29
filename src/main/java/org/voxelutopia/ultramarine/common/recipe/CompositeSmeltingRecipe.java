@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
 import org.voxelutopia.ultramarine.init.registry.ModRecipeSerializers;
 import org.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
@@ -119,10 +120,21 @@ public class CompositeSmeltingRecipe implements Recipe<RecipeInput> {
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return this.result.copy();
-    }
+    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+        ItemStack result = this.result.copy();
+//        Ultramarine.LOGGER.info("CompositeSmeltingRecipe.getResultItem - 物品: {}, 数量: {}, 最大堆叠: {}",
+//                result.getItem().getDescriptionId(),
+//                result.getCount(),
+//                result.getMaxStackSize();
 
+        // 确保结果物品数量正确
+        if (result.getCount() <= 0) {
+            Ultramarine.LOGGER.warn("配方结果物品数量异常，设置为1");
+            result.setCount(1);
+        }
+
+        return result;
+    }
     @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.COMPOSITE_SMELTING_SERIALIZER;
@@ -168,7 +180,8 @@ public class CompositeSmeltingRecipe implements Recipe<RecipeInput> {
             } else {
                 String s1 = GsonHelper.getAsString(pJson, "result");
                 ResourceLocation resourcelocation = ResourceLocation.tryParse(s1);
-                result = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation));
+                int count = GsonHelper.getAsInt(pJson, "count", 1); // 添加count解析
+                result = new ItemStack(BuiltInRegistries.ITEM.get(resourcelocation), count);
             }
             float exp = GsonHelper.getAsFloat(pJson, "experience", 0.0F);
             int cookingTime = GsonHelper.getAsInt(pJson, "cookingtime", defaultCookingTime);

@@ -52,7 +52,7 @@ public class SeatEntity extends Entity {
     // 使用新的乘客位置调整方式
     @Override
     protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
-        return new Vec3(0, 0, 0); // 调整乘客位置偏移
+        return new Vec3(0, 0.25, 0); // 调整乘客位置偏移
     }
 
     @Override

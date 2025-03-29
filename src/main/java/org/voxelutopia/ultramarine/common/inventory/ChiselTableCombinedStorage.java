@@ -69,4 +69,18 @@ public class ChiselTableCombinedStorage extends CombinedStorage {
     public boolean stillValid(Player player) {
         return true;
     }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        super.setStackInSlot(slot, stack);
+        // 标记方块实体为已更改
+        this.setChanged();
+    }
+
+    @Override
+    public void setChanged() {
+        if (this.blockEntity != null) {
+            this.blockEntity.setChanged();
+        }
+    }
 }

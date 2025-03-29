@@ -44,11 +44,13 @@ public class SlotFabricItemStorage extends Slot {
 
     @Override
     public int getMaxStackSize() {
-        return 64;
+        // 直接调用父类方法，避免使用storage.getMaxStackSize(index)
+        return super.getMaxStackSize();
     }
 
     @Override
     public int getMaxStackSize(@NotNull ItemStack stack) {
+        // 使用物品自身的最大堆叠数和槽位最大堆叠数中的较小值
         return Math.min(getMaxStackSize(), stack.getMaxStackSize());
     }
 

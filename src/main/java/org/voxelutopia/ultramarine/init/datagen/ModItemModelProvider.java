@@ -14,7 +14,7 @@
 //import org.voxelutopia.ultramarine.common.block.BaseFence;
 //import org.voxelutopia.ultramarine.common.block.BaseWall;
 //import org.voxelutopia.ultramarine.init.registry.ModBlocks;
-//import org.voxelutopia.ultramarine.util.RegistryHelper;
+//import org.voxelutopia.ultramarine.util.helper.RegistryHelper;
 //
 //import java.util.ArrayList;
 //import java.util.List;

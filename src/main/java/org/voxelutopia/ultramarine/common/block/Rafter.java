@@ -13,10 +13,16 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.voxelutopia.ultramarine.init.data.RawVoxelShape;
+import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
+
+import java.util.function.Function;
 
 public class Rafter extends ShiftableBlock {
 
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
+    public static final Function<BlockState, VoxelShape> RAFTER_SHAPE = ReShapeFunction.axialRotations(new RawVoxelShape(0.0D, 10.0D, 5.0D, 16.0D, 16.0D, 11.0D));
+    public static final Function<BlockState, VoxelShape> RAFTER_SHAPE_SHIFTED = ReShapeFunction.axialRotations(new RawVoxelShape(0.0D, 18.0D, 5.0D, 16.0D, 24.0D, 11.0D));
 
     public Rafter(BaseBlockProperty property) {
         super(property.copy().properties.noOcclusion());
@@ -38,12 +44,12 @@ public class Rafter extends ShiftableBlock {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return Block.box(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+        return pState.getValue(SHIFTED) ? RAFTER_SHAPE_SHIFTED.apply(pState) : RAFTER_SHAPE.apply(pState);
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return Shapes.empty();
+        return getShape(pState, pLevel, pPos, pContext);
     }
 
     @Override

@@ -59,11 +59,22 @@ public class CenserBlockEntity extends BlockEntity {
     public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
         super.loadAdditional(pTag, provider);
         this.remainingTime = pTag.getInt("BurnTime");
+        this.lit = pTag.getBoolean("Lit");
+
+        // 确保方块状态与实体状态一致
+        BlockState state = this.getBlockState();
+        if (state.hasProperty(DecorativeBlock.LIT) && state.getValue(DecorativeBlock.LIT) != this.lit) {
+            Level level = this.getLevel();
+            if (level != null && !level.isClientSide()) {
+                level.setBlock(this.getBlockPos(), state.setValue(DecorativeBlock.LIT, this.lit), Block.UPDATE_ALL);
+            }
+        }
     }
 
     @Override
     protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
         super.saveAdditional(pTag, provider);
         pTag.putInt("BurnTime", remainingTime);
+        pTag.putBoolean("Lit", lit);
     }
 }

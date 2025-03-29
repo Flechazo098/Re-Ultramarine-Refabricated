@@ -25,7 +25,7 @@
 //    public static final RecipeType<CompositeSmeltingRecipe> COMPOSITE_SMELTING_RECIPE_TYPE =
 //            new RecipeType<>(UID, CompositeSmeltingRecipe.class);
 //
-//    public static final ResourceLocation TEXTURE_GUI = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "textures/gui/brick_kiln.png");
+//    public static final ResourceLocation TEXTURE_GUI = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "textures/gui/rei_brick_kiln.png");
 //
 //    private final IDrawable background;
 //    private final int regularCookTime;

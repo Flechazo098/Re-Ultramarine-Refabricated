@@ -42,7 +42,14 @@ public class HangingLantern extends DecorativeBlock {
     private final HangingLanternType type;
 
     public HangingLantern(HangingLanternType type) {
-        super(DecorativeBlock.with(BaseBlockProperty.WOOD).directional().luminous());
+        super(DecorativeBlock.with(BaseBlockProperty.WOOD)
+                .directional()
+                .luminous()
+                .properties(BaseBlockProperty.WOOD.properties.lightLevel(
+                        (state) -> state.hasProperty(LIT) && state.getValue(LIT) ?
+                                Math.min(15, 10 + (state.hasProperty(LANTERNS) ? state.getValue(LANTERNS) : 1)) : 0
+                )));
+
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(LANTERNS, 1));
         this.type = type;
@@ -96,7 +103,7 @@ public class HangingLantern extends DecorativeBlock {
     }
 
     @Override
-    public @NotNull BlockState getStateForPlacement(BlockPlaceContext pContext) {
+    public @NotNull BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return state.setValue(LIT, true).setValue(LANTERNS, 1);
     }
@@ -107,9 +114,8 @@ public class HangingLantern extends DecorativeBlock {
         pBuilder.add(LANTERNS);
     }
 
-    public enum HangingLanternType{
+    public enum HangingLanternType {
         POLE, HANGING;
-
     }
 
 }

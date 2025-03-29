@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.voxelutopia.ultramarine.common.tile.BlockEntityHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,6 +22,7 @@ import java.util.List;
  */
 public class CombinedStorage implements FabricItemStorage {
     protected final FabricItemStorage[] itemStorages;
+    protected BlockEntity blockEntity; // 添加方块实体引用
 
     public CombinedStorage(FabricItemStorage... itemStorages) {
         this.itemStorages = itemStorages;
@@ -123,9 +126,37 @@ public class CombinedStorage implements FabricItemStorage {
         }
     }
 
+    /**
+     * 设置关联的方块实体
+     * @param blockEntity 方块实体
+     */
     @Override
-    public void setChanged () {
+    public void setBlockEntity(BlockEntity blockEntity) {
+        this.blockEntity = blockEntity;
+        // 将方块实体传递给所有子存储
+        for (FabricItemStorage storage : itemStorages) {
+            if (storage != null) {
+                storage.setBlockEntity(blockEntity);
+            }
+        }
+    }
+    /**
+     * 获取关联的方块实体
+     * @return 关联的方块实体
+     */
+    @Override
+    public BlockEntity getBlockEntity() {
+        return this.blockEntity;
+    }
 
+    /**
+     * 标记方块实体为已更改
+     */
+    @Override
+    public void setChanged() {
+        if (this.blockEntity != null) {
+            this.blockEntity.setChanged();
+        }
     }
 
     @Override

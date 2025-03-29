@@ -18,7 +18,7 @@
 //import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 //import org.voxelutopia.ultramarine.init.data.ModItemTags;
 //import org.voxelutopia.ultramarine.init.registry.ModItems;
-//import org.voxelutopia.ultramarine.util.RegistryHelper;
+//import org.voxelutopia.ultramarine.util.helper.RegistryHelper;
 //
 //import java.util.Objects;
 //import java.util.concurrent.CompletableFuture;

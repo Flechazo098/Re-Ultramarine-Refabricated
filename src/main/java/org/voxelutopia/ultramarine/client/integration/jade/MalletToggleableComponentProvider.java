@@ -2,14 +2,12 @@ package org.voxelutopia.ultramarine.client.integration.jade;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec2;
 import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.init.registry.ModItems;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
-import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
 
 public enum MalletToggleableComponentProvider implements IBlockComponentProvider {
@@ -19,10 +17,13 @@ public enum MalletToggleableComponentProvider implements IBlockComponentProvider
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
-        IElementHelper elements = IElementHelper.get();
-        IElement icon = elements.item(ModItems.WOODEN_MALLET.getDefaultInstance(), 0.5f).size(new Vec2(10, 10)).translate(new Vec2(0, -1));
-        tooltip.add(icon);
-        tooltip.append(Component.translatable("gui.jade.plugin_ultramarine.mallet_toggleable"));
+        IElementHelper helper = IElementHelper.get();
+
+        // 添加木槌图标，使用正常大小
+        tooltip.add(helper.item(ModItems.WOODEN_MALLET.getDefaultInstance()));
+
+        // 添加文本说明
+        tooltip.append(helper.text(Component.translatable("gui.jade.plugin_ultramarine.mallet_toggleable")));
     }
 
     @Override

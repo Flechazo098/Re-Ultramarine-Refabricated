@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.tile.BlockEntityHelper;
@@ -43,8 +44,16 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
 
     public BrickKiln() {
         super(DecorativeBlock.with(BaseBlockProperty.STONE)
-                .shaped(Block.box(0,0,0, 16, 15, 16)).directional().luminous().noOcclusion());
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, Boolean.FALSE));
+                .shaped(Block.box(0,0,0, 16, 15, 16))
+                .directional()
+                .noOcclusion()
+                .properties(BaseBlockProperty.STONE.properties.lightLevel(
+                        (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
+                )));
+
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(LIT, Boolean.FALSE));
     }
 
     @Nullable
@@ -138,20 +147,17 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
-//        pBuilder.add(FACING, LIT);
+        pBuilder.add(LIT); // 确保添加LIT属性
+
     }
 
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
 
     @Override
     public boolean useShapeForLightOcclusion(BlockState pState) {
         return true;
-    }
-
-    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getValue(LIT) ? 15 : 0;
     }
 
     @Override
@@ -163,4 +169,5 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
     public BaseBlockProperty getProperty() {
         return BaseBlockProperty.STONE;
     }
+
 }

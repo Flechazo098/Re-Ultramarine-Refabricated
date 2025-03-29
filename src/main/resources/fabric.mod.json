@@ -29,6 +29,12 @@
     ],
     "fabric-datagen": [
       "org.voxelutopia.ultramarine.UltramarineDataGenerators"
+    ],
+    "rei_client": [
+      "org.voxelutopia.ultramarine.client.integration.rei.UltramarineREIPlugin"
+    ],
+    "jade": [
+      "org.voxelutopia.ultramarine.client.integration.jade.UltramarineJadePlugin"
     ]
   },
   "mixins": [

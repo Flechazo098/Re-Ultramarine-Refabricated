@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.inventory.ChiselTableCombinedStorage;
 import org.voxelutopia.ultramarine.common.menu.ChiselTableMenu;
 import org.voxelutopia.ultramarine.init.registry.ModBlockEntities;
@@ -54,6 +55,9 @@ public class ChiselTableBlockEntity extends BlockEntity implements MenuProvider 
             }
         }
         pTag.put("Items", itemListTag);
+
+        // 添加调试日志
+        Ultramarine.LOGGER.debug("凿石台保存物品数据: {} 个物品", itemListTag.size());
     }
 
     @Override
@@ -65,8 +69,16 @@ public class ChiselTableBlockEntity extends BlockEntity implements MenuProvider 
             CompoundTag itemTag = itemListTag.getCompound(i);
             int slot = itemTag.getByte("Slot") & 255;
             if (slot >= 0 && slot < 7) {
-                storage.setStackInSlot(slot, ItemStack.parseOptional(provider, itemTag));
+                ItemStack stack = ItemStack.parseOptional(provider, itemTag);
+                storage.setStackInSlot(slot, stack);
+
+                // 添加调试日志
+                Ultramarine.LOGGER.debug("凿石台加载物品: 槽位 {}, 物品 {}, 数量 {}",
+                        slot, stack.getItem().getDescriptionId(), stack.getCount());
             }
         }
+
+        // 添加调试日志
+        Ultramarine.LOGGER.debug("凿石台加载物品数据: {} 个物品", itemListTag.size());
     }
 }

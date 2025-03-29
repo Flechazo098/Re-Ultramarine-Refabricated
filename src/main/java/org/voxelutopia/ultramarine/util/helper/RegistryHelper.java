@@ -1,8 +1,7 @@
-package org.voxelutopia.ultramarine.util;
+package org.voxelutopia.ultramarine.util.helper;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ItemLike;
 

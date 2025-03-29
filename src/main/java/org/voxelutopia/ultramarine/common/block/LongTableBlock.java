@@ -159,4 +159,9 @@ public class LongTableBlock extends Block implements BaseBlockPropertyHolder {
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE_FUNCTION.apply(pState);
     }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return SHAPE_FUNCTION.apply(pState);
+    }
 }

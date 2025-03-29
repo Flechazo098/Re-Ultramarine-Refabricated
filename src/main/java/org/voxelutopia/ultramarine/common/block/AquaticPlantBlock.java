@@ -10,8 +10,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
+import org.voxelutopia.ultramarine.util.IPlantable;
+import org.voxelutopia.ultramarine.util.type.PlantType;
 
-public class AquaticPlantBlock extends DecorativeBlock {
+public class AquaticPlantBlock extends DecorativeBlock implements IPlantable {
 
     public AquaticPlantBlock(Builder builder) {
         super(builder);
@@ -36,4 +38,15 @@ public class AquaticPlantBlock extends DecorativeBlock {
         return (fluidstate.getType() == Fluids.WATER || pState.getMapColor(pLevel, pPos) == MapColor.ICE) && fluidstate1.getType() == Fluids.EMPTY;
     }
 
+    @Override
+    public BlockState getPlant(BlockGetter world, BlockPos pos) {
+        BlockState state = world.getBlockState(pos);
+        if (state.getBlock() != this) return defaultBlockState();
+        return state;
+    }
+
+    @Override
+    public PlantType getPlantType(BlockGetter level, BlockPos pos) {
+        return PlantType.WATER;
+    }
 }

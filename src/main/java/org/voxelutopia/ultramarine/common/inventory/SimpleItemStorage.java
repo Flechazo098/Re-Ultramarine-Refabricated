@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -21,6 +22,7 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
     protected ItemVariant variant = ItemVariant.blank();
     protected long amount;
     protected final long capacity;
+    protected BlockEntity blockEntity; // 添加方块实体引用
 
     public SimpleItemStorage(int capacity) {
         this.capacity = capacity;
@@ -39,12 +41,14 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
             updateSnapshots(transaction);
             variant = insertedVariant;
             amount = insertedAmount;
+            setChanged(); // 添加这行
             return insertedAmount;
         } else if (variant.equals(insertedVariant)) {
             long insertedAmount = Math.min(maxAmount, capacity - amount);
             if (insertedAmount > 0) {
                 updateSnapshots(transaction);
                 amount += insertedAmount;
+                setChanged(); // 添加这行
             }
             return insertedAmount;
         }
@@ -60,13 +64,15 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
             long extractedAmount = Math.min(maxAmount, amount);
             if (extractedAmount > 0) {
                 updateSnapshots(transaction);
-                amount -= extractedAmount;
                 if (amount == 0) {
                     variant = ItemVariant.blank();
                 }
+                setChanged(); // 添加这行
             }
+
             return extractedAmount;
         }
+
 
         return 0;
     }
@@ -142,9 +148,32 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
         setItem(slot, stack);
     }
 
+    /**
+     * 设置关联的方块实体
+     * @param blockEntity 方块实体
+     */
+    @Override
+    public void setBlockEntity(BlockEntity blockEntity) {
+        this.blockEntity = blockEntity;
+    }
+
+    /**
+     * 获取关联的方块实体
+     * @return 关联的方块实体
+     */
+    @Override
+    public BlockEntity getBlockEntity() {
+        return this.blockEntity;
+    }
+
+    /**
+     * 标记方块实体为已更改
+     */
     @Override
     public void setChanged() {
-        // Override in subclasses if needed
+        if (this.blockEntity != null) {
+            this.blockEntity.setChanged();
+        }
     }
 
     @Override

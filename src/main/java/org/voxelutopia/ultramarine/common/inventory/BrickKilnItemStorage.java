@@ -26,15 +26,21 @@ public class BrickKilnItemStorage extends SimpleItemStorage {
 
     @Override
     public long insert(ItemVariant insertedVariant, long maxAmount, TransactionContext transaction) {
+        // 如果是输出槽，确保可以插入物品（即使是通过内部逻辑）
+        if (isOutputSlot) {
+            // 允许内部逻辑插入物品到输出槽
+            return super.insert(insertedVariant, maxAmount, transaction);
+        }
+
         if (!isItemValid(0, insertedVariant.toStack())) {
             return 0;
         }
         return super.insert(insertedVariant, maxAmount, transaction);
     }
-
     @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
         if (isOutputSlot) {
+            // 对于输出槽，只允许内部逻辑插入物品，不允许玩家直接放入
             return false;
         }
         if (isFuelSlot) {

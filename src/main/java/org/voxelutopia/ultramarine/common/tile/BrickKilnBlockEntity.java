@@ -1,24 +1,21 @@
 package org.voxelutopia.ultramarine.common.tile;
 
 import com.google.common.collect.Lists;
-import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.NbtContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -30,18 +27,15 @@ import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.inventory.BrickKilnCombinedStorage;
-import org.voxelutopia.ultramarine.common.inventory.FabricItemStorage;
 import org.voxelutopia.ultramarine.common.menu.BrickKilnMenu;
 import org.voxelutopia.ultramarine.common.recipe.CompositeSmeltingRecipe;
 import org.voxelutopia.ultramarine.common.wrapper.RecipeWrapper;
@@ -80,6 +74,8 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     int cookingProgress;
     int cookingTotalTime;
 
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+
 
     private final BrickKilnCombinedStorage storage = new BrickKilnCombinedStorage();
 
@@ -115,10 +111,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     }
 
 
-    public static void serverTick (Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity){
+    public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity) {
         boolean lit = pBlockEntity.isLit();
         boolean changed = false;
-    
+
         ItemStack fuelItem = pBlockEntity.storage.getFuel().getItem(0);
         ItemStack primaryItem = pBlockEntity.storage.getPrimaryInput().getItem(0);
         ItemStack secondaryItem = pBlockEntity.storage.getSecondaryInput().getItem(0);
@@ -126,12 +122,12 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         Optional<RecipeHolder<CompositeSmeltingRecipe>> recipeHolder = pLevel.getRecipeManager()
                 .getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, new RecipeWrapper(pBlockEntity.storage), pLevel);
         CompositeSmeltingRecipe recipe = recipeHolder.map(RecipeHolder::value).orElse(null);
-    
+
         if (pBlockEntity.isLit()) {
             --pBlockEntity.litTime;
         }
-    
-        if (recipe != null){
+
+        if (recipe != null) {
             pBlockEntity.cookingTotalTime = recipe.getCookingTime();
         }
 
@@ -144,7 +140,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
                 // 设置燃烧时间和持续时间
                 pBlockEntity.litTime = burnTime;
                 pBlockEntity.litDuration = burnTime;
-                
+
                 Item remainingItem = fuelItem.getItem().getCraftingRemainingItem();
                 if (remainingItem != null) {
                     // 如果有剩余物品，设置为剩余物品
@@ -158,37 +154,89 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
                 changed = true;
             }
         }
-    
-        if (pBlockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
-            int maxStack = 64;
-            if (! pBlockEntity.isLit() && recipe != null) {
-                pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack);
+
+        // 修改这部分代码，正确处理烧炼逻辑
+        if (pBlockEntity.isLit() && recipe != null) {
+            // 检查是否可以烧炼
+            boolean canBurn = false;
+
+            // 获取配方结果物品
+            ItemStack recipeResult = recipe.getResultItem(pLevel.registryAccess());
+
+            // 添加调试日志
+            Ultramarine.LOGGER.debug("砖窑烧炼 - 配方结果: {}, 数量: {}",
+                    recipeResult.getItem().getDescriptionId(),
+                    recipeResult.getCount());
+
+            // 检查输出槽是否可以接受结果
+            if (resultItem.isEmpty()) {
+                // 输出槽为空，可以烧炼
+                canBurn = true;
+            } else if (ItemStack.isSameItemSameComponents(resultItem, recipeResult)) {
+                // 输出槽有相同物品，检查是否可以堆叠
+                int newCount = resultItem.getCount() + recipeResult.getCount();
+                int maxStackSize = Math.min(resultItem.getMaxStackSize(), 64);
+                canBurn = newCount <= maxStackSize;
+
+                Ultramarine.LOGGER.debug("砖窑烧炼 - 尝试堆叠，当前: {}, 新增: {}, 总计: {}, 最大: {}, 可堆叠: {}",
+                        resultItem.getCount(), recipeResult.getCount(), newCount, maxStackSize, canBurn);
             }
-    
-            if (pBlockEntity.isLit() && pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+
+            // 检查输入物品是否足够
+            canBurn = canBurn && !primaryItem.isEmpty() && !secondaryItem.isEmpty();
+
+            if (canBurn) {
+                // 增加烧炼进度
                 ++pBlockEntity.cookingProgress;
-                if (pBlockEntity.cookingProgress == pBlockEntity.cookingTotalTime) {
+
+                if (pBlockEntity.cookingProgress >= pBlockEntity.cookingTotalTime) {
+                    // 烧炼完成
                     pBlockEntity.cookingProgress = 0;
-                    pBlockEntity.cookingTotalTime = getTotalCookTime(pLevel, pBlockEntity);
-                    if (pBlockEntity.burn(recipe, pBlockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                        pBlockEntity.setRecipeUsed(recipeHolder.orElse(null));
+
+                    // 处理输出物品
+                    if (resultItem.isEmpty()) {
+                        // 输出槽为空，直接放入结果
+                        pBlockEntity.storage.getResult().setItem(0, recipeResult.copy());
+                        Ultramarine.LOGGER.debug("砖窑烧炼 - 输出槽为空，放入新物品: {}, 数量: {}",
+                                recipeResult.getItem().getDescriptionId(), recipeResult.getCount());
+                    } else {
+                        // 输出槽有相同物品，堆叠
+                        int newCount = resultItem.getCount() + recipeResult.getCount();
+                        resultItem.setCount(newCount);
+                        pBlockEntity.storage.getResult().setItem(0, resultItem);
+                        Ultramarine.LOGGER.debug("砖窑烧炼 - 堆叠物品，新数量: {}", newCount);
                     }
-    
+
+                    // 消耗输入物品
+                    primaryItem.shrink(1);
+                    pBlockEntity.storage.getPrimaryInput().setItem(0, primaryItem);
+
+                    secondaryItem.shrink(1);
+                    pBlockEntity.storage.getSecondaryInput().setItem(0, secondaryItem);
+
+                    Ultramarine.LOGGER.debug("砖窑烧炼 - 消耗材料，主材料剩余: {}, 副材料剩余: {}",
+                            primaryItem.getCount(), secondaryItem.getCount());
+
+                    // 记录使用的配方
+                    pBlockEntity.setRecipeUsed(recipeHolder.orElse(null));
+
                     changed = true;
                 }
             } else {
+                // 不能烧炼，重置进度
                 pBlockEntity.cookingProgress = 0;
             }
         } else if (!pBlockEntity.isLit() && pBlockEntity.cookingProgress > 0) {
-            pBlockEntity.cookingProgress = Mth.clamp(pBlockEntity.cookingProgress - 2, 0, pBlockEntity.cookingTotalTime);
+            // 如果没有燃烧，进度慢慢减少
+            pBlockEntity.cookingProgress = Mth.clamp(pBlockEntity.cookingProgress - BURN_COOL_SPEED, 0, pBlockEntity.cookingTotalTime);
         }
-    
+
         if (lit != pBlockEntity.isLit()) {
             changed = true;
             pState = pState.setValue(AbstractFurnaceBlock.LIT, pBlockEntity.isLit());
             pLevel.setBlock(pPos, pState, 3);
         }
-    
+
         if (changed) {
             setChanged(pLevel, pPos, pState);
         }
@@ -229,8 +277,11 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
             ItemStack newResult = pRecipe.assemble(new RecipeWrapper(new SimpleContainer(primary, secondary)), level.registryAccess());
             if (resultPrev.isEmpty()) {
                 storage.getResult().setItem(0, newResult.copy());
-            } else if (resultPrev.is(newResult.getItem())) {
-                resultPrev.grow(newResult.getCount());
+            } else if (ItemStack.isSameItemSameComponents(resultPrev, newResult)) {
+                // 累加新结果的count到已有堆叠
+                int total = resultPrev.getCount() + newResult.getCount();
+                int maxStack = resultPrev.getMaxStackSize();
+                resultPrev.setCount(Math.min(total, maxStack));
             }
 
             primary.shrink(1);
@@ -317,54 +368,50 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     }
 
     @Override
-    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
-        super.loadAdditional(pTag, provider);
-        this.litTime = pTag.getInt("BurnTime");
-        this.cookingProgress = pTag.getInt("CookTime");
-        this.cookingTotalTime = pTag.getInt("CookTimeTotal");
-        this.litDuration = pTag.getInt("BurnDuration");
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
 
-        ListTag itemListTag = pTag.getList("Items", 10);
-        for (int i = 0; i < itemListTag.size(); ++i) {
-            CompoundTag itemTag = itemListTag.getCompound(i);
-            int slot = itemTag.getByte("Slot") & 255;
-            ItemStack stack = ItemStack.parseOptional(provider, itemTag);
-            switch (slot) {
-                case SLOT_INPUT_PRIMARY -> storage.getPrimaryInput().setItem(0, stack);
-                case SLOT_INPUT_SECONDARY -> storage.getSecondaryInput().setItem(0, stack);
-                case SLOT_FUEL -> storage.getFuel().setItem(0, stack);
-                case SLOT_RESULT -> storage.getResult().setItem(0, stack);
-            }
+        // 1. 加载物品
+        NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(tag, items, provider);
+//        for (int i = 0; i < NUM_SLOTS; i++) {
+//            this.setItem(i, items.get(i));
+//        }
+
+        // 2. 加载进度数据
+        this.litTime = tag.getShort("BurnTime");
+        this.cookingProgress = tag.getShort("CookTime");
+        this.cookingTotalTime = tag.getShort("CookTimeTotal");
+        this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
+
+        // 3. 加载配方使用记录
+        CompoundTag recipesUsedTag = tag.getCompound("RecipesUsed");
+        for (String key : recipesUsedTag.getAllKeys()) {
+            this.recipesUsed.put(ResourceLocation.parse(key), recipesUsedTag.getInt(key));
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
-        super.saveAdditional(pTag, provider);
-        pTag.putInt("BurnTime", this.litTime);
-        pTag.putInt("CookTime", this.cookingProgress);
-        pTag.putInt("CookTimeTotal", this.cookingTotalTime);
-        pTag.putInt("BurnDuration", this.litDuration);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
 
-        ListTag itemListTag = new ListTag();
-        for (int i = 0; i < NUM_SLOTS; i++) {
-            ItemStack stack = switch (i) {
-                case SLOT_INPUT_PRIMARY -> storage.getPrimaryInput().getItem(0);
-                case SLOT_INPUT_SECONDARY -> storage.getSecondaryInput().getItem(0);
-                case SLOT_FUEL -> storage.getFuel().getItem(0);
-                case SLOT_RESULT -> storage.getResult().getItem(0);
-                default -> ItemStack.EMPTY;
-            };
-            if (!stack.isEmpty()) {
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putByte("Slot", (byte) i);
-                stack.save(provider, itemTag);
-                itemListTag.add(itemTag);
-            }
-        }
-        pTag.put("Items", itemListTag);
+        // 1. 保存物品
+        NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
+//        for (int i = 0; i < NUM_SLOTS; i++) {
+//            items.set(i, this.getItem(i));
+//        }
+        ContainerHelper.saveAllItems(tag, items, provider);
+
+        // 2. 保存进度数据（使用short类型）
+        tag.putShort("BurnTime", (short)this.litTime);
+        tag.putShort("CookTime", (short)this.cookingProgress);
+        tag.putShort("CookTimeTotal", (short)this.cookingTotalTime);
+
+        // 3. 保存配方使用记录
+        CompoundTag recipesUsedTag = new CompoundTag();
+        this.recipesUsed.forEach((id, count) -> recipesUsedTag.putInt(id.toString(), count));
+        tag.put("RecipesUsed", recipesUsedTag);
     }
-
     @Override
     public int getContainerSize() {
         return NUM_SLOTS;
@@ -387,6 +434,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
             case SLOT_RESULT -> storage.getResult().getItem(0);
             default -> ItemStack.EMPTY;
         };
+    }
+
+    public NonNullList<ItemStack> getInventory () {
+        return inventory;
     }
 
     @Override
@@ -414,6 +465,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
             case SLOT_FUEL -> storage.getFuel().setItem(0, stack);
             case SLOT_RESULT -> storage.getResult().setItem(0, stack);
         }
+        this.setChanged();
     }
 
     @Override
@@ -431,7 +483,14 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         storage.getFuel().setItem(0, ItemStack.EMPTY);
         storage.getResult().setItem(0, ItemStack.EMPTY);
     }
-//    @Override
+
+    // 设置每个槽位的最大物品数量
+    @Override
+    public int getMaxStackSize() {
+        return 64;
+    }
+
+    //    @Override
 //    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
 //        if (side == null) return false;
 //        return switch (side) {
@@ -468,4 +527,77 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 //            case SLOT_RESULT -> storage.getResult().setItem(0, stack);
 //        }
 //    }
+
+    private void smelt(@Nullable RecipeHolder<?> recipeHolder) {
+        if (recipeHolder != null && canSmelt(recipeHolder)) {
+            ItemStack primaryInput = this.getItem(SLOT_INPUT_PRIMARY);
+            ItemStack secondaryInput = this.getItem(SLOT_INPUT_SECONDARY);
+            ItemStack resultItem = recipeHolder.value().getResultItem(this.level.registryAccess());
+
+            // 添加调试日志
+            Ultramarine.LOGGER.debug("砖窑合成 - 配方结果物品: {}, 数量: {}, 最大堆叠: {}",
+                    resultItem.getItem().getDescriptionId(),
+                    resultItem.getCount(),
+                    resultItem.getMaxStackSize());
+
+            ItemStack currentOutput = this.getItem(SLOT_RESULT);
+
+            // 处理输出物品
+            if (currentOutput.isEmpty()) {
+                // 输出槽为空，直接放入结果
+                this.setItem(SLOT_RESULT, resultItem.copy());
+                Ultramarine.LOGGER.debug("砖窑合成 - 输出槽为空，放入新物品");
+            } else if (ItemStack.isSameItemSameComponents(currentOutput, resultItem)) {
+                // 输出槽已有相同物品，尝试堆叠
+                int newCount = currentOutput.getCount() + resultItem.getCount();
+                int maxStackSize = Math.min(currentOutput.getMaxStackSize(), 64);
+
+                Ultramarine.LOGGER.debug("砖窑合成 - 尝试堆叠，新数量: {}, 最大堆叠: {}", newCount, maxStackSize);
+
+                if (newCount <= maxStackSize) {
+                    // 可以完全堆叠
+                    currentOutput.setCount(newCount);
+                    Ultramarine.LOGGER.debug("砖窑合成 - 完全堆叠，设置数量: {}", newCount);
+                } else {
+                    // 只能部分堆叠，达到最大堆叠数
+                    currentOutput.setCount(maxStackSize);
+                    Ultramarine.LOGGER.debug("砖窑合成 - 部分堆叠，设置最大数量: {}", maxStackSize);
+                }
+            }
+
+            // 消耗输入物品
+            if (primaryInput.getCount() > 0) {
+                primaryInput.shrink(1);
+            }
+            if (secondaryInput.getCount() > 0 && recipeHolder.value() instanceof CompositeSmeltingRecipe) {
+                secondaryInput.shrink(1);
+            }
+        }
+    }
+
+    // 同时修改canSmelt方法以检查输出槽是否可以接受更多物品
+    private boolean canSmelt(@Nullable RecipeHolder<?> recipeHolder) {
+        if (recipeHolder == null) {
+            return false;
+        } else if (this.getItem(SLOT_INPUT_PRIMARY).isEmpty()) {
+            return false;
+        } else {
+            ItemStack resultItem = recipeHolder.value().getResultItem(this.level.registryAccess());
+
+            if (resultItem.isEmpty()) {
+                return false;
+            } else {
+                ItemStack outputItem = this.getItem(SLOT_RESULT);
+                if (outputItem.isEmpty()) {
+                    return true;
+                } else if (!ItemStack.isSameItemSameComponents(outputItem, resultItem)) {
+                    return false;
+                } else {
+                    // 检查是否可以堆叠更多
+                    int maxStackSize = Math.min(outputItem.getMaxStackSize(), 64);
+                    return outputItem.getCount() + resultItem.getCount() <= maxStackSize;
+                }
+            }
+        }
+    }
 }

@@ -3,7 +3,9 @@ package org.voxelutopia.ultramarine.common.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -25,13 +27,17 @@ public class SeatDecorativeBlock extends DecorativeBlock {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
+    public ItemInteractionResult useItemOn(ItemStack pItemStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (pState.is(this) && pLevel.getEntitiesOfClass(SeatEntity.class, new AABB(pPos)).isEmpty()) {
-            SeatEntity seat = new SeatEntity(pLevel, Vec3.atCenterOf(pPos).add(seatOffset));
-            pLevel.addFreshEntity(seat);
-            return pPlayer.startRiding(seat) ? InteractionResult.sidedSuccess(pLevel.isClientSide()) : InteractionResult.PASS;
+            boolean ridingSuccess = false;
+            if (!pLevel.isClientSide()){
+                SeatEntity seat = new SeatEntity(pLevel, Vec3.atCenterOf(pPos).add(seatOffset));
+                pLevel.addFreshEntity(seat);
+                ridingSuccess = pPlayer.startRiding(seat);
+            }
+            return ridingSuccess ? ItemInteractionResult.sidedSuccess(pLevel.isClientSide()) : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        return super.useWithoutItem(pState, pLevel, pPos, pPlayer, pHit);
+        return super.useItemOn(pItemStack, pState, pLevel, pPos, pPlayer, pHand, pHit);
     }
 
     @SuppressWarnings("unused")

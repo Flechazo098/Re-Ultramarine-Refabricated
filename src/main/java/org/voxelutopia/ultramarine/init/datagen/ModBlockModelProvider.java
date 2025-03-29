@@ -17,7 +17,7 @@ import org.voxelutopia.ultramarine.UltramarineDataGenerators;
 import org.voxelutopia.ultramarine.common.block.*;
 import org.voxelutopia.ultramarine.common.block.state.*;
 import org.voxelutopia.ultramarine.init.registry.ModBlocks;
-import org.voxelutopia.ultramarine.util.RegistryHelper;
+import org.voxelutopia.ultramarine.util.helper.RegistryHelper;
 
 import java.util.Map;
 import java.util.Objects;

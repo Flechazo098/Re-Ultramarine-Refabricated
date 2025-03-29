@@ -159,6 +159,8 @@ public class ModClientEventHandler {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BRICK_KILN, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CHISEL_TABLE, RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RED_LANTERN_STREETLIGHT, RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.LONG_TABLE, RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.translucent(), ModBlocks.ICICLE, ModBlocks.LARGE_ICICLE);
     }
 
     private static void registerMenuScreens() {
