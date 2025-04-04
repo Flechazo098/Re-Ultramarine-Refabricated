@@ -1,23 +1,16 @@
 package org.voxelutopia.ultramarine.init.registry;
 
 import com.google.common.base.Supplier;
-import dev.architectury.platform.Mod;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.item.*;
 import org.voxelutopia.ultramarine.init.data.CreativeTabData;
 import org.voxelutopia.ultramarine.init.data.ModTiers;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class ModItems {

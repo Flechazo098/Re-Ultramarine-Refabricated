@@ -54,6 +54,6 @@ public class ModConfiguredFeatures {
     public static <FL extends FeatureConfiguration, F extends Feature<FL>> void register(
             BootstrapContext<ConfiguredFeature<?, ?>> bootstrapContext, ResourceKey<ConfiguredFeature<?, ?>> key, F feature, FL config
     ) {
-        bootstrapContext.register(key, new ConfiguredFeature<FL, F>(feature, config));
+        bootstrapContext.register(key, new ConfiguredFeature<>(feature, config));
     }
 }

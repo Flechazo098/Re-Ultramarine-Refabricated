@@ -102,7 +102,6 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
         boolean north = pState.getValue(NORTH);
         boolean south = pState.getValue(SOUTH);

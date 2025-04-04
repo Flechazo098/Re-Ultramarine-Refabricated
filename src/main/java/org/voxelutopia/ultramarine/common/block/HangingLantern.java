@@ -115,7 +115,7 @@ public class HangingLantern extends DecorativeBlock {
     }
 
     public enum HangingLanternType {
-        POLE, HANGING;
+        POLE, HANGING
     }
 
 }

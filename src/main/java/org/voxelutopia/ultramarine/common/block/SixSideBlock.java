@@ -18,8 +18,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
-import java.util.Map;
-
 public class SixSideBlock extends Block implements BaseBlockPropertyHolder, SimpleWaterloggedBlock, SideBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;

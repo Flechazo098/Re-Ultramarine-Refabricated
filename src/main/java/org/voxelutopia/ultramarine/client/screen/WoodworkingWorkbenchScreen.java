@@ -1,19 +1,15 @@
 package org.voxelutopia.ultramarine.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.StonecutterRecipe;
 import org.voxelutopia.ultramarine.common.menu.WoodworkingWorkbenchMenu;
 import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 
@@ -26,15 +22,6 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
     private static final ResourceLocation RECIPE_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("container/stonecutter/recipe_highlighted");
     private static final ResourceLocation RECIPE_SPRITE = ResourceLocation.withDefaultNamespace("container/stonecutter/recipe");
     private static final ResourceLocation BG_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/stonecutter.png");
-    private static final int SCROLLER_WIDTH = 12;
-    private static final int SCROLLER_HEIGHT = 15;
-    private static final int RECIPES_COLUMNS = 4;
-    private static final int RECIPES_ROWS = 3;
-    private static final int RECIPES_IMAGE_SIZE_WIDTH = 16;
-    private static final int RECIPES_IMAGE_SIZE_HEIGHT = 18;
-    private static final int SCROLLER_FULL_HEIGHT = 54;
-    private static final int RECIPES_X = 52;
-    private static final int RECIPES_Y = 14;
     private float scrollOffs;
     private boolean scrolling;
     private int startIndex;
@@ -81,7 +68,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
                 int p = k + o % 4 * 16;
                 int q = l + o / 4 * 18 + 2;
                 if (i >= p && i < p + 16 && j >= q && j < q + 18) {
-                    guiGraphics.renderTooltip(this.font, ((WoodworkingRecipe)((RecipeHolder)list.get(n)).value()).getResultItem(this.minecraft.level.registryAccess()), i, j);
+                    guiGraphics.renderTooltip(this.font, ((RecipeHolder<?>)list.get(n)).value().getResultItem(this.minecraft.level.registryAccess()), i, j);
                 }
             }
         }
@@ -114,7 +101,7 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int n = i + m % 4 * 16;
             int o = m / 4;
             int p = j + o * 18 + 2;
-            guiGraphics.renderItem(((WoodworkingRecipe)((RecipeHolder)list.get(l)).value()).getResultItem(this.minecraft.level.registryAccess()), n, p);
+            guiGraphics.renderItem(((RecipeHolder<?>)list.get(l)).value().getResultItem(this.minecraft.level.registryAccess()), n, p);
         }
     }
 

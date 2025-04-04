@@ -73,7 +73,6 @@ public class ConsumableDecorativeBlock extends DecorativeBlock {
         return state.hasProperty(BITES) ? state.setValue(BITES, getMaxBites()) : state;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         int bitesRemaining = pState.hasProperty(BITES) ? pState.getValue(BITES) : 0;

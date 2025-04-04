@@ -199,58 +199,162 @@ public class ChiselTableMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack (Player pPlayer, int pIndex) {
+    public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(pIndex);
 
         if (slot.hasItem()) {
             ItemStack slotItem = slot.getItem();
             itemstack = slotItem.copy();
+
+            // 添加调试日志
+            Ultramarine.LOGGER.debug("快速移动物品: {} x{} 从槽位 {}",
+                    slotItem.getItem().getDescriptionId(), slotItem.getCount(), pIndex);
+
             if (pIndex == SLOT_RESULT) {
                 slotItem.getItem().onCraftedBy(slotItem, pPlayer.level(), pPlayer);
-                if (! this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
+                if (!this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(slotItem, itemstack);
             } else if (pIndex > SLOT_RESULT) { // inv slots
                 if (IS_WOOD.test(slotItem)) {
-                    if (! this.moveItemStackTo(slotItem, SLOT_MATERIAL, SLOT_MATERIAL + 1, false)) {
+                    if (!this.moveItemStackTo(slotItem, SLOT_MATERIAL, SLOT_MATERIAL + 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (IS_TEMPLATE.test(slotItem)) {
-                    if (! this.moveItemStackTo(slotItem, SLOT_TEMPLATE, SLOT_TEMPLATE + 1, false)) {
+                    if (!this.moveItemStackTo(slotItem, SLOT_TEMPLATE, SLOT_TEMPLATE + 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (IS_COLOR.test(slotItem)) {
-                    if (! this.moveItemStackTo(slotItem, SLOT_COLOR_START, SLOT_COLOR_END, false)) {
+                    if (!this.moveItemStackTo(slotItem, SLOT_COLOR_START, SLOT_COLOR_END, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (pIndex < INV_SLOT_END) {
-                    if (! this.moveItemStackTo(slotItem, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false)) {
+                    if (!this.moveItemStackTo(slotItem, USE_ROW_SLOT_START, USE_ROW_SLOT_END, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (pIndex < USE_ROW_SLOT_END && ! this.moveItemStackTo(slotItem, INV_SLOT_START, INV_SLOT_END, false)) {
+                } else if (pIndex < USE_ROW_SLOT_END && !this.moveItemStackTo(slotItem, INV_SLOT_START, INV_SLOT_END, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (! this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, false)) {
+            } else if (!this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, false)) {
                 return ItemStack.EMPTY;
             }
 
+            // 确保物品状态正确更新
             if (slotItem.isEmpty()) {
                 slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
             }
-            slot.setChanged();
+
+            // 添加调试日志
+            Ultramarine.LOGGER.debug("移动后物品状态: {} x{}",
+                    slotItem.isEmpty() ? "空" : slotItem.getItem().getDescriptionId(),
+                    slotItem.isEmpty() ? 0 : slotItem.getCount());
 
             if (slotItem.getCount() == itemstack.getCount()) {
                 return ItemStack.EMPTY;
             }
 
+            // 确保物品被正确拿取
             slot.onTake(pPlayer, slotItem);
             this.broadcastChanges();
         }
         return itemstack;
     }
 
+    @Override
+    protected boolean moveItemStackTo(ItemStack pStack, int pStartIndex, int pEndIndex, boolean pReverse) {
+        boolean flag = false;
+        int i = pStartIndex;
+        if (pReverse) {
+            i = pEndIndex - 1;
+        }
+
+        // 先尝试合并到已有的物品堆
+        while(!pStack.isEmpty()) {
+            if (pReverse) {
+                if (i < pStartIndex) {
+                    break;
+                }
+            } else if (i >= pEndIndex) {
+                break;
+            }
+
+            Slot slot = this.slots.get(i);
+            ItemStack itemstack = slot.getItem();
+
+            // 使用正确的物品匹配检查
+            if (!itemstack.isEmpty() && ItemStack.isSameItemSameComponents(pStack, itemstack)) {
+                int j = itemstack.getCount() + pStack.getCount();
+                int maxSize = Math.min(slot.getMaxStackSize(), pStack.getMaxStackSize());
+
+                if (j <= maxSize) {
+                    pStack.setCount(0);
+                    itemstack.setCount(j);
+                    slot.setChanged();
+                    flag = true;
+                    break; // 成功合并后立即退出循环
+                } else if (itemstack.getCount() < maxSize) {
+                    int toAdd = maxSize - itemstack.getCount();
+                    pStack.shrink(toAdd);
+                    itemstack.setCount(maxSize);
+                    slot.setChanged();
+                    flag = true;
+                    // 继续循环尝试放入其他槽位
+                }
+            }
+
+            if (pReverse) {
+                --i;
+            } else {
+                ++i;
+            }
+        }
+
+        // 如果还有剩余物品，尝试放入空槽位
+        if (!pStack.isEmpty()) {
+            if (pReverse) {
+                i = pEndIndex - 1;
+            } else {
+                i = pStartIndex;
+            }
+
+            while(true) {
+                if (pReverse) {
+                    if (i < pStartIndex) {
+                        break;
+                    }
+                } else if (i >= pEndIndex) {
+                    break;
+                }
+
+                Slot slot = this.slots.get(i);
+                ItemStack itemstack = slot.getItem();
+
+                if (itemstack.isEmpty() && slot.mayPlace(pStack)) {
+                    if (pStack.getCount() > slot.getMaxStackSize()) {
+                        slot.set(pStack.split(slot.getMaxStackSize()));
+                    } else {
+                        slot.set(pStack.split(pStack.getCount()));
+                    }
+
+                    slot.setChanged();
+                    flag = true;
+                    break;
+                }
+
+                if (pReverse) {
+                    --i;
+                } else {
+                    ++i;
+                }
+            }
+        }
+
+        return flag;
+    }
     @Override
     public boolean stillValid (Player pPlayer) {
         return stillValid(this.access, pPlayer, ModBlocks.CHISEL_TABLE);

@@ -47,31 +47,24 @@ public class REIChiselTableRecipeDisplay implements Display, Comparable<REIChise
     public static REIChiselTableRecipeDisplay of(RecipeHolder<ChiselTableRecipe> recipeHolder) {
         ChiselTableRecipe recipe = recipeHolder.value();
 
-        // 创建固定大小的输入列表，确保槽位对应关系正确
         List<EntryIngredient> inputs = new ArrayList<>();
 
-        // 填充空槽位，确保有足够的槽位
         for (int i = 0; i < ChiselTableMenu.SLOT_COLOR_END; i++) {
             inputs.add(EntryIngredient.empty());
         }
 
-        // 设置材料槽
         inputs.set(ChiselTableMenu.SLOT_MATERIAL, EntryIngredients.ofIngredient(recipe.getMaterial()));
 
-        // 设置模板槽
         inputs.set(ChiselTableMenu.SLOT_TEMPLATE, EntryIngredients.ofIngredient(recipe.getTemplate()));
 
-        // 设置染料槽
         List<EntryIngredient> colorEntries = recipe.getColors().stream()
                 .map(EntryIngredients::ofIngredient)
                 .toList();
 
-        // 将颜色放入对应的槽位
         for (int i = 0; i < colorEntries.size() && i < 4; i++) {
             inputs.set(ChiselTableMenu.SLOT_COLOR_START + i, colorEntries.get(i));
         }
 
-        // 处理输出
         ItemStack resultItem = recipe.getResultItem(null);
         List<EntryIngredient> outputs = Collections.singletonList(
                 resultItem.isEmpty() ? EntryIngredient.empty() : EntryIngredient.of(EntryStacks.of(resultItem))
@@ -111,20 +104,16 @@ public class REIChiselTableRecipeDisplay implements Display, Comparable<REIChise
 
         @Override
         public CompoundTag save(CompoundTag tag, REIChiselTableRecipeDisplay display) {
-            // 存储配方输入
             ListTag inputs = new ListTag();
             display.inputs.forEach(ingredient -> inputs.add(ingredient.saveIngredient()));
             tag.put("inputs", inputs);
 
-            // 存储配方输出
             ListTag outputs = new ListTag();
             display.outputs.forEach(ingredient -> outputs.add(ingredient.saveIngredient()));
             tag.put("outputs", outputs);
 
-            // 存储配方ID
             display.recipeID.ifPresent(id -> tag.putString("recipeID", id.toString()));
 
-            // 存储排序索引
             tag.putInt("sortIndex", display.sortIndex);
 
             return tag;
@@ -132,25 +121,20 @@ public class REIChiselTableRecipeDisplay implements Display, Comparable<REIChise
 
         @Override
         public REIChiselTableRecipeDisplay read(CompoundTag tag) {
-            // 读取输入
             List<EntryIngredient> inputs = new ArrayList<>();
             tag.getList("inputs", Tag.TAG_LIST).forEach(nbtElement ->
                     inputs.add(EntryIngredient.read((ListTag) nbtElement)));
 
-            // 读取输出
             List<EntryIngredient> outputs = new ArrayList<>();
             tag.getList("outputs", Tag.TAG_LIST).forEach(nbtElement ->
                     outputs.add(EntryIngredient.read((ListTag) nbtElement)));
 
-            // 读取配方ID
             Optional<ResourceLocation> recipeID = tag.contains("recipeID")
                     ? Optional.of(ResourceLocation.parse(tag.getString("recipeID")))
                     : Optional.empty();
 
-            // 读取排序索引
             int sortIndex = tag.contains("sortIndex") ? tag.getInt("sortIndex") : 0;
 
-            // 创建显示对象并设置排序索引
             return new REIChiselTableRecipeDisplay(inputs, outputs, recipeID)
                     .setSortIndex(sortIndex);
         }

@@ -14,12 +14,8 @@ import snownee.jade.api.WailaPlugin;
 @WailaPlugin
 public class UltramarineJadePlugin implements IWailaPlugin {
 
-    // 定义Ultramarine模组的Jade ID常量 - 使用各组件中已定义的常量
-    // 不再重复定义这些常量，而是直接使用各组件类中的常量
-
     @Override
     public void register(IWailaCommonRegistration registration) {
-        // 注册方块数据提供者
         registration.registerBlockDataProvider(CenserComponent.INSTANCE, CenserBlockEntity.class);
         registration.registerBlockDataProvider(BrickKilnComponent.INSTANCE, BrickKilnBlockEntity.class);
         registration.registerBlockDataProvider(BottleGourdComponent.INSTANCE, BottleGourdBlockEntity.class);
@@ -27,9 +23,7 @@ public class UltramarineJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
-        // 添加配置项 - 不再重复添加配置，这些配置应该在各自的组件类中添加
 
-        // 注册方块组件
         registration.registerBlockComponent(MalletToggleableComponentProvider.INSTANCE, ShiftableBlock.class);
         registration.registerBlockComponent(MalletToggleableComponentProvider.INSTANCE, ChiralDirectionalBlock.class);
         registration.registerBlockComponent(MalletToggleableComponentProvider.INSTANCE, RailingBlock.class);
@@ -37,11 +31,8 @@ public class UltramarineJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(BrickKilnComponent.INSTANCE, BrickKiln.class);
         registration.registerBlockComponent(BottleGourdComponent.INSTANCE, BottleGourd.class);
 
-        // 标记客户端特性和设置配置分类
-        // 这些操作应该在各自的组件类中完成，不在这里重复
         Component block = Component.translatable("config.jade.plugin_ultramarine.block");
 
-        // 只设置分类，不重复添加配置
         registration.setConfigCategoryOverride(MalletToggleableComponentProvider.MALLET_TOGGLEABLE, block);
         registration.setConfigCategoryOverride(CenserComponent.CENSER_BURN_TIME, block);
         registration.setConfigCategoryOverride(BrickKilnComponent.BRICK_KILN, block);

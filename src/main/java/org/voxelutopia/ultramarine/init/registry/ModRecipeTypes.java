@@ -12,19 +12,16 @@ import org.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
 
 public class ModRecipeTypes {
 
-    // 配方类型声明
     public static RecipeType<WoodworkingRecipe> WOODWORKING;
     public static RecipeType<CompositeSmeltingRecipe> COMPOSITE_SMELTING;
     public static RecipeType<ChiselTableRecipe> CHISEL_TABLE;
 
-    // 注册入口
     public static void registerModRecipeTypes () {
         WOODWORKING = register("woodworking");
         COMPOSITE_SMELTING = register("composite_smelting");
         CHISEL_TABLE = register("chisel_table");
     }
 
-    // 通用注册方法
     private static <T extends Recipe<?>> RecipeType<T> register (String name) {
         return Registry.register(
                 BuiltInRegistries.RECIPE_TYPE,

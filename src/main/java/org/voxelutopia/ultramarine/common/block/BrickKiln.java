@@ -4,17 +4,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -72,10 +69,10 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
     @Override
     public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
         if (pLevel.isClientSide) {
-            Ultramarine.LOGGER.debug("[客户端] 点击砖窑方块，位置：{}", pPos);
+//            Ultramarine.LOGGER.debug("[客户端] 点击砖窑方块，位置：{}", pPos);
             return InteractionResult.SUCCESS;
         } else {
-            Ultramarine.LOGGER.info("[服务端] 玩家 {} 尝试打开砖窑 GUI，位置：{}", pPlayer.getName().getString(), pPos);
+//            Ultramarine.LOGGER.info("[服务端] 玩家 {} 尝试打开砖窑 GUI，位置：{}", pPlayer.getName().getString(), pPos);
 
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof BrickKilnBlockEntity) {
@@ -104,7 +101,6 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
         return blockEntity instanceof MenuProvider ? (MenuProvider) blockEntity : null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if (!pState.is(pNewState.getBlock())) {

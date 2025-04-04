@@ -23,7 +23,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
-import java.util.Map;
 
 public class WallSideBlock extends Block implements BaseBlockPropertyHolder, SimpleWaterloggedBlock, SideBlock {
 
@@ -59,10 +58,6 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
                 .setValue(FACING, Direction.NORTH)
                 .setValue(WATERLOGGED, false));
     }
-
-//    public WallSideBlock(BaseBlockProperty property, int sideThickness) {
-//        this(property, ReShapeFunction.sideShape(sideThickness));
-//    }
 
     public WallSideBlock(BaseBlockProperty property) {
         this(property, 1);

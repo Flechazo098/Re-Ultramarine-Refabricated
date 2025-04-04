@@ -3,11 +3,9 @@ package org.voxelutopia.ultramarine.common.inventory;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.voxelutopia.ultramarine.common.tile.BlockEntityHelper;
 
 /**
  * @author Flechazo
@@ -71,14 +69,14 @@ public interface FabricItemStorage extends Storage<ItemVariant>, Container {
     FabricItemStorage getSecondaryInput();
 
     /**
-     * 设置关联的方块实体
-     * @param blockEntity 方块实体
+     * Set the associated block entity
+     * @param blockEntity Block Entity
      */
     void setBlockEntity(BlockEntity blockEntity);
 
     /**
-     * 获取关联的方块实体
-     * @return 关联的方块实体
+     * Gets the associated block entity
+     * @return The associated block entity
      */
     BlockEntity getBlockEntity();
 }

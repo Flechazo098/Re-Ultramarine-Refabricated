@@ -5,8 +5,13 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.fabricmc.fabric.impl.transfer.item.ItemVariantImpl;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +27,7 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
     protected ItemVariant variant = ItemVariant.blank();
     protected long amount;
     protected final long capacity;
-    protected BlockEntity blockEntity; // 添加方块实体引用
+    protected BlockEntity blockEntity;
 
     public SimpleItemStorage(int capacity) {
         this.capacity = capacity;
@@ -41,14 +46,14 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
             updateSnapshots(transaction);
             variant = insertedVariant;
             amount = insertedAmount;
-            setChanged(); // 添加这行
+            setChanged();
             return insertedAmount;
         } else if (variant.equals(insertedVariant)) {
             long insertedAmount = Math.min(maxAmount, capacity - amount);
             if (insertedAmount > 0) {
                 updateSnapshots(transaction);
                 amount += insertedAmount;
-                setChanged(); // 添加这行
+                setChanged();
             }
             return insertedAmount;
         }
@@ -64,15 +69,17 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
             long extractedAmount = Math.min(maxAmount, amount);
             if (extractedAmount > 0) {
                 updateSnapshots(transaction);
-                if (amount == 0) {
+                amount -= extractedAmount;
+                if (amount <= 0) {
                     variant = ItemVariant.blank();
+                    amount = 0;
                 }
-                setChanged(); // 添加这行
+                // 确保状态更新被保存
+                setChanged();
             }
 
             return extractedAmount;
         }
-
 
         return 0;
     }
@@ -119,9 +126,26 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
 
     @Override
     public @NotNull ItemStack removeItem(int slot, int count) {
-        ItemVariant current = variant;
-        long extracted = extract(current, count, null);
-        return current.toStack((int) extracted);
+        if (count <= 0 || variant.isBlank() || amount <= 0) {
+            return ItemStack.EMPTY;
+        }
+
+        // 计算实际可以提取的数量
+        int actualCount = (int) Math.min(count, amount);
+
+        // 创建要返回的物品堆
+        ItemStack result = variant.toStack(actualCount);
+
+        // 更新存储状态
+        amount -= actualCount;
+        if (amount <= 0) {
+            variant = ItemVariant.blank();
+            amount = 0;
+        }
+
+        // 确保状态更新被保存
+        setChanged();
+        return result;
     }
 
     @Override
@@ -133,14 +157,25 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
 
     @Override
     public void setItem(int slot, @NotNull ItemStack stack) {
+        if (slot != 0) return; // 只处理第一个槽位
+
+        // 保存旧状态用于调试
+        ItemVariant oldVariant = this.variant;
+        long oldAmount = this.amount;
+
         if (stack.isEmpty()) {
-            variant = ItemVariant.blank();
-            amount = 0;
+            this.variant = ItemVariant.blank();
+            this.amount = 0;
         } else {
-            variant = ItemVariant.of(stack);
-            amount = stack.getCount();
+            // 确保使用正确的方法创建 ItemVariant
+            this.variant = ItemVariant.of(stack);
+            this.amount = stack.getCount();
         }
-        setChanged();
+
+        // 如果状态发生变化，标记为已更改
+        if (!this.variant.equals(oldVariant) || this.amount != oldAmount) {
+            setChanged();
+        }
     }
 
     @Override
@@ -149,8 +184,8 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
     }
 
     /**
-     * 设置关联的方块实体
-     * @param blockEntity 方块实体
+     * Set the associated block entity
+     * @param blockEntity Block entities
      */
     @Override
     public void setBlockEntity(BlockEntity blockEntity) {
@@ -158,8 +193,8 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
     }
 
     /**
-     * 获取关联的方块实体
-     * @return 关联的方块实体
+     * Gets the associated block entity
+     * @return The associated block entity
      */
     @Override
     public BlockEntity getBlockEntity() {
@@ -167,7 +202,7 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
     }
 
     /**
-     * 标记方块实体为已更改
+     * Mark the block entity as changed
      */
     @Override
     public void setChanged() {
@@ -210,13 +245,13 @@ public class SimpleItemStorage implements FabricItemStorage, SingleSlotStorage<I
 
     protected void updateSnapshots(TransactionContext transaction) {
         if (transaction == null) return;
-        // 保存当前状态的快照
+        // Save a snapshot of the current state
         ItemVariant originalVariant = variant;
         long originalAmount = amount;
         
         transaction.addCloseCallback((t, result) -> {
-            if (result.wasAborted()) {  // 使用wasAborted()方法检查事务结果
-                // 如果事务被中止，恢复到原始状态
+            if (result.wasAborted()) {  // check the transaction result
+                // If the transaction is aborted, it reverts to its original state
                 variant = originalVariant;
                 amount = originalAmount;
             }

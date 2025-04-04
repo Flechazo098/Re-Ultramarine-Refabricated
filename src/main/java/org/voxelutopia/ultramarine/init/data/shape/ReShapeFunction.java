@@ -39,14 +39,12 @@ public class ReShapeFunction implements Function<BlockState, VoxelShape> {
             ReShapeFunction::getName
     );
 
-    // 私有构造函数
     private ReShapeFunction(String methodName, RawVoxelShape rawShape, Function<BlockState, VoxelShape> processFunction) {
         this.methodName = methodName;
         this.rawShape = rawShape;
         this.processFunction = processFunction;
     }
 
-    // 序列化名称生成
     public String getName() {
         if (methodName == null || rawShape == null) {
             return "unknown";
@@ -54,7 +52,6 @@ public class ReShapeFunction implements Function<BlockState, VoxelShape> {
         return methodName + ":" + rawShape.serializeParams();
     }
 
-    // 反序列化逻辑
     public static ReShapeFunction fromString(String name) {
         String[] parts = name.split(":", 2);
         String method = parts[0];

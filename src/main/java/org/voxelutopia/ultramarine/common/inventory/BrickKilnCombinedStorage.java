@@ -2,6 +2,7 @@ package org.voxelutopia.ultramarine.common.inventory;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -64,14 +65,22 @@ public class BrickKilnCombinedStorage extends CombinedStorage {
     @Override
     public void setStackInSlot(int slot, ItemStack stack) {
         super.setStackInSlot(slot, stack);
-        // 标记方块实体为已更改
         this.setChanged();
     }
 
     @Override
-    public void setChanged() {
-        if (this.blockEntity != null) {
-            this.blockEntity.setChanged();
-        }
+    public void setChanged () {
+        super.setChanged();
+    }
+
+    @Override
+    public void setBlockEntity(BlockEntity blockEntity) {
+        super.setBlockEntity(blockEntity);
+
+        // 将方块实体引用传递给所有子存储
+        this.primaryInput.setBlockEntity(blockEntity);
+        this.secondaryInput.setBlockEntity(blockEntity);
+        this.fuel.setBlockEntity(blockEntity);
+        this.result.setBlockEntity(blockEntity);
     }
 }

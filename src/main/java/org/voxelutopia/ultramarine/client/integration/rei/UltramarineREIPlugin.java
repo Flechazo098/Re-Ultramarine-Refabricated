@@ -33,9 +33,6 @@ import java.util.function.Function;
 
 public class UltramarineREIPlugin implements REIClientPlugin {
 
-    /**
-     * 定义配方类型枚举，包含所有需要处理的配方类型及其相关信息
-     **/
 
     @SuppressWarnings("unchecked")
      private enum RecipeTypeInfo {
@@ -148,7 +145,6 @@ public class UltramarineREIPlugin implements REIClientPlugin {
         // 获取所有指定类型的配方
         List<RecipeHolder<?>> recipes = new ArrayList<>();
 
-        // 使用原始类型绕过泛型检查
         RecipeType<?> rawType = typeInfo.recipeType;
         if (rawType == ModRecipeTypes.CHISEL_TABLE) {
             recipes.addAll(recipeManager.getAllRecipesFor((RecipeType<ChiselTableRecipe>) rawType));

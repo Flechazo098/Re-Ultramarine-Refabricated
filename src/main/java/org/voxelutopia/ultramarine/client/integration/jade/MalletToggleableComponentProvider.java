@@ -19,10 +19,8 @@ public enum MalletToggleableComponentProvider implements IBlockComponentProvider
     public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
         IElementHelper helper = IElementHelper.get();
 
-        // 添加木槌图标，使用正常大小
         tooltip.add(helper.item(ModItems.WOODEN_MALLET.getDefaultInstance()));
 
-        // 添加文本说明
         tooltip.append(helper.text(Component.translatable("gui.jade.plugin_ultramarine.mallet_toggleable")));
     }
 

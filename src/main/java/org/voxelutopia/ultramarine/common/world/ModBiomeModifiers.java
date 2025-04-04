@@ -26,10 +26,10 @@ public class ModBiomeModifiers {
     }
 
     private static void addOreFeature(ResourceKey<PlacedFeature> featureKey,
-                                      TagKey<Biome> biomeTag, // 修改参数类型为TagKey<Biome>
+                                      TagKey<Biome> biomeTag,
                                       GenerationStep.Decoration step) {
         BiomeModifications.addFeature(
-                context -> context.hasTag(biomeTag), // 直接使用TagKey
+                context -> context.hasTag(biomeTag),
                 step,
                 featureKey
         );

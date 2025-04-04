@@ -1,14 +1,12 @@
 package org.voxelutopia.ultramarine.common.inventory;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.voxelutopia.ultramarine.common.tile.BlockEntityHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -127,8 +125,8 @@ public class CombinedStorage implements FabricItemStorage {
     }
 
     /**
-     * 设置关联的方块实体
-     * @param blockEntity 方块实体
+     * Set the associated block entity
+     * @param blockEntity Block entities
      */
     @Override
     public void setBlockEntity(BlockEntity blockEntity) {
@@ -141,8 +139,8 @@ public class CombinedStorage implements FabricItemStorage {
         }
     }
     /**
-     * 获取关联的方块实体
-     * @return 关联的方块实体
+     * Gets the associated block entity
+     * @return The associated block entity
      */
     @Override
     public BlockEntity getBlockEntity() {

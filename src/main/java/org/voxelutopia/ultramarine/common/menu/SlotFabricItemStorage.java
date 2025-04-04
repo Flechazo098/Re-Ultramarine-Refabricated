@@ -1,6 +1,5 @@
 package org.voxelutopia.ultramarine.common.menu;
 
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -44,13 +43,12 @@ public class SlotFabricItemStorage extends Slot {
 
     @Override
     public int getMaxStackSize() {
-        // 直接调用父类方法，避免使用storage.getMaxStackSize(index)
         return super.getMaxStackSize();
     }
 
     @Override
     public int getMaxStackSize(@NotNull ItemStack stack) {
-        // 使用物品自身的最大堆叠数和槽位最大堆叠数中的较小值
+        // Uses the smaller of the item's own maximum stacks and slots' maximum stacks
         return Math.min(getMaxStackSize(), stack.getMaxStackSize());
     }
 
@@ -58,4 +56,5 @@ public class SlotFabricItemStorage extends Slot {
     public boolean mayPickup(Player player) {
         return true;
     }
+
 }

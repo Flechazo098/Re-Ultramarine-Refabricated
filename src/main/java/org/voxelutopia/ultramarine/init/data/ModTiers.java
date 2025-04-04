@@ -1,8 +1,8 @@
 package org.voxelutopia.ultramarine.init.data;
 
+import com.google.common.base.Suppliers;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
@@ -15,19 +15,16 @@ public enum ModTiers implements Tier {
             () -> Ingredient.of(ModItems.BLUE_AND_WHITE_PORCELAIN_PIECE)
     );
 
-    // 保留原有字段
     private final int uses;
     private final float speed;
     private final float damage;
     private final int enchantmentValue;
-    private final LazyLoadedValue<Ingredient> repairIngredient;
+    private final Supplier<Ingredient> repairIngredient;
 
-    // 新增字段
     private final TagKey<Block> incorrectBlocks;
 
-    // 构造函数调整
-    private ModTiers(
-            int level, // 保留但不再使用
+    ModTiers (
+            int level,
             int uses,
             float speed,
             float damage,
@@ -40,7 +37,7 @@ public enum ModTiers implements Tier {
         this.damage = damage;
         this.enchantmentValue = enchantmentValue;
         this.incorrectBlocks = incorrectBlocks;
-        this.repairIngredient = new LazyLoadedValue<>(repairIngredient);
+        this.repairIngredient = Suppliers.memoize(repairIngredient::get);
     }
 
     @Override

@@ -28,10 +28,7 @@ import org.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 import org.voxelutopia.ultramarine.init.data.shape.BlockShapes;
 import org.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 
-import java.util.function.ToIntFunction;
-
 @MethodsReturnNonnullByDefault
-@SuppressWarnings("deprecation")
 public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseBlockPropertyHolder, DiagonallyPlaceable {
 
     public static final MapCodec<DecorativeBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -62,7 +59,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     private final boolean noCollision;
     private final boolean luminous;
     private final boolean noFenceConnect;
-    private final @Nullable Direction offsetDirection;
     protected StateDefinition<Block, BlockState> stateDefinition;
 
     public DecorativeBlock(BaseBlockProperty property, ReShapeFunction shape,
@@ -79,7 +75,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         this.luminous = luminous;
         this.noCollision = noCollision;
         this.noFenceConnect = noFenceConnect;
-        this.offsetDirection = offset;
 
         var stateDefinationBuilder = new StateDefinition.Builder<Block, BlockState>(this);
         createBlockStateDefinition(stateDefinationBuilder);

@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.voxelutopia.ultramarine.init.registry.ModBlockEntities;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class BottleGourdBlockEntity extends BlockEntity {

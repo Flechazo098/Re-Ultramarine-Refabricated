@@ -6,9 +6,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 
 public interface IForgeContainerFactory<T extends AbstractContainerMenu> extends MenuType.MenuSupplier<T> {
-    T create(int var1, Inventory var2, FriendlyByteBuf var3);
+    T create(int containerId, Inventory playerInventory, FriendlyByteBuf extraData);
 
-    default T create(int p_create_1_, Inventory p_create_2_) {
-        return (T)this.create(p_create_1_, p_create_2_, (FriendlyByteBuf)null);
+    default T create(int containerId, Inventory playerInventory) {
+        return this.create(containerId, playerInventory, null);
     }
 }

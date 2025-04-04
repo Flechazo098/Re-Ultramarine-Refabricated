@@ -1,19 +1,14 @@
 package org.voxelutopia.ultramarine.common.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-import org.voxelutopia.ultramarine.common.menu.ChiselTableMenu;
 import org.voxelutopia.ultramarine.common.tile.ChiselTableBlockEntity;
 import org.voxelutopia.ultramarine.init.data.shape.BlockShapes;
 

@@ -19,7 +19,6 @@ import org.voxelutopia.ultramarine.init.registry.ModEntityTypes;
 public class SeatEntity extends Entity {
 
     private static final EntityDataAccessor<Integer> LIFE = SynchedEntityData.defineId(SeatEntity.class, EntityDataSerializers.INT);
-    private final int MAX_LIFE = 20;
     private int life;
 
     public SeatEntity(EntityType<? extends SeatEntity> pEntityType, Level pLevel) {
@@ -45,6 +44,7 @@ public class SeatEntity extends Entity {
             if (this.getPassengers().isEmpty() || this.level().isEmptyBlock(this.blockPosition())) {
                 this.life++;
             }
+            int MAX_LIFE = 20;
             if (this.life > MAX_LIFE) this.discard();
         }
     }

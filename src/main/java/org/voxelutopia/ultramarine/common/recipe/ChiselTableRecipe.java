@@ -11,7 +11,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -23,14 +22,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import org.voxelutopia.ultramarine.Ultramarine;
 import org.voxelutopia.ultramarine.common.menu.ChiselTableMenu;
-import org.voxelutopia.ultramarine.init.data.ModItemTags;
 import org.voxelutopia.ultramarine.init.registry.ModRecipeSerializers;
 import org.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ChiselTableRecipe implements Recipe<RecipeInput> {
 

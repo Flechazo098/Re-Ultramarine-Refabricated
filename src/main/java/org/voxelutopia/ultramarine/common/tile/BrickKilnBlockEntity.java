@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -74,7 +73,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     int cookingProgress;
     int cookingTotalTime;
 
-    private final NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
 
     private final BrickKilnCombinedStorage storage = new BrickKilnCombinedStorage();
@@ -108,6 +107,12 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 
     public BrickKilnBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(ModBlockEntities.BRICK_KILN, blockPos, blockState);
+
+        this.storage.setBlockEntity(this);
+        this.storage.getPrimaryInput().setBlockEntity(this);
+        this.storage.getSecondaryInput().setBlockEntity(this);
+        this.storage.getFuel().setBlockEntity(this);
+        this.storage.getResult().setBlockEntity(this);
     }
 
 
@@ -247,7 +252,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
             return 0;
         } else {
             Item item = itemStack.getItem();
-            return (Integer)getFuel().getOrDefault(item, 0);
+            return getFuel().getOrDefault(item, 0);
         }
     }
 
@@ -367,42 +372,29 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         return entity.storage;
     }
 
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-
-        // 1. 加载物品
-        NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(tag, items, provider);
-//        for (int i = 0; i < NUM_SLOTS; i++) {
-//            this.setItem(i, items.get(i));
-//        }
-
-        // 2. 加载进度数据
-        this.litTime = tag.getShort("BurnTime");
-        this.cookingProgress = tag.getShort("CookTime");
-        this.cookingTotalTime = tag.getShort("CookTimeTotal");
-        this.litDuration = this.getBurnDuration(this.getItem(SLOT_FUEL));
-
-        // 3. 加载配方使用记录
-        CompoundTag recipesUsedTag = tag.getCompound("RecipesUsed");
-        for (String key : recipesUsedTag.getAllKeys()) {
-            this.recipesUsed.put(ResourceLocation.parse(key), recipesUsedTag.getInt(key));
-        }
-    }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
 
-        // 1. 保存物品
-        NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
-//        for (int i = 0; i < NUM_SLOTS; i++) {
-//            items.set(i, this.getItem(i));
-//        }
+        // 1. 保存物品 - 直接从storage中获取
+        NonNullList<ItemStack> items = NonNullList.withSize(NUM_SLOTS, ItemStack.EMPTY);
+
+        // 获取各个槽位的物品
+        ItemStack primaryInput = storage.getPrimaryInput().getItem(0);
+        ItemStack secondaryInput = storage.getSecondaryInput().getItem(0);
+        ItemStack fuel = storage.getFuel().getItem(0);
+        ItemStack result = storage.getResult().getItem(0);
+
+        items.set(SLOT_INPUT_PRIMARY, primaryInput);
+        items.set(SLOT_INPUT_SECONDARY, secondaryInput);
+        items.set(SLOT_FUEL, fuel);
+        items.set(SLOT_RESULT, result);
+
+        // 确保物品正确保存
         ContainerHelper.saveAllItems(tag, items, provider);
 
-        // 2. 保存进度数据（使用short类型）
+        // 2. 保存进度数据
         tag.putShort("BurnTime", (short)this.litTime);
         tag.putShort("CookTime", (short)this.cookingProgress);
         tag.putShort("CookTimeTotal", (short)this.cookingTotalTime);
@@ -412,6 +404,34 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         this.recipesUsed.forEach((id, count) -> recipesUsedTag.putInt(id.toString(), count));
         tag.put("RecipesUsed", recipesUsedTag);
     }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+
+        // 1. 加载物品
+        NonNullList<ItemStack> items = NonNullList.withSize(NUM_SLOTS, ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(tag, items, provider);
+
+        // 直接设置到storage对象的各个槽位中
+        storage.getPrimaryInput().setItem(0, items.get(SLOT_INPUT_PRIMARY).copy());
+        storage.getSecondaryInput().setItem(0, items.get(SLOT_INPUT_SECONDARY).copy());
+        storage.getFuel().setItem(0, items.get(SLOT_FUEL).copy());
+        storage.getResult().setItem(0, items.get(SLOT_RESULT).copy());
+
+        // 2. 加载进度数据
+        this.litTime = tag.getShort("BurnTime");
+        this.cookingProgress = tag.getShort("CookTime");
+        this.cookingTotalTime = tag.getShort("CookTimeTotal");
+        this.litDuration = this.getBurnDuration(storage.getFuel().getItem(0));
+
+        // 3. 加载配方使用记录
+        CompoundTag recipesUsedTag = tag.getCompound("RecipesUsed");
+        for (String key : recipesUsedTag.getAllKeys()) {
+            this.recipesUsed.put(ResourceLocation.parse(key), recipesUsedTag.getInt(key));
+        }
+    }
+
     @Override
     public int getContainerSize() {
         return NUM_SLOTS;
@@ -442,12 +462,23 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
-        ItemStack result = getItem(slot);
-        if (result.isEmpty()) return ItemStack.EMPTY;
+        if (amount <= 0) return ItemStack.EMPTY;
 
-        ItemStack split = result.split(amount);
-        setItem(slot, result);
-        return split;
+        ItemStack current = getItem(slot);
+        if (current.isEmpty()) return ItemStack.EMPTY;
+
+        // 计算实际可以提取的数量
+        int actualAmount = Math.min(amount, current.getCount());
+
+        // 创建要返回的物品堆
+        ItemStack result = current.copy();
+        result.setCount(actualAmount);
+
+        // 更新剩余物品
+        current.shrink(actualAmount);
+        setItem(slot, current);
+
+        return result;
     }
 
     @Override

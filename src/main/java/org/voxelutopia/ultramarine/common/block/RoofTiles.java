@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -19,19 +18,14 @@ import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -41,7 +35,6 @@ import org.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 import org.voxelutopia.ultramarine.init.data.RawVoxelShape;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class RoofTiles extends ShiftableBlock {
 
@@ -147,7 +140,6 @@ public class RoofTiles extends ShiftableBlock {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
@@ -166,14 +158,12 @@ public class RoofTiles extends ShiftableBlock {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
         updateSideSnow(pState, pLevel, pPos);
         super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
         updateSideSnow(pState, pLevel, pPos);
@@ -181,7 +171,6 @@ public class RoofTiles extends ShiftableBlock {
         super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         updateNeighborSideSnow(pState, pLevel, pPos);
@@ -346,7 +335,6 @@ public class RoofTiles extends ShiftableBlock {
         return super.getStateForPlacement(pContext).setValue(FACING, pContext.getHorizontalDirection());
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         Boolean shifted = pState.getValue(SHIFTED);

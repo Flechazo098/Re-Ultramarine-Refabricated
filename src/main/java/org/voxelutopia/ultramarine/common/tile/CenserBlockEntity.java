@@ -16,7 +16,6 @@ import org.voxelutopia.ultramarine.init.registry.ModBlockEntities;
 
 public class CenserBlockEntity extends BlockEntity {
 
-    private final int BURN_TIME = 1200;
     private int remainingTime = 0;
     private boolean lit = false;
 
@@ -39,7 +38,7 @@ public class CenserBlockEntity extends BlockEntity {
 
     public void lightIncense(Level pLevel, BlockPos pPos, BlockState pState) {
         this.lit = true;
-        this.remainingTime = BURN_TIME;
+        this.remainingTime = 1200;
         pLevel.setBlock(pPos, pState.setValue(DecorativeBlock.LIT, true), Block.UPDATE_ALL);
         this.setChanged();
     }

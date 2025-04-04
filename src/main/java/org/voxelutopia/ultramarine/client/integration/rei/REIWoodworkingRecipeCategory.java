@@ -43,7 +43,6 @@ public class REIWoodworkingRecipeCategory implements DisplayCategory<REIWoodwork
         final Point startPoint = new Point(bounds.getCenterX() - 50, bounds.getCenterY() - 20);
         List<Widget> widgets = new ArrayList<>();
 
-        // 添加背景
         widgets.add(Widgets.createTexturedWidget(
                 TEXTURE_GUI,
                 startPoint.x,
@@ -54,22 +53,17 @@ public class REIWoodworkingRecipeCategory implements DisplayCategory<REIWoodwork
         List<EntryIngredient> inputs = display.getInputEntries();
         List<EntryIngredient> outputs = display.getOutputEntries();
 
-        // 输入槽 (20,33)
         if (!inputs.isEmpty()) {
             widgets.add(Widgets.createSlot(new Point(startPoint.x + 16, startPoint.y + 14))
-                    .entries(inputs.get(0))
+                    .entries(inputs.getFirst())
                     .markInput());
         }
 
-//        // 添加箭头
-//        widgets.add(Widgets.createArrow(new Point(startPoint.x + 80, startPoint.y + 33))
-//                .animationDurationTicks(100));
 
-        // 输出槽 (143,33)
         if (!outputs.isEmpty()) {
             widgets.add(Widgets.createResultSlotBackground(new Point(startPoint.x + 73, startPoint.y + 14)));
             widgets.add(Widgets.createSlot(new Point(startPoint.x + 73 - 1, startPoint.y + 14 - 1))
-                    .entries(outputs.get(0))
+                    .entries(outputs.getFirst())
                     .disableBackground()
                     .markOutput());
         }

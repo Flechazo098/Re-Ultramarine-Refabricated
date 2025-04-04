@@ -27,7 +27,7 @@ public class ModEntityTypes {
         TRAVELLING_MERCHANT = Registry.register(
             BuiltInRegistries.ENTITY_TYPE,
             ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "travelling_merchant"),
-            EntityType.Builder.<TravellingMerchant>of(TravellingMerchant::new, MobCategory.MISC)
+            EntityType.Builder.of(TravellingMerchant::new, MobCategory.MISC)
                 .sized(0.6F, 0.2F)
                 .clientTrackingRange(64)
                 .updateInterval(20)

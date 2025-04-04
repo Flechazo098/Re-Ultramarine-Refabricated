@@ -9,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +19,6 @@ import org.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 import org.voxelutopia.ultramarine.init.registry.ModSounds;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
@@ -233,8 +230,6 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
     public void removed(Player pPlayer) {
         super.removed(pPlayer);
         this.resultContainer.removeItemNoUpdate(1);
-        this.access.execute((p_40313_, p_40314_) -> {
-            this.clearContainer(pPlayer, this.container);
-        });
+        this.access.execute((p_40313_, p_40314_) -> this.clearContainer(pPlayer, this.container));
     }
 }

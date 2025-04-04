@@ -8,9 +8,9 @@ import org.voxelutopia.ultramarine.Ultramarine;
 
 public class ModBlockTags {
 
-    public static final TagKey<Block> MINEABLE_WITH_SHEARS = create("mineable_with_shears");
+    public static final TagKey<Block> MINEABLE_WITH_SHEARS = create();
 
-    private static TagKey<Block> create(String string) {
-        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, string));
+    private static TagKey<Block> create() {
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "mineable_with_shears"));
     }
 }

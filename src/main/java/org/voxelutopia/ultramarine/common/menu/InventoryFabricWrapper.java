@@ -179,20 +179,20 @@ public class InventoryFabricWrapper implements FabricItemStorage {
     }
 
     /**
-     * 设置关联的方块实体
-     * @param blockEntity 方块实体
+     * Set the associated block entity
+     * @param blockEntity Block entities
      */
     @Override
-    public void setBlockEntity(BlockEntity blockEntity) {
+    public void setBlockEntity(@Nullable BlockEntity blockEntity) {
         this.blockEntity = blockEntity;
     }
 
     /**
-     * 获取关联的方块实体
-     * @return 关联的方块实体
+     * Gets the associated block entity
+     * @return The associated block entity
      */
     @Override
-    public BlockEntity getBlockEntity() {
+    public @Nullable BlockEntity getBlockEntity() {
         return this.blockEntity;
     }
 
@@ -200,7 +200,7 @@ public class InventoryFabricWrapper implements FabricItemStorage {
         private final FabricItemStorage parent;
         private final int slot;
         @Nullable
-        private BlockEntity blockEntity; // 添加方块实体引用
+        private BlockEntity blockEntity;
 
         public SingleSlotStorage(FabricItemStorage parent, int slot) {
             this.parent = parent;
@@ -344,20 +344,20 @@ public class InventoryFabricWrapper implements FabricItemStorage {
         }
 
         /**
-         * 设置关联的方块实体
-         * @param blockEntity 方块实体
+         * Set the associated block entity
+         * @param blockEntity Block entities
          */
         @Override
-        public void setBlockEntity(BlockEntity blockEntity) {
+        public void setBlockEntity(@Nullable BlockEntity blockEntity) {
             this.blockEntity = blockEntity;
         }
 
         /**
-         * 获取关联的方块实体
-         * @return 关联的方块实体
+         * Gets the associated block entity
+         * @return The associated block entity
          */
         @Override
-        public BlockEntity getBlockEntity() {
+        public @Nullable BlockEntity getBlockEntity() {
             return this.blockEntity;
         }
     }
