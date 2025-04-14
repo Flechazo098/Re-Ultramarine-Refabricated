@@ -7,15 +7,17 @@
   "authors": [
     "Soul_Shadow",
     "LocusAzzurro",
-    "cnlimiter[fabric]"
+    "cnlimiter[fabric]",
+    "MikhailTapio[fabric-1.20.1]",
+    "Flechazo[fabric>=1.21]"
   ],
   "contributors": [
     "Arrokoth",
     "Tapio"
   ],
   "contact": {
-    "repo": "https://github.com/LocusAzzurro/Ultramarine",
-    "fork": "https://github.com/cnlimiter/Ultramarine"
+    "repo": "https://github.com/DoveCotMC/Ultramarine-Refabricated",
+    "fork": "https://github.com/Flechazo098/Ultramarine-Rekindled"
   },
   "license": "Source and binary: BSD-3; Assets: CC-BY-NC 4.0",
   "icon": "logo.png",
