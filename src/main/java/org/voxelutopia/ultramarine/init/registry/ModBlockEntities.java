@@ -20,6 +20,7 @@ public class ModBlockEntities {
     public static BlockEntityType<ChiselTableBlockEntity> CHISEL_TABLE;
 
     static Set<Block> CONTAINER_BLOCKS = Set.of(
+            ModBlocks.SACK, ModBlocks.BAMBOO_TEA_BASKET, ModBlocks.EMPTY_BAMBOO_TEA_BASKET,
             ModBlocks.GUNNY_SACK, ModBlocks.FRUIT_BOX, ModBlocks.WOODEN_CRATE, ModBlocks.FOOD_HAMPER,
             ModBlocks.OAK_CABINET, ModBlocks.WARPED_CABINET, ModBlocks.EBONY_CABINET);
     static Set<Block> CENSERS = Set.of(ModBlocks.BRONZE_CENSER, ModBlocks.ROYAL_CENSER);
