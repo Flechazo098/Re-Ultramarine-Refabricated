@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -93,6 +94,20 @@ public class CentralAxialBlock extends Block implements AxialBlock, SimpleWaterl
     public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return this.hasCollision ? getShape(pState, pLevel, pPos, pContext) : Shapes.empty();
     }
+
+    @Override
+    public BlockState rotate(BlockState pState, Rotation pRot) {
+        BlockState newState = pState;
+        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90){
+            newState = switch (pState.getValue(AXIS)){
+                case X -> pState.setValue(AXIS, Direction.Axis.Z);
+                case Z -> pState.setValue(AXIS, Direction.Axis.X);
+                default -> newState;
+            };
+        }
+        return newState;
+    }
+
 
     @Override
     public Direction.Axis getAxis(BlockState pState) {

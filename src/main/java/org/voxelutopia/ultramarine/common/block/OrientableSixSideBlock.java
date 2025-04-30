@@ -3,6 +3,8 @@ package org.voxelutopia.ultramarine.common.block;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -48,5 +50,31 @@ public class OrientableSixSideBlock extends SixSideBlock implements SideBlock {
         pBuilder.add(FACING, DIRECTION, WATERLOGGED);
     }
 
+    @Override
+    public BlockState rotate(BlockState pState, Rotation pRot) {
+        BlockState newState = pState;
+        Direction facing = pState.getValue(FACING);
+        Direction onFaceDir = pState.getValue(DIRECTION);
+        if (facing.getAxis().isHorizontal()){
+            newState = newState.setValue(FACING, pRot.rotate(facing));
+        }
+        if (onFaceDir.getAxis().isHorizontal()){
+            newState = newState.setValue(DIRECTION, pRot.rotate(onFaceDir));
+        }
+        return newState;
+    }
 
+    @Override
+    public BlockState mirror(BlockState pState, Mirror pMirror) {
+        BlockState newState = pState;
+        Direction facing = pState.getValue(FACING);
+        Direction onFaceDir = pState.getValue(DIRECTION);
+        if (facing.getAxis().isHorizontal()){
+            newState = newState.setValue(FACING, pMirror.rotation().rotate(facing));
+        }
+        if (onFaceDir.getAxis().isHorizontal()){
+            newState = newState.setValue(DIRECTION, pMirror.rotation().rotate(onFaceDir));
+        }
+        return newState;
+    }
 }
