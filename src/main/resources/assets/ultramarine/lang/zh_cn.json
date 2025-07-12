@@ -716,5 +716,11 @@
   "gui.jade.plugin_ultramarine.mallet_toggleable": "可调整",
   "gui.jade.plugin_ultramarine.censer_burn_time": "熏香：%d秒",
 
+  "__comment27__": "JEI Categories",
+  "gui.jei.category.woodworking": "木工桌",
+  "gui.jei.category.composite_smelting": "复合烧炼",
+  "gui.jei.category.chisel_table": "雕刻桌",
+  "gui.jei.category.travelling_merchant": "行商",
+
   "__EOF__": ""
 }

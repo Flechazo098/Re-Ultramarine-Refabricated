@@ -1,0 +1,47 @@
+package com.voxelutopia.ultramarine.common.inventory;
+
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * @author Flechazo
+ * <p>
+ * A specialized implementation of SimpleItemStorage for the Brick Kiln.
+ * This class manages the input, fuel, and output slots of the Brick Kiln.
+ */
+public class BrickKilnItemStorage extends SimpleItemStorage {
+    private final boolean isFuelSlot;
+    private final boolean isOutputSlot;
+
+    public BrickKilnItemStorage(int capacity, int slotType) {
+        super(capacity);
+        this.isFuelSlot = slotType == 2;
+        this.isOutputSlot = slotType == 3;
+    }
+
+    @Override
+    public long insert(ItemVariant insertedVariant, long maxAmount, TransactionContext transaction) {
+        if (isOutputSlot) {
+            return super.insert(insertedVariant, maxAmount, transaction);
+        }
+
+        if (!isItemValid(0, insertedVariant.toStack())) {
+            return 0;
+        }
+        return super.insert(insertedVariant, maxAmount, transaction);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        if (isOutputSlot) {
+            return false;
+        }
+        if (isFuelSlot) {
+            return AbstractFurnaceBlockEntity.isFuel(stack);
+        }
+        return true;
+    }
+}

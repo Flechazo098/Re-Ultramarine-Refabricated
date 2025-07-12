@@ -1,0 +1,41 @@
+package com.voxelutopia.ultramarine.client.integration.jade;
+
+
+import com.voxelutopia.ultramarine.common.block.*;
+import com.voxelutopia.ultramarine.common.tile.BottleGourdBlockEntity;
+import com.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
+import com.voxelutopia.ultramarine.common.tile.CenserBlockEntity;
+import net.minecraft.network.chat.Component;
+import snownee.jade.api.IWailaClientRegistration;
+import snownee.jade.api.IWailaCommonRegistration;
+import snownee.jade.api.IWailaPlugin;
+import snownee.jade.api.WailaPlugin;
+
+@WailaPlugin
+public class UltramarineJadePlugin implements IWailaPlugin {
+
+    @Override
+    public void register(IWailaCommonRegistration registration) {
+        registration.registerBlockDataProvider(CenserComponent.INSTANCE, CenserBlockEntity.class);
+        registration.registerBlockDataProvider(BrickKilnComponent.INSTANCE, BrickKilnBlockEntity.class);
+        registration.registerBlockDataProvider(BottleGourdComponent.INSTANCE, BottleGourdBlockEntity.class);
+    }
+
+    @Override
+    public void registerClient(IWailaClientRegistration registration) {
+
+        registration.registerBlockComponent(MalletToggleableComponentProvider.INSTANCE, ShiftableBlock.class);
+        registration.registerBlockComponent(MalletToggleableComponentProvider.INSTANCE, ChiralDirectionalBlock.class);
+        registration.registerBlockComponent(MalletToggleableComponentProvider.INSTANCE, RailingBlock.class);
+        registration.registerBlockComponent(CenserComponent.INSTANCE, Censer.class);
+        registration.registerBlockComponent(BrickKilnComponent.INSTANCE, BrickKiln.class);
+        registration.registerBlockComponent(BottleGourdComponent.INSTANCE, BottleGourd.class);
+
+        Component block = Component.translatable("config.jade.plugin_ultramarine.block");
+
+        registration.setConfigCategoryOverride(MalletToggleableComponentProvider.MALLET_TOGGLEABLE, block);
+        registration.setConfigCategoryOverride(CenserComponent.CENSER_BURN_TIME, block);
+        registration.setConfigCategoryOverride(BrickKilnComponent.BRICK_KILN, block);
+        registration.setConfigCategoryOverride(BottleGourdComponent.BOTTLE_GOURD, block);
+    }
+}

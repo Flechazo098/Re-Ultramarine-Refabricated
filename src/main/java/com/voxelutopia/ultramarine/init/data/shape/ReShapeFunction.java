@@ -1,0 +1,279 @@
+package com.voxelutopia.ultramarine.init.data.shape;
+
+import com.google.common.collect.Maps;
+import com.mojang.serialization.Codec;
+import com.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
+import com.voxelutopia.ultramarine.common.block.state.OrientableBlockType;
+import com.voxelutopia.ultramarine.init.data.RawVoxelShape;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+
+public class ReShapeFunction implements Function<BlockState, VoxelShape> {
+
+    private static final Map<Pair<Direction, Direction>, Integer> ROTATIONS;
+    private final Function<BlockState, VoxelShape> processFunction;
+    private final Map<BlockState, VoxelShape> cache = Maps.newConcurrentMap();
+    private final String methodName;
+    private final RawVoxelShape rawShape;
+
+    private ReShapeFunction(Function<BlockState, VoxelShape> processFunction) {
+        this.processFunction = processFunction;
+        this.methodName = null;
+        this.rawShape = null;
+    }
+
+    public static final Codec<ReShapeFunction> CODEC = Codec.STRING.xmap(
+            ReShapeFunction::fromString,
+            ReShapeFunction::getName
+    );
+
+    private ReShapeFunction(String methodName, RawVoxelShape rawShape, Function<BlockState, VoxelShape> processFunction) {
+        this.methodName = methodName;
+        this.rawShape = rawShape;
+        this.processFunction = processFunction;
+    }
+
+    public String getName() {
+        if (methodName == null || rawShape == null) {
+            return "unknown";
+        }
+        return methodName + ":" + rawShape.serializeParams();
+    }
+
+    public static ReShapeFunction fromString(String name) {
+        String[] parts = name.split(":", 2);
+        String method = parts[0];
+        RawVoxelShape shape = RawVoxelShape.fromParams(parts[1]);
+
+        return switch (method) {
+            case "cardinalRotations" -> cardinalRotations(shape);
+            case "sideShape" -> sideShape((int) (16 - shape.maxP.z()));
+            case "eightRotations" -> eightRotations(shape);
+            case "axialRotations" -> axialRotations(shape);
+            case "diagonal" -> diagonal(shape);
+            case "sideOrientedShape" -> sideOrientedShape(shape);
+            case "sixSideShape" -> sixSideShape((int) (16 - shape.maxP.z()));
+            default -> throw new IllegalArgumentException("Unknown shape method: " + method);
+        };
+    }
+
+    @Override
+    public VoxelShape apply(BlockState state) {
+        return this.cache.computeIfAbsent(state, this.processFunction);
+    }
+
+    public static ReShapeFunction of(Function<BlockState, VoxelShape> processFunction) {
+        return new ReShapeFunction(processFunction);
+    }
+
+    public static ReShapeFunction or(ReShapeFunction a, ReShapeFunction b) {
+        return new ReShapeFunction(state -> Shapes.or(a.apply(state), b.apply(state)));
+    }
+
+    public static ReShapeFunction or(ReShapeFunction a, ReShapeFunction... b) {
+        return Arrays.stream(b).reduce(a, ReShapeFunction::or);
+    }
+
+    public static ReShapeFunction exclude(ReShapeFunction a, ReShapeFunction b) {
+        return new ReShapeFunction(state -> Shapes.join(a.apply(state), b.apply(state), BooleanOp.ONLY_FIRST));
+    }
+
+    public static ReShapeFunction eightRotations(RawVoxelShape northShape) {
+        return eightRotations(northShape, 0);
+    }
+
+    public static ReShapeFunction eightRotations(RawVoxelShape northShape, float diagonalRotationOffset) {
+        return new ReShapeFunction(
+                state -> {
+                    Direction primaryDir = state.getValue(HorizontalDirectionalBlock.FACING);
+                    Direction shiftDir = state.getValue(ModBlockStateProperties.HORIZONTAL_FACING_SHIFT);
+                    if (primaryDir == shiftDir) {
+                        return switch (primaryDir) {
+                            case DOWN, UP -> Shapes.empty();
+                            case NORTH -> northShape.copy().toVoxelShape();
+                            case SOUTH -> northShape.copy().rotateY(180).toVoxelShape();
+                            case WEST -> northShape.copy().rotateY(90).toVoxelShape();
+                            case EAST -> northShape.copy().rotateY(270).toVoxelShape();
+                        };
+                    } else if (ROTATIONS.containsKey(Pair.of(primaryDir, shiftDir))) {
+                        return northShape.copy().rotateY(ROTATIONS.get((Pair.of(primaryDir, shiftDir))) + diagonalRotationOffset).toVoxelShape();
+                    } else return northShape.copy().toVoxelShape();
+                });
+    }
+
+    public static ReShapeFunction cardinalRotations(RawVoxelShape northShape) {
+        Function<BlockState, VoxelShape> function = state -> {
+            Direction direction = state.getValue(HorizontalDirectionalBlock.FACING);
+            return switch (direction) {
+                case DOWN, UP -> Shapes.empty();
+                case NORTH -> northShape.copy().toVoxelShape();
+                case SOUTH -> northShape.copy().rotateY(180).toVoxelShape();
+                case WEST -> northShape.copy().rotateY(90).toVoxelShape();
+                case EAST -> northShape.copy().rotateY(270).toVoxelShape();
+            };
+        };
+        return new ReShapeFunction("cardinalRotations", northShape, function);
+    }
+
+    public static ReShapeFunction axialRotations(RawVoxelShape xShape) {
+        return new ReShapeFunction(
+                state -> {
+                    Direction.Axis axis = state.getValue(BlockStateProperties.HORIZONTAL_AXIS);
+                    return switch (axis) {
+                        case X -> xShape.copy().toVoxelShape();
+                        case Y -> Shapes.empty();
+                        case Z -> xShape.copy().rotateY(90).toVoxelShape();
+                    };
+                });
+    }
+
+    public static ReShapeFunction centeredSquare(float side, float height) {
+        float d = (16f - side) / 2f;
+        return simpleShape(Block.box(d, 0, d, 16 - d, height, 16 - d));
+    }
+
+    public static ReShapeFunction centeredSquare(int side, int height) {
+        return centeredSquare((float) side, (float) height);
+    }
+
+    public static ReShapeFunction diagonalSquare(float side, float height) {
+        return new ReShapeFunction(
+                state -> {
+                    boolean diagonal = state.getValue(ModBlockStateProperties.DIAGONAL);
+                    float s = diagonal ? side * Mth.SQRT_OF_TWO : side;
+                    float d = (16 - s) / 2;
+                    return Block.box(d, 0, d, 16 - d, height, 16 - d);
+                });
+    }
+
+    public static ReShapeFunction diagonalSquare(int side, int height) {
+        return diagonalSquare((float) side, (float) height);
+    }
+
+    public static ReShapeFunction diagonal(RawVoxelShape normalShape) {
+        return new ReShapeFunction(
+                state -> {
+                    boolean diagonal = state.getValue(ModBlockStateProperties.DIAGONAL);
+                    return diagonal ? normalShape.copy().rotateY(45).toVoxelShape() : normalShape.copy().toVoxelShape();
+                });
+    }
+
+    public static ReShapeFunction sideShape(int thickness) {
+        RawVoxelShape shape = new RawVoxelShape(0, 0, 16 - thickness, 16, 16, 16);
+        Function<BlockState, VoxelShape> function = state -> {
+            Direction direction = state.getValue(HorizontalDirectionalBlock.FACING);
+            return switch (direction) {
+                case DOWN, UP -> Shapes.empty();
+                case NORTH -> shape.copy().toVoxelShape();
+                case SOUTH -> shape.copy().rotateY(180).toVoxelShape();
+                case WEST -> shape.copy().rotateY(90).toVoxelShape();
+                case EAST -> shape.copy().rotateY(270).toVoxelShape();
+            };
+        };
+        return new ReShapeFunction("sideShape", shape, function);
+    }
+
+    public static ReShapeFunction sixSideShape(int thickness) {
+        return sixSideShape(new RawVoxelShape(0, 0, 16 - thickness, 16, 16, 16), new RawVoxelShape(0, 0, 0, 16, thickness, 16));
+    }
+
+    //values from north facing left orientation
+    public static ReShapeFunction sideOrientedShape(RawVoxelShape northLeftShape) {
+        return new ReShapeFunction(
+                state -> {
+                    Direction facing = state.getValue(HorizontalDirectionalBlock.FACING);
+                    OrientableBlockType direction = state.getValue(ModBlockStateProperties.ORIENTABLE_BLOCK_TYPE);
+                    RawVoxelShape northRightShape = northLeftShape.copy().mirrorZ();
+                    RawVoxelShape shape = switch (direction) {
+                        case LEFT -> northLeftShape.copy();
+                        case RIGHT -> northRightShape.copy();
+                    };
+                    return switch (facing) {
+                        case DOWN, UP -> Shapes.empty();
+                        case NORTH -> shape.copy().toVoxelShape();
+                        case SOUTH -> shape.copy().rotateY(180).toVoxelShape();
+                        case WEST -> shape.copy().rotateY(90).toVoxelShape();
+                        case EAST -> shape.copy().rotateY(270).toVoxelShape();
+                    };
+                });
+    }
+
+    public static ReShapeFunction sixSideShape(RawVoxelShape northShape, RawVoxelShape topShape) {
+        return new ReShapeFunction(
+                state -> {
+                    Direction facing = state.getValue(BlockStateProperties.FACING);
+                    return switch (facing) {
+                        case UP -> topShape.copy().toVoxelShape();
+                        case DOWN -> topShape.copy().mirrorY().toVoxelShape();
+                        case NORTH -> northShape.copy().toVoxelShape();
+                        case SOUTH -> northShape.copy().rotateY(180).toVoxelShape();
+                        case WEST -> northShape.copy().rotateY(90).toVoxelShape();
+                        case EAST -> northShape.copy().rotateY(270).toVoxelShape();
+                    };
+                });
+    }
+
+    public static ReShapeFunction orientedSixSideShape(RawVoxelShape northUpShape, RawVoxelShape topNorthShape) {
+        return new ReShapeFunction(
+                state -> {
+                    Direction facing = state.getValue(BlockStateProperties.FACING);
+                    Direction direction = state.getValue(ModBlockStateProperties.ON_FACE_DIRECTION);
+                    RawVoxelShape shape;
+                    if (facing == Direction.UP || facing == Direction.DOWN) {
+                        shape = topNorthShape.copy();
+                        if (facing == Direction.DOWN) shape = topNorthShape.copy().mirrorY();
+                        switch (direction) {
+                            case NORTH -> shape = shape.copy();
+                            case SOUTH -> shape = shape.copy().rotateY(180);
+                            case WEST -> shape = shape.copy().rotateY(90);
+                            case EAST -> shape = shape.copy().rotateY(270);
+                        }
+                    } else {
+                        shape = northUpShape.copy();
+                        if (facing.getClockWise() == direction) shape = shape.copy().rotateZ(-90);
+                        else if (facing.getCounterClockWise() == direction) shape = shape.copy().rotateZ(90);
+                        else if (direction == Direction.DOWN) shape = shape.copy().mirrorY();
+                        switch (facing) {
+                            case NORTH -> shape = shape.copy();
+                            case SOUTH -> shape = shape.copy().rotateY(180);
+                            case WEST -> shape = shape.copy().rotateY(90);
+                            case EAST -> shape = shape.copy().rotateY(270);
+                        }
+                    }
+                    return shape.toVoxelShape();
+                });
+    }
+
+    public static ReShapeFunction simpleShape(VoxelShape shape) {
+        return new ReShapeFunction(state -> shape);
+    }
+
+    public static ReShapeFunction simpleShape(RawVoxelShape shape) {
+        return new ReShapeFunction(state -> shape.toVoxelShape());
+    }
+
+    static {
+        ROTATIONS = Map.of(
+                Pair.of(Direction.NORTH, Direction.EAST), 135,
+                Pair.of(Direction.EAST, Direction.NORTH), 135,
+                Pair.of(Direction.EAST, Direction.SOUTH), 45,
+                Pair.of(Direction.SOUTH, Direction.EAST), 45,
+                Pair.of(Direction.SOUTH, Direction.WEST), 315,
+                Pair.of(Direction.WEST, Direction.SOUTH), 315,
+                Pair.of(Direction.WEST, Direction.NORTH), 225,
+                Pair.of(Direction.NORTH, Direction.WEST), 225);
+    }
+
+}

@@ -24,20 +24,24 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "org.voxelutopia.ultramarine.UltramarineClient"
+      "com.voxelutopia.ultramarine.UltramarineClient"
     ],
     "main": [
-      "org.voxelutopia.ultramarine.Ultramarine"
+      "com.voxelutopia.ultramarine.Ultramarine"
     ],
     "fabric-datagen": [
-      "org.voxelutopia.ultramarine.UltramarineDataGenerators"
+      "com.voxelutopia.ultramarine.UltramarineDataGenerators"
     ],
     "rei_client": [
-      "org.voxelutopia.ultramarine.client.integration.rei.UltramarineREIPlugin"
+      "com.voxelutopia.ultramarine.client.integration.rei.UltramarineREIPlugin"
     ],
     "jade": [
-      "org.voxelutopia.ultramarine.client.integration.jade.UltramarineJadePlugin"
+      "com.voxelutopia.ultramarine.client.integration.jade.UltramarineJadePlugin"
+    ],
+    "jei_mod_plugin": [
+      "com.voxelutopia.ultramarine.client.integration.jei.UltramarineJEIPlugin"
     ]
+
   },
   "mixins": [
     "ultramarine.mixins.json"
