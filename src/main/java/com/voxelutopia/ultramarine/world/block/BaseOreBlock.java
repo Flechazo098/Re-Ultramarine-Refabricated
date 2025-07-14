@@ -9,6 +9,7 @@ public class BaseOreBlock extends DropExperienceBlock {
     private final UniformInt xpRange;
     public static final BlockBehaviour.Properties PROPERTIES = BlockBehaviour.Properties.of()
             .requiresCorrectToolForDrops().strength(3.0F, 3.0F);
+
     public BaseOreBlock(UniformInt xpRange) {
         super(PROPERTIES);
         this.xpRange = xpRange;

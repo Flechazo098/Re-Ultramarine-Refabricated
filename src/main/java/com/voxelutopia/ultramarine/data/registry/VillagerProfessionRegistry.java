@@ -1,20 +1,22 @@
 package com.voxelutopia.ultramarine.data.registry;
 
 import com.google.common.collect.ImmutableSet;
-import com.voxelutopia.ultramarine.Ultramarine;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.npc.VillagerProfession;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+
+import java.util.Objects;
 
 public class VillagerProfessionRegistry {
+    public static VillagerProfession COOK;
 
-    public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(ForgeRegistries.VILLAGER_PROFESSIONS, Ultramarine.MOD_ID);
 
-    public static final RegistryObject<VillagerProfession> COOK = PROFESSIONS.register("cook",
-            () -> new VillagerProfession("cook",
-                    poi -> poi.get() == PoiTypeRegistry.COOKING_POI.get(),
-                    poi -> poi.get() == PoiTypeRegistry.COOKING_POI.get(),
-                    ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_BUTCHER));
+    public static void registerModVillagerProfession() {
+        COOK = Registry.register(BuiltInRegistries.VILLAGER_PROFESSION, "cook",
+                new VillagerProfession("cook",
+                        (holder) -> holder.is(Objects.requireNonNull(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(PoiTypeRegistry.COOKING_POI))),
+                        (holder) -> holder.is(Objects.requireNonNull(BuiltInRegistries.POINT_OF_INTEREST_TYPE.getKey(PoiTypeRegistry.COOKING_POI))),
+                        ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_BUTCHER));
+    }
 }

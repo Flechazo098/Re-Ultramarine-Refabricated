@@ -6,6 +6,12 @@ import com.voxelutopia.ultramarine.data.recipe.ChiselTableRecipe;
 import com.voxelutopia.ultramarine.data.registry.BlockRegistry;
 import com.voxelutopia.ultramarine.data.registry.MenuTypeRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlotItemHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -16,17 +22,13 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class ChiselTableMenu extends AbstractContainerMenu{
+public class ChiselTableMenu extends AbstractContainerMenu {
 
     public static final int SLOT_MATERIAL = 0;
     public static final int SLOT_TEMPLATE = 1;
@@ -40,45 +42,162 @@ public class ChiselTableMenu extends AbstractContainerMenu{
 
     private static final Predicate<ItemStack> IS_WOOD = i -> i.is(ItemTags.LOGS) || i.is(ModItemTags.POLISHED_PLANKS);
     private static final Predicate<ItemStack> IS_TEMPLATE = i -> i.is(ModItemTags.CHISEL_TEMPLATES);
-    private static final Predicate<ItemStack> IS_COLOR = i -> i.is(ModItemTags.FORGE_DYES) || i.is(ModItemTags.DYE_POWDER);
+    private static final Predicate<ItemStack> IS_COLOR = i -> i.is(ModItemTags.DYES) || i.is(ModItemTags.DYE_POWDER);
 
     private final ContainerLevelAccess access;
     private final Player player;
     private final ItemStackHandler crafting = new ItemStackHandler(6);
     private final ItemStackHandler result = new ItemStackHandler(1);
-    private final IItemHandler inventory;
+    private final SlottedStackStorage inventory;
 
-    public ChiselTableMenu(int id, Inventory inventory){
+    public static class InventoryWrapper implements SlottedStackStorage {
+        private final Inventory inventory;
+
+        public InventoryWrapper(Inventory inventory) {
+            this.inventory = inventory;
+        }
+
+        @Override
+        public int getSlotCount() {
+            return inventory.getContainerSize();
+        }
+
+        @Override
+        public SingleSlotStorage<ItemVariant> getSlot(int slot) {
+            if (slot < 0 || slot >= inventory.getContainerSize()) {
+                return null;
+            }
+
+            return new SingleSlotStorage<>() {
+                @Override
+                public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+                    ItemStack stack = inventory.getItem(slot);
+                    if (stack.isEmpty()) {
+                        int toInsert = (int) Math.min(maxAmount, inventory.getMaxStackSize());
+                        inventory.setItem(slot, resource.toStack(toInsert));
+                        return toInsert;
+                    } else if (ItemVariant.of(stack).equals(resource)) {
+                        int canInsert = Math.min((int) maxAmount, inventory.getMaxStackSize() - stack.getCount());
+                        if (canInsert > 0) {
+                            stack.grow(canInsert);
+                            return canInsert;
+                        }
+                    }
+                    return 0;
+                }
+
+                @Override
+                public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+                    ItemStack stack = inventory.getItem(slot);
+                    if (!stack.isEmpty() && ItemVariant.of(stack).equals(resource)) {
+                        int toExtract = (int) Math.min(maxAmount, stack.getCount());
+                        stack.shrink(toExtract);
+                        if (stack.isEmpty()) {
+                            inventory.setItem(slot, ItemStack.EMPTY);
+                        }
+                        return toExtract;
+                    }
+                    return 0;
+                }
+
+                @Override
+                public boolean isResourceBlank() {
+                    return inventory.getItem(slot).isEmpty();
+                }
+
+                @Override
+                public ItemVariant getResource() {
+                    return ItemVariant.of(inventory.getItem(slot));
+                }
+
+                @Override
+                public long getAmount() {
+                    return inventory.getItem(slot).getCount();
+                }
+
+                @Override
+                public long getCapacity() {
+                    return inventory.getMaxStackSize();
+                }
+            };
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return inventory.getItem(slot);
+        }
+
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            inventory.setItem(slot, stack);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return inventory.getMaxStackSize();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemVariant resource, int count) {
+            return true;
+        }
+
+        @Override
+        public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+            long inserted = 0;
+            for (int i = 0; i < inventory.getContainerSize() && inserted < maxAmount; i++) {
+                SingleSlotStorage<ItemVariant> slot = getSlot(i);
+                if (slot != null) {
+                    inserted += slot.insert(resource, maxAmount - inserted, transaction);
+                }
+            }
+            return inserted;
+        }
+
+        @Override
+        public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+            long extracted = 0;
+            for (int i = 0; i < inventory.getContainerSize() && extracted < maxAmount; i++) {
+                SingleSlotStorage<ItemVariant> slot = getSlot(i);
+                if (slot != null) {
+                    extracted += slot.extract(resource, maxAmount - extracted, transaction);
+                }
+            }
+            return extracted;
+        }
+    }
+
+    public ChiselTableMenu(int id, Inventory inventory) {
         this(id, inventory, ContainerLevelAccess.NULL);
     }
 
     public ChiselTableMenu(int id, Inventory inventory, ContainerLevelAccess access) {
-        super(MenuTypeRegistry.CHISEL_TABLE.get(), id);
-        this.inventory = new InvWrapper(inventory);
+        super(MenuTypeRegistry.CHISEL_TABLE, id);
+        this.inventory = new InventoryWrapper(inventory);
         this.access = access;
         this.player = inventory.player;
 
         this.addSlot(new MaterialSlot(crafting, SLOT_MATERIAL, 26, 25));
         this.addSlot(new TemplateSlot(crafting, SLOT_TEMPLATE, 53, 25));
-        for (int i = SLOT_COLOR_START, j = 0; i < SLOT_COLOR_END; i++, j++){
-            this.addSlot(new DyeSlot(crafting, i, 26 + j * 18,52));
+        for (int i = SLOT_COLOR_START, j = 0; i < SLOT_COLOR_END; i++, j++) {
+            this.addSlot(new DyeSlot(crafting, i, 26 + j * 18, 52));
         }
         this.addSlot(new OutputSlot(result, 0, 130, 34));
 
-        for(int r = 0; r < 3; ++r) {
-            for(int c = 0; c < 9; ++c) {
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 9; ++c) {
                 this.addSlot(new SlotItemHandler(this.inventory, c + r * 9 + 9, 8 + c * 18, 84 + r * 18));
             }
         }
 
-        for(int k = 0; k < 9; ++k) {
+        for (int k = 0; k < 9; ++k) {
             this.addSlot(new SlotItemHandler(this.inventory, k, 8 + k * 18, 142));
         }
     }
 
     public void slotsChanged(SlotItemHandler slot) {
         this.broadcastChanges();
-        if (slot.getSlotIndex() <= SLOT_RESULT){
+        if (slot.getSlotIndex() <= SLOT_RESULT) {
             this.createResult();
         }
     }
@@ -86,10 +205,10 @@ public class ChiselTableMenu extends AbstractContainerMenu{
     public void createResult() {
         Level level = player.level();
         Container ingredients = this.wrapIngredients();
-        List<ChiselTableRecipe> list = level.getRecipeManager().getRecipesFor(RecipeTypeRegistry.CHISEL_TABLE.get(), ingredients, level);
-        if (list.size() > 1){
-            Ultramarine.getLogger().warn("Duplicate chisel table recipe: ");
-            list.forEach(recipe -> Ultramarine.getLogger().warn(recipe.getId().getPath()));
+        List<ChiselTableRecipe> list = level.getRecipeManager().getRecipesFor(RecipeTypeRegistry.CHISEL_TABLE, ingredients, level);
+        if (list.size() > 1) {
+            Ultramarine.LOGGER.warn("Duplicate chisel table recipe: ");
+            list.forEach(recipe -> Ultramarine.LOGGER.warn(recipe.getId().getPath()));
         }
         if (list.isEmpty()) {
             this.result.setStackInSlot(0, ItemStack.EMPTY);
@@ -100,8 +219,8 @@ public class ChiselTableMenu extends AbstractContainerMenu{
         }
     }
 
-    protected void onTake(Player player, ItemStack itemStack, SlotItemHandler slot){
-        for (int i = 0; i < SLOT_COLOR_END; i++){
+    protected void onTake(Player player, ItemStack itemStack, SlotItemHandler slot) {
+        for (int i = 0; i < SLOT_COLOR_END; i++) {
             ItemStack item = crafting.getStackInSlot(i);
             crafting.setStackInSlot(i, item);
             if (i != SLOT_TEMPLATE)
@@ -125,15 +244,15 @@ public class ChiselTableMenu extends AbstractContainerMenu{
                 }
                 slot.onQuickCraft(slotItem, itemstack);
             } else if (pIndex > SLOT_RESULT) { // inv slots
-                if (IS_WOOD.test(slotItem)){
+                if (IS_WOOD.test(slotItem)) {
                     if (!this.moveItemStackTo(slotItem, SLOT_MATERIAL, SLOT_MATERIAL + 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (IS_TEMPLATE.test(slotItem)){
+                } else if (IS_TEMPLATE.test(slotItem)) {
                     if (!this.moveItemStackTo(slotItem, SLOT_TEMPLATE, SLOT_TEMPLATE + 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (IS_COLOR.test(slotItem)){
+                } else if (IS_COLOR.test(slotItem)) {
                     if (!this.moveItemStackTo(slotItem, SLOT_COLOR_START, SLOT_COLOR_END, false)) {
                         return ItemStack.EMPTY;
                     }
@@ -164,7 +283,7 @@ public class ChiselTableMenu extends AbstractContainerMenu{
     }
 
     public boolean canTakeItemForPickAll(ItemStack pStack, Slot pSlot) {
-        return ((SlotItemHandler)pSlot).getItemHandler() != this.result && super.canTakeItemForPickAll(pStack, pSlot);
+        return ((SlotItemHandler) pSlot).getItemHandler() != this.result && super.canTakeItemForPickAll(pStack, pSlot);
     }
 
     public void removed(Player pPlayer) {
@@ -172,9 +291,9 @@ public class ChiselTableMenu extends AbstractContainerMenu{
         this.access.execute((level, blockPos) -> this.clearContainer(pPlayer, this.wrapIngredients()));
     }
 
-    private Container wrapIngredients(){
+    private Container wrapIngredients() {
         var container = new SimpleContainer(6);
-        for (int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             container.setItem(i, this.crafting.getStackInSlot(i));
         }
         return container;
@@ -182,12 +301,12 @@ public class ChiselTableMenu extends AbstractContainerMenu{
 
     @Override
     public boolean stillValid(Player pPlayer) {
-        return stillValid(this.access, pPlayer, BlockRegistry.CHISEL_TABLE.get());
+        return stillValid(this.access, pPlayer, BlockRegistry.CHISEL_TABLE);
     }
 
     class OutputSlot extends SlotItemHandler {
 
-        public OutputSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        public OutputSlot(SlottedStackStorage itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
         }
 
@@ -217,9 +336,9 @@ public class ChiselTableMenu extends AbstractContainerMenu{
         }
     }
 
-    class IngredientSlot extends SlotItemHandler{
+    class IngredientSlot extends SlotItemHandler {
 
-        public IngredientSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        public IngredientSlot(SlottedStackStorage itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
         }
 
@@ -232,7 +351,7 @@ public class ChiselTableMenu extends AbstractContainerMenu{
 
     class TemplateSlot extends IngredientSlot {
 
-        public TemplateSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        public TemplateSlot(SlottedStackStorage itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
         }
 
@@ -246,7 +365,7 @@ public class ChiselTableMenu extends AbstractContainerMenu{
 
     class MaterialSlot extends IngredientSlot {
 
-        public MaterialSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        public MaterialSlot(SlottedStackStorage itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
         }
 
@@ -259,7 +378,7 @@ public class ChiselTableMenu extends AbstractContainerMenu{
 
     class DyeSlot extends IngredientSlot {
 
-        public DyeSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        public DyeSlot(SlottedStackStorage itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
         }
 

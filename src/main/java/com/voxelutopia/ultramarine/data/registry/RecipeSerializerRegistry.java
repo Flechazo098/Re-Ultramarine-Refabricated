@@ -4,24 +4,26 @@ import com.voxelutopia.ultramarine.Ultramarine;
 import com.voxelutopia.ultramarine.data.recipe.ChiselTableRecipe;
 import com.voxelutopia.ultramarine.data.recipe.CompositeSmeltingRecipe;
 import com.voxelutopia.ultramarine.data.recipe.WoodworkingRecipe;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 public class RecipeSerializerRegistry {
 
-    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
-            DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ultramarine.MOD_ID);
+    public static RecipeSerializer<WoodworkingRecipe> WOODWORKING_SERIALIZER;
+    public static RecipeSerializer<CompositeSmeltingRecipe> COMPOSITE_SMELTING_SERIALIZER;
+    public static RecipeSerializer<ChiselTableRecipe> CHISEL_TABLE_SERIALIZER;
 
-    public static final RegistryObject<RecipeSerializer<WoodworkingRecipe>> WOODWORKING_SERIALIZER =
-            RECIPE_SERIALIZERS.register("woodworking", () -> WoodworkingRecipe.Serializer.INSTANCE);
 
-    public static final RegistryObject<RecipeSerializer<CompositeSmeltingRecipe>> COMPOSITE_SMELTING_SERIALIZER =
-            RECIPE_SERIALIZERS.register("composite_smelting", () -> CompositeSmeltingRecipe.Serializer.INSTANCE);
-
-    public static final RegistryObject<RecipeSerializer<ChiselTableRecipe>> CHISEL_TABLE_SERIALIZER =
-            RECIPE_SERIALIZERS.register("chisel_table", () -> ChiselTableRecipe.Serializer.INSTANCE);
+    public static void registerModRecipeSerializers() {
+        WOODWORKING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Ultramarine.MOD_ID, "woodworking"),
+                WoodworkingRecipe.Serializer.INSTANCE);
+        COMPOSITE_SMELTING_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Ultramarine.MOD_ID, "composite_smelting"),
+                CompositeSmeltingRecipe.Serializer.INSTANCE);
+        CHISEL_TABLE_SERIALIZER = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Ultramarine.MOD_ID, "chisel_table"),
+                ChiselTableRecipe.Serializer.INSTANCE);
+    }
 
 
 }

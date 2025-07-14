@@ -66,6 +66,7 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
             Direction.WEST, WOODEN_WEST_SIDE,
             Direction.EAST, WOODEN_EAST_SIDE
     );
+
     public RailingBlock(BaseBlockProperty property, Map<Direction, VoxelShape> partShapes) {
         super(property.properties.noOcclusion());
         this.property = property;
@@ -136,7 +137,7 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
         return pState.setValue(NORTH, north).setValue(SOUTH, south).setValue(EAST, east).setValue(WEST, west).setValue(UP, up);
     }
 
-    public BlockState updatePole(BlockState state){
+    public BlockState updatePole(BlockState state) {
         boolean north = state.getValue(NORTH);
         boolean south = state.getValue(SOUTH);
         boolean east = state.getValue(EAST);
@@ -158,17 +159,15 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
      */
     private boolean connectsTo(Direction connectsToDirection, Boolean isSelfShifted, BlockPos connectsToPos, BlockState connectsToState, BlockGetter level) {
         boolean canConnectToSlant = false;
-        if (!isSelfShifted && connectsToState.getBlock() instanceof RailingSlant){
+        if (!isSelfShifted && connectsToState.getBlock() instanceof RailingSlant) {
             Direction facing = connectsToState.getValue(BaseHorizontalDirectionalBlock.FACING);
             Boolean shifted = connectsToState.getValue(RailingSlant.SHIFTED);
             canConnectToSlant = (!shifted && (connectsToDirection == facing.getOpposite())) || (shifted && (connectsToDirection == facing));
-        }
-        else if (isSelfShifted && connectsToState.getBlock() instanceof RailingSlant){
+        } else if (isSelfShifted && connectsToState.getBlock() instanceof RailingSlant) {
             Direction facing = connectsToState.getValue(BaseHorizontalDirectionalBlock.FACING);
             Boolean shifted = connectsToState.getValue(RailingSlant.SHIFTED);
             canConnectToSlant = !shifted && (connectsToDirection == facing);
-        }
-        else if (isSelfShifted && level.getBlockState(connectsToPos.below()).getBlock() instanceof RailingSlant){
+        } else if (isSelfShifted && level.getBlockState(connectsToPos.below()).getBlock() instanceof RailingSlant) {
             BlockState blockBelow = level.getBlockState(connectsToPos.below());
             Direction facing = blockBelow.getValue(BaseHorizontalDirectionalBlock.FACING);
             Boolean shifted = blockBelow.getValue(RailingSlant.SHIFTED);
@@ -194,7 +193,7 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
         for (Boolean up : UP.getPossibleValues()) {
             for (Boolean east : EAST.getPossibleValues()) {
                 for (Boolean north : NORTH.getPossibleValues()) {
-                    for (Boolean west: WEST.getPossibleValues()) {
+                    for (Boolean west : WEST.getPossibleValues()) {
                         for (Boolean south : SOUTH.getPossibleValues()) {
                             VoxelShape shape = Shapes.empty();
                             if (north) shape = Shapes.or(shape, this.shapeByPart.get(Direction.NORTH));
@@ -246,6 +245,7 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
     public boolean propagatesSkylightDown(BlockState pState, BlockGetter pReader, BlockPos pPos) {
         return !pState.getValue(WATERLOGGED);
     }
+
     @Override
     public BaseBlockProperty getProperty() {
         return this.property;

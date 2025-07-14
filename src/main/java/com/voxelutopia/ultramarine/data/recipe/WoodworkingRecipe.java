@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.voxelutopia.ultramarine.data.registry.RecipeSerializerRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -14,7 +15,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleItemRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class WoodworkingRecipe extends SingleItemRecipe {
 
@@ -22,13 +22,15 @@ public class WoodworkingRecipe extends SingleItemRecipe {
     protected final ItemStack result;
     protected final ResourceLocation id;
     protected final String group;
+
     public WoodworkingRecipe(ResourceLocation pId, String pGroup, Ingredient pIngredient, ItemStack pResult) {
-        super(RecipeTypeRegistry.WOODWORKING.get(), RecipeSerializerRegistry.WOODWORKING_SERIALIZER.get(), pId, pGroup, pIngredient, pResult);
+        super(RecipeTypeRegistry.WOODWORKING, RecipeSerializerRegistry.WOODWORKING_SERIALIZER, pId, pGroup, pIngredient, pResult);
         this.id = pId;
         this.group = pGroup;
         this.ingredient = pIngredient;
         this.result = pResult;
     }
+
     @Override
     public boolean matches(Container pContainer, Level pLevel) {
         return ingredient.test(pContainer.getItem(0));
@@ -61,19 +63,21 @@ public class WoodworkingRecipe extends SingleItemRecipe {
 
     @Override
     public RecipeType<?> getType() {
-        return RecipeTypeRegistry.WOODWORKING.get();
+        return RecipeTypeRegistry.WOODWORKING;
     }
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RecipeSerializerRegistry.WOODWORKING_SERIALIZER.get();
+        return RecipeSerializerRegistry.WOODWORKING_SERIALIZER;
     }
 
 
     public static class Serializer implements RecipeSerializer<WoodworkingRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
-        protected Serializer() {}
+
+        protected Serializer() {
+        }
 
         public WoodworkingRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
             String s = GsonHelper.getAsString(pJson, "group", "");
@@ -86,7 +90,7 @@ public class WoodworkingRecipe extends SingleItemRecipe {
 
             String s1 = GsonHelper.getAsString(pJson, "result");
             int i = GsonHelper.getAsInt(pJson, "count");
-            ItemStack itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(s1)), i);
+            ItemStack itemstack = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(s1)), i);
             return new WoodworkingRecipe(pRecipeId, s, ingredient, itemstack);
         }
 

@@ -15,12 +15,12 @@ import snownee.jade.api.ui.IElementHelper;
 public enum MalletToggleableComponentProvider implements IBlockComponentProvider {
     INSTANCE;
 
-    public static final ResourceLocation MALLET_TOGGLEABLE = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "mallet_toggleable");
+    public static final ResourceLocation MALLET_TOGGLEABLE = new ResourceLocation(Ultramarine.MOD_ID, "mallet_toggleable");
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
         IElementHelper elements = tooltip.getElementHelper();
-        IElement icon = elements.item(ItemRegistry.WOODEN_MALLET.get().getDefaultInstance(), 0.5f).size(new Vec2(10, 10)).translate(new Vec2(0, -1));
+        IElement icon = elements.item(ItemRegistry.WOODEN_MALLET.getDefaultInstance(), 0.5f).size(new Vec2(10, 10)).translate(new Vec2(0, -1));
         tooltip.add(icon);
         tooltip.append(Component.translatable("gui.jade.plugin_ultramarine.mallet_toggleable"));
     }

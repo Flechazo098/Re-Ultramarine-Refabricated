@@ -13,11 +13,11 @@ public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockP
 
     protected final BaseBlockProperty property;
 
-    public BaseDirectionalBlock(BaseBlock block){
+    public BaseDirectionalBlock(BaseBlock block) {
         this(block.getProperty());
     }
 
-    public BaseDirectionalBlock(BaseBlockProperty property){
+    public BaseDirectionalBlock(BaseBlockProperty property) {
         super(property.properties);
         this.property = property;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
@@ -35,7 +35,7 @@ public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockP
     public BlockState rotate(BlockState pState, Rotation pRot) {
         BlockState newState = pState;
         Direction facing = pState.getValue(FACING);
-        if (facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             newState = newState.setValue(FACING, pRot.rotate(facing));
         }
         return newState;
@@ -45,7 +45,7 @@ public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockP
     public BlockState mirror(BlockState pState, Mirror pMirror) {
         BlockState newState = pState;
         Direction facing = pState.getValue(FACING);
-        if (facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             newState = newState.rotate(pMirror.getRotation(facing));
         }
         return newState;

@@ -55,7 +55,7 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
         FluidState fluidstate = pContext.getLevel().getFluidState(pContext.getClickedPos());
 
         Direction direction = pContext.getClickedFace();
-        if (direction.getAxis().isHorizontal()){
+        if (direction.getAxis().isHorizontal()) {
             return state.setValue(FACING, direction)
                     .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
         }

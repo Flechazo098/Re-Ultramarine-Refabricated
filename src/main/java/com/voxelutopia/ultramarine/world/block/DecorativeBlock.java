@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,7 +46,9 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                            boolean directional, boolean diagonallyPlaceable,
                            boolean luminous, boolean noCollision, boolean noFenceConnect,
                            @Nullable Direction offset) {
-        super(property.properties);
+        super(luminous ?
+                property.properties.lightLevel((state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0) :
+                property.properties);
         this.property = property;
         this.shapeFunction = shapeFunction;
         this.directional = directional;
@@ -135,7 +138,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     @Override
     public BlockState rotate(BlockState pState, Rotation pRot) {
         BlockState newState = pState;
-        if (pState.getBlock() instanceof DecorativeBlock decorativeBlock && decorativeBlock.isDirectional()){
+        if (pState.getBlock() instanceof DecorativeBlock decorativeBlock && decorativeBlock.isDirectional()) {
             newState = pState.setValue(FACING, pRot.rotate(pState.getValue(FACING)));
             if (decorativeBlock.isDiagonallyPlaceable()) {
                 newState = newState.setValue(HORIZONTAL_FACING_SHIFT, pRot.rotate(pState.getValue(HORIZONTAL_FACING_SHIFT)));
@@ -147,7 +150,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     @Override
     public BlockState mirror(BlockState pState, Mirror pMirror) {
         BlockState newState = pState;
-        if (pState.getBlock() instanceof DecorativeBlock decorativeBlock && decorativeBlock.isDirectional()){
+        if (pState.getBlock() instanceof DecorativeBlock decorativeBlock && decorativeBlock.isDirectional()) {
             newState = pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
             if (decorativeBlock.isDiagonallyPlaceable()) {
                 newState = newState.rotate(pMirror.getRotation(pState.getValue(HORIZONTAL_FACING_SHIFT)));
@@ -169,12 +172,6 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     @Override
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
-    }
-
-    @Override
-    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
-        if (isLuminous()) return state.getValue(LIT) ? 14 : 0;
-        else return 0;
     }
 
     @Override
@@ -235,11 +232,31 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
         public Builder luminous() {
             this.luminous = true;
+            // 确保在这里设置lightLevel
+            this.property.properties = this.property.properties.lightLevel(
+                    (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
+            );
+            return this;
+        }
+
+        public Builder luminous(boolean luminous) {
+            this.luminous = luminous;
+            if (luminous) {
+                // 确保在这里设置lightLevel
+                this.property.properties = this.property.properties.lightLevel(
+                        (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
+                );
+            }
             return this;
         }
 
         public Builder noCollision() {
             this.noCollision = true;
+            return this;
+        }
+
+        public Builder pushReaction(PushReaction reaction) {
+            this.property.properties.pushReaction(reaction);
             return this;
         }
 
@@ -253,7 +270,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
-        public Builder placeOffset(Direction direction){
+        public Builder placeOffset(Direction direction) {
             offset = direction;
             return this;
         }

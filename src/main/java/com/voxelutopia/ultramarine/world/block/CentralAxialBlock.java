@@ -42,7 +42,7 @@ public class CentralAxialBlock extends Block implements AxialBlock, SimpleWaterl
     }
 
     public CentralAxialBlock(BaseBlockProperty property, int thickness, int height, boolean hasCollision) {
-        this(property, ShapeFunction.axialRotations(new RawVoxelShape(0, 0, (16-thickness)/2f, 16, height, 16-(16-thickness)/2f)), hasCollision);
+        this(property, ShapeFunction.axialRotations(new RawVoxelShape(0, 0, (16 - thickness) / 2f, 16, height, 16 - (16 - thickness) / 2f)), hasCollision);
     }
 
     public CentralAxialBlock(BaseBlockProperty property, int thickness) {
@@ -53,7 +53,7 @@ public class CentralAxialBlock extends Block implements AxialBlock, SimpleWaterl
         this(property, thickness, height, true);
     }
 
-    public CentralAxialBlock(BaseBlockProperty property, ShapeFunction shapeFunction){
+    public CentralAxialBlock(BaseBlockProperty property, ShapeFunction shapeFunction) {
         this(property, shapeFunction, false);
     }
 
@@ -87,8 +87,8 @@ public class CentralAxialBlock extends Block implements AxialBlock, SimpleWaterl
     @Override
     public BlockState rotate(BlockState pState, Rotation pRot) {
         BlockState newState = pState;
-        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90){
-            newState = switch (pState.getValue(AXIS)){
+        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90) {
+            newState = switch (pState.getValue(AXIS)) {
                 case X -> pState.setValue(AXIS, Direction.Axis.Z);
                 case Z -> pState.setValue(AXIS, Direction.Axis.X);
                 default -> newState;

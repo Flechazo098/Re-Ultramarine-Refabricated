@@ -7,14 +7,17 @@ import com.voxelutopia.ultramarine.data.registry.RecipeSerializerRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
 import com.voxelutopia.ultramarine.world.block.entity.BrickKilnBlockEntity;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public class CompositeSmeltingRecipe implements Recipe<Container> {
@@ -77,19 +80,19 @@ public class CompositeSmeltingRecipe implements Recipe<Container> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return RecipeSerializerRegistry.COMPOSITE_SMELTING_SERIALIZER.get();
+        return RecipeSerializerRegistry.COMPOSITE_SMELTING_SERIALIZER;
     }
 
     @Override
     public RecipeType<?> getType() {
-        return RecipeTypeRegistry.COMPOSITE_SMELTING.get();
+        return RecipeTypeRegistry.COMPOSITE_SMELTING;
     }
 
     public int getCookingTime() {
         return cookingTime;
     }
 
-    public float getExp(){
+    public float getExp() {
         return experience;
     }
 
@@ -98,7 +101,8 @@ public class CompositeSmeltingRecipe implements Recipe<Container> {
         public static final Serializer INSTANCE = new Serializer();
         private static final int defaultCookingTime = 200;
 
-        protected Serializer() {}
+        protected Serializer() {
+        }
 
 
         @Override
@@ -111,11 +115,13 @@ public class CompositeSmeltingRecipe implements Recipe<Container> {
             Ingredient secondaryIngredient = parseIngredient(pJson, "secondary_ingredient");
 
             ItemStack result;
-            if (pJson.get("result").isJsonObject()) result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
+            if (pJson.get("result").isJsonObject())
+                result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
             else {
                 String s1 = GsonHelper.getAsString(pJson, "result");
                 ResourceLocation resourcelocation = ResourceLocation.tryParse(s1);
-                result = new ItemStack(ForgeRegistries.ITEMS.getHolder(resourcelocation).orElseThrow(() -> new IllegalStateException("Item: " + s1 + " does not exist")));
+                ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, resourcelocation);
+                result = new ItemStack(BuiltInRegistries.ITEM.getHolder(itemKey).orElseThrow(() -> new IllegalStateException("Item: " + s1 + " does not exist")));
             }
             float exp = GsonHelper.getAsFloat(pJson, "experience", 0.0F);
             int cookingTime = GsonHelper.getAsInt(pJson, "cookingtime", defaultCookingTime);
@@ -144,7 +150,7 @@ public class CompositeSmeltingRecipe implements Recipe<Container> {
             pBuffer.writeVarInt(pRecipe.cookingTime);
         }
 
-        private static Ingredient parseIngredient(JsonObject json, String member){
+        private static Ingredient parseIngredient(JsonObject json, String member) {
             JsonElement ingredientRaw = GsonHelper.isArrayNode(json, member) ? GsonHelper.getAsJsonArray(json, member) : GsonHelper.getAsJsonObject(json, member);
             return Ingredient.fromJson(ingredientRaw);
         }

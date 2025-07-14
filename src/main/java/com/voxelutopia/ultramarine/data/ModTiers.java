@@ -8,8 +8,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import java.util.function.Supplier;
 
 public enum ModTiers implements Tier {
-    BLUE_AND_WHITE_PORCELAIN(3, 16, 14.0F, 5.0F, 24, () -> Ingredient.of(ItemRegistry.BLUE_AND_WHITE_PORCELAIN_PIECE.get()))
-    ;
+    BLUE_AND_WHITE_PORCELAIN(3, 16, 14.0F, 5.0F, 24, () -> Ingredient.of(ItemRegistry.BLUE_AND_WHITE_PORCELAIN_PIECE));
 
     private final int level;
     private final int uses;
@@ -18,7 +17,7 @@ public enum ModTiers implements Tier {
     private final int enchantmentValue;
     private final LazyLoadedValue<Ingredient> repairIngredient;
 
-    private ModTiers(int pLevel, int pUses, float pSpeed, float pDamage, int pEnchantmentValue, Supplier<Ingredient> pRepairIngredient) {
+    ModTiers(int pLevel, int pUses, float pSpeed, float pDamage, int pEnchantmentValue, Supplier<Ingredient> pRepairIngredient) {
         this.level = pLevel;
         this.uses = pUses;
         this.speed = pSpeed;

@@ -1,15 +1,24 @@
 package com.voxelutopia.ultramarine.world.block.entity;
 
 import com.google.common.collect.Lists;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.data.recipe.CompositeSmeltingRecipe;
 import com.voxelutopia.ultramarine.data.registry.BlockEntityRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
 import com.voxelutopia.ultramarine.world.block.menu.BrickKilnMenu;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.RecipeWrapper;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
+import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -29,20 +38,11 @@ import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -51,7 +51,25 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
-public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, RecipeHolder {
+public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, RecipeHolder, SlottedStackStorage {
+
+    public static final Codec<BrickKilnBlockEntity> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    BlockPos.CODEC.fieldOf("pos").forGetter(entity -> entity.worldPosition),
+                    BlockState.CODEC.fieldOf("blockState").forGetter(entity -> entity.getBlockState()),
+                    Codec.INT.fieldOf("litTime").forGetter(entity -> entity.litTime),
+                    Codec.INT.fieldOf("litDuration").forGetter(entity -> entity.litDuration),
+                    Codec.INT.fieldOf("cookingProgress").forGetter(entity -> entity.cookingProgress),
+                    Codec.INT.fieldOf("cookingTotalTime").forGetter(entity -> entity.cookingTotalTime)
+            ).apply(instance, (pos, state, litTime, litDuration, cookingProgress, cookingTotalTime) -> {
+                BrickKilnBlockEntity entity = new BrickKilnBlockEntity(pos, state);
+                entity.litTime = litTime;
+                entity.litDuration = litDuration;
+                entity.cookingProgress = cookingProgress;
+                entity.cookingTotalTime = cookingTotalTime;
+                return entity;
+            })
+    );
 
     public static final int SLOT_INPUT_PRIMARY = 0;
     public static final int SLOT_INPUT_SECONDARY = 1;
@@ -73,33 +91,35 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     int cookingProgress;
     int cookingTotalTime;
 
-    private final ItemStackHandler ingredientsHandler = new ItemStackHandler(2){
+
+    private final ItemStackHandler ingredientsHandler = new ItemStackHandler(2) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
         }
     };
 
-    private final ItemStackHandler fuelHandler = new ItemStackHandler(1){
+    private final ItemStackHandler fuelHandler = new ItemStackHandler(1) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING) > 0;
+        public boolean isItemValid(int slot, ItemVariant resource, int amount) {
+            ItemStack stack = resource.toStack(amount);
+            return FuelRegistry.INSTANCE.get(stack.getItem()) != null;
         }
     };
 
-    private final ItemStackHandler resultHandler = new ItemStackHandler(1){
+    private final ItemStackHandler resultHandler = new ItemStackHandler(1) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        public boolean isItemValid(int slot, ItemVariant resource, int count) {
             return false;
         }
     };
@@ -136,10 +156,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
 
     public BrickKilnBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(BlockEntityRegistry.BRICK_KILN.get(), blockPos, blockState);
+        super(BlockEntityRegistry.BRICK_KILN, blockPos, blockState);
     }
 
-    public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity){
+    public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity) {
         boolean lit = pBlockEntity.isLit();
         boolean changed = false;
 
@@ -147,13 +167,13 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         ItemStack primaryItem = pBlockEntity.ingredientsHandler.getStackInSlot(0);
         ItemStack secondaryItem = pBlockEntity.ingredientsHandler.getStackInSlot(1);
         ItemStack resultItem = pBlockEntity.resultHandler.getStackInSlot(0);
-        CompositeSmeltingRecipe recipe = pLevel.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING.get(), wrapRecipe(pBlockEntity), pLevel).orElse(null);
+        CompositeSmeltingRecipe recipe = pLevel.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING, wrapRecipe(pBlockEntity), pLevel).orElse(null);
 
         if (pBlockEntity.isLit()) {
             --pBlockEntity.litTime;
         }
 
-        if (recipe != null){
+        if (recipe != null) {
             pBlockEntity.cookingTotalTime = recipe.getCookingTime();
         }
 
@@ -161,7 +181,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 
             int maxStack = 64;
             if (!pBlockEntity.isLit() && recipe != null && pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                pBlockEntity.litTime = ForgeHooks.getBurnTime(fuelItem, RecipeType.SMELTING);
+                pBlockEntity.litTime = FuelRegistry.INSTANCE.get(fuelItem.getItem());
                 pBlockEntity.litDuration = pBlockEntity.litTime;
                 if (pBlockEntity.isLit()) {
                     changed = true;
@@ -241,7 +261,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     }
 
     private static int getTotalCookTime(Level pLevel, BrickKilnBlockEntity entity) {
-        return pLevel.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING.get(), wrapRecipe(entity), pLevel).map(CompositeSmeltingRecipe::getCookingTime).orElse(200);
+        return pLevel.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING, wrapRecipe(entity), pLevel).map(CompositeSmeltingRecipe::getCookingTime).orElse(200);
     }
 
     public void setRecipeUsed(@Nullable Recipe<?> pRecipe) {
@@ -272,10 +292,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel pLevel, Vec3 pos) {
         List<Recipe<?>> list = Lists.newArrayList();
 
-        for(Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+        for (Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
             pLevel.getRecipeManager().byKey(entry.getKey()).ifPresent((p_155023_) -> {
                 list.add(p_155023_);
-                createExperience(pLevel, pos, entry.getIntValue(), ((AbstractCookingRecipe)p_155023_).getExperience());
+                createExperience(pLevel, pos, entry.getIntValue(), ((AbstractCookingRecipe) p_155023_).getExperience());
             });
         }
 
@@ -283,9 +303,9 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     }
 
     private static void createExperience(ServerLevel pLevel, Vec3 p_155000_, int p_155001_, float p_155002_) {
-        int i = Mth.floor((float)p_155001_ * p_155002_);
-        float f = Mth.frac((float)p_155001_ * p_155002_);
-        if (f != 0.0F && Math.random() < (double)f) {
+        int i = Mth.floor((float) p_155001_ * p_155002_);
+        float f = Mth.frac((float) p_155001_ * p_155002_);
+        if (f != 0.0F && Math.random() < (double) f) {
             ++i;
         }
 
@@ -305,14 +325,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     @Override
     public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
         return new BrickKilnMenu(pContainerId, this.worldPosition, pInventory,
-                wrapHandlers(), this.dataAccess);
+                this, this.dataAccess);
     }
 
-    public CombinedInvWrapper wrapHandlers(){
-        return new CombinedInvWrapper(this.ingredientsHandler, this.fuelHandler, this.resultHandler);
-    }
-
-    private static RecipeWrapper wrapRecipe(BrickKilnBlockEntity entity){
+    private static RecipeWrapper wrapRecipe(BrickKilnBlockEntity entity) {
         return new RecipeWrapper(entity.ingredientsHandler);
     }
 
@@ -323,10 +339,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         this.cookingTotalTime = pTag.getInt("CookTimeTotal");
 
         ListTag itemListTag = pTag.getList("Items", 10);
-        for(int i = 0; i < itemListTag.size(); ++i) {
+        for (int i = 0; i < itemListTag.size(); ++i) {
             CompoundTag itemTag = itemListTag.getCompound(i);
             int j = itemTag.getByte("Slot") & 255;
-            switch (j){
+            switch (j) {
                 case SLOT_INPUT_PRIMARY -> this.ingredientsHandler.setStackInSlot(0, ItemStack.of(itemTag));
                 case SLOT_INPUT_SECONDARY -> this.ingredientsHandler.setStackInSlot(1, ItemStack.of(itemTag));
                 case SLOT_FUEL -> this.fuelHandler.setStackInSlot(0, ItemStack.of(itemTag));
@@ -334,12 +350,12 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
             }
         }
 
-        this.litDuration = ForgeHooks.getBurnTime(this.fuelHandler.getStackInSlot(0), RecipeType.SMELTING);
+        this.litDuration = getBurnTime(this.fuelHandler.getStackInSlot(0));
 
         CompoundTag recipesTag = pTag.getCompound("RecipesUsed");
 
-        for(String s : recipesTag.getAllKeys()) {
-            this.recipesUsed.put(ResourceLocation.withDefaultNamespace(s), recipesTag.getInt(s));
+        for (String s : recipesTag.getAllKeys()) {
+            this.recipesUsed.put(new ResourceLocation(s), recipesTag.getInt(s));
         }
 
     }
@@ -352,11 +368,11 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 
         ListTag itemListTag = new ListTag();
         var items = this.wrapHandlers();
-        for (int i = 0; i < items.getSlots(); i++){
+        for (int i = 0; i < items.getSlots().size(); i++) {
             ItemStack item = items.getStackInSlot(i);
             if (!item.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putByte("Slot", (byte)i);
+                itemTag.putByte("Slot", (byte) i);
                 item.save(itemTag);
                 itemListTag.add(itemTag);
             }
@@ -376,22 +392,11 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         createLazyHandlers();
     }
 
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
-        if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER) {
-            if (facing == Direction.UP){
-                return ingredientsLazyHandler.cast();
-            }
-            else if (facing == Direction.DOWN){
-                return resultLazyHandler.cast();
-            }
-            else {
-                return fuelLazyHandler.cast();
-            }
-        }
-        return super.getCapability(capability, facing);
+    private int getBurnTime(ItemStack stack) {
+        if (stack.isEmpty()) return 0;
+        return FuelRegistry.INSTANCE.get(stack.getItem());
     }
+
 
     @Override
     public void invalidateCaps() {
@@ -401,16 +406,119 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
         fuelLazyHandler.invalidate();
     }
 
-    @Override
-    public void reviveCaps() {
-        super.reviveCaps();
-        createLazyHandlers();
-    }
-
     private void createLazyHandlers() {
         this.ingredientsLazyHandler = LazyOptional.of(() -> ingredientsHandler);
         this.resultLazyHandler = LazyOptional.of(() -> resultHandler);
         this.fuelLazyHandler = LazyOptional.of(() -> fuelHandler);
     }
 
+    public ItemStackHandler getIngredientsHandler() {
+        return ingredientsHandler;
+    }
+
+    public ItemStackHandler getFuelHandler() {
+        return fuelHandler;
+    }
+
+    public ItemStackHandler getResultHandler() {
+        return resultHandler;
+    }
+
+    @Override
+    public int getSlotCount() {
+        return NUM_SLOTS;
+    }
+
+    @Override
+    public SingleSlotStorage<ItemVariant> getSlot(int slot) {
+        return switch (slot) {
+            case SLOT_INPUT_PRIMARY -> ingredientsHandler.getSlot(0);
+            case SLOT_INPUT_SECONDARY -> ingredientsHandler.getSlot(1);
+            case SLOT_FUEL -> fuelHandler.getSlot(0);
+            case SLOT_RESULT -> resultHandler.getSlot(0);
+            default -> null;
+        };
+    }
+
+    @Override
+    public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+        long inserted = 0;
+
+        // 尝试插入到ingredients slots
+        if (inserted < maxAmount) {
+            inserted += ingredientsHandler.insert(resource, maxAmount - inserted, transaction);
+        }
+
+        // 如果是燃料，尝试插入到fuel slot
+        if (inserted < maxAmount && FuelRegistry.INSTANCE.get(resource.getItem()) != null) {
+            inserted += fuelHandler.insert(resource, maxAmount - inserted, transaction);
+        }
+
+        return inserted;
+    }
+
+    @Override
+    public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+        long extracted = 0;
+
+        // 从result handler提取
+        extracted += resultHandler.extract(resource, maxAmount - extracted, transaction);
+
+        // 如果还需要提取更多，从其他handlers提取
+        if (extracted < maxAmount) {
+            extracted += ingredientsHandler.extract(resource, maxAmount - extracted, transaction);
+        }
+
+        if (extracted < maxAmount) {
+            extracted += fuelHandler.extract(resource, maxAmount - extracted, transaction);
+        }
+
+        return extracted;
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return switch (slot) {
+            case SLOT_INPUT_PRIMARY -> ingredientsHandler.getStackInSlot(0);
+            case SLOT_INPUT_SECONDARY -> ingredientsHandler.getStackInSlot(1);
+            case SLOT_FUEL -> fuelHandler.getStackInSlot(0);
+            case SLOT_RESULT -> resultHandler.getStackInSlot(0);
+            default -> ItemStack.EMPTY;
+        };
+    }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        switch (slot) {
+            case SLOT_INPUT_PRIMARY -> ingredientsHandler.setStackInSlot(0, stack);
+            case SLOT_INPUT_SECONDARY -> ingredientsHandler.setStackInSlot(1, stack);
+            case SLOT_FUEL -> fuelHandler.setStackInSlot(0, stack);
+            case SLOT_RESULT -> resultHandler.setStackInSlot(0, stack);
+        }
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return 64; // 或者根据具体slot返回不同的限制
+    }
+
+    @Override
+    public boolean isItemValid(int slot, ItemVariant resource, int count) {
+        return switch (slot) {
+            case SLOT_INPUT_PRIMARY, SLOT_INPUT_SECONDARY -> true;
+            case SLOT_FUEL -> FuelRegistry.INSTANCE.get(resource.getItem()) != null;
+            case SLOT_RESULT -> false;
+            default -> false;
+        };
+    }
+
+    // 添加wrapHandlers方法
+    public ItemStackHandler wrapHandlers() {
+        ItemStackHandler combined = new ItemStackHandler(NUM_SLOTS);
+        combined.setStackInSlot(SLOT_INPUT_PRIMARY, ingredientsHandler.getStackInSlot(0));
+        combined.setStackInSlot(SLOT_INPUT_SECONDARY, ingredientsHandler.getStackInSlot(1));
+        combined.setStackInSlot(SLOT_FUEL, fuelHandler.getStackInSlot(0));
+        combined.setStackInSlot(SLOT_RESULT, resultHandler.getStackInSlot(0));
+        return combined;
+    }
 }

@@ -1,42 +1,41 @@
 package com.voxelutopia.ultramarine.data;
 
-import com.google.common.collect.ImmutableList;
+import com.voxelutopia.ultramarine.data.registry.CreativeTabRegistry;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.RegistryObject;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public enum ModCreativeTab {
-    MATERIALS,
-    TOOLS,
-    BUILDING_BLOCKS,
-    DECORATIVE_BLOCKS,
-    DECORATIONS,
-    FURNITURE,
-    WINDOWS_AND_DOORS,
-    PLANTS,
-    LAMPS;
+    MATERIALS(CreativeTabRegistry.MATERIALS),
+    TOOLS(CreativeTabRegistry.TOOLS),
+    BUILDING_BLOCKS(CreativeTabRegistry.BUILDING_BLOCKS),
+    DECORATIVE_BLOCKS(CreativeTabRegistry.DECORATIVE_BLOCKS),
+    DECORATIONS(CreativeTabRegistry.DECORATIONS),
+    FURNITURE(CreativeTabRegistry.FURNITURE),
+    WINDOWS_AND_DOORS(CreativeTabRegistry.WINDOWS_AND_DOORS),
+    PLANTS(CreativeTabRegistry.PLANTS),
+    LAMPS(CreativeTabRegistry.LAMPS);
 
-    static final Map<ModCreativeTab, LinkedHashSet<RegistryObject<Item>>> itemSets = Map.of(
-            MATERIALS, new LinkedHashSet<>(),
-            TOOLS, new LinkedHashSet<>(),
-            BUILDING_BLOCKS, new LinkedHashSet<>(),
-            DECORATIVE_BLOCKS, new LinkedHashSet<>(),
-            DECORATIONS, new LinkedHashSet<>(),
-            FURNITURE, new LinkedHashSet<>(),
-            WINDOWS_AND_DOORS, new LinkedHashSet<>(),
-            PLANTS, new LinkedHashSet<>(),
-            LAMPS, new LinkedHashSet<>()
-    );
+    public static final Map<ModCreativeTab, Set<Item>> itemSets = new LinkedHashMap<>();
 
-    public static void putItemInSet(RegistryObject<Item> item, ModCreativeTab tab){
+    static {
+        Arrays.stream(ModCreativeTab.values()).forEach(tab ->
+                itemSets.put(tab, new LinkedHashSet<>())
+        );
+    }
+
+    final CreativeModeTab tab;
+
+    ModCreativeTab(CreativeModeTab tab) {
+        this.tab = tab;
+    }
+
+    public static void putItemInSet(Item item, ModCreativeTab tab) {
         itemSets.get(tab).add(item);
     }
 
-    public static List<RegistryObject<Item>> getItemsFromSet(ModCreativeTab tab){
-        return ImmutableList.copyOf(itemSets.get(tab));
+    public CreativeModeTab getTab() {
+        return tab;
     }
-
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class ChiselTableScreen extends AbstractContainerScreen<ChiselTableMenu> {
 
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "textures/gui/chisel_table.png");
+    private static final ResourceLocation BACKGROUND = new ResourceLocation(Ultramarine.MOD_ID, "textures/gui/chisel_table.png");
 
     public ChiselTableScreen(ChiselTableMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -31,6 +31,6 @@ public class ChiselTableScreen extends AbstractContainerScreen<ChiselTableMenu> 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BACKGROUND);
-        guiGraphics.blit(BACKGROUND, this.getGuiLeft(), this.getGuiTop(), 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 }

@@ -16,18 +16,17 @@ public interface DiagonallyPlaceable {
 
     boolean isDiagonallyPlaceable();
 
-    default boolean getDiagonalState(@NotNull BlockPlaceContext pContext){
-        return Math.round((pContext.getRotation() + 180.0F ) / 45.0F) % 2 == 1;
+    default boolean getDiagonalState(@NotNull BlockPlaceContext pContext) {
+        return Math.round((pContext.getRotation() + 180.0F) / 45.0F) % 2 == 1;
     }
 
-    default int getOctaRotationState(BlockPlaceContext pContext){
+    default int getOctaRotationState(BlockPlaceContext pContext) {
         return Mth.floor((double) (pContext.getRotation() * 8.0F / 360.0F) + 0.5D) & 7;
     }
 
-    default Pair<Direction, Direction> getMainAndShiftedDirections(BlockPlaceContext pContext){
+    default Pair<Direction, Direction> getMainAndShiftedDirections(BlockPlaceContext pContext) {
         int rotation = getOctaRotationState(pContext);
         return switch (rotation) {
-            default -> Pair.of(Direction.NORTH, Direction.NORTH);
             case 1 -> Pair.of(Direction.NORTH, Direction.EAST);
             case 2 -> Pair.of(Direction.EAST, Direction.EAST);
             case 3 -> Pair.of(Direction.EAST, Direction.SOUTH);
@@ -35,16 +34,17 @@ public interface DiagonallyPlaceable {
             case 5 -> Pair.of(Direction.SOUTH, Direction.WEST);
             case 6 -> Pair.of(Direction.WEST, Direction.WEST);
             case 7 -> Pair.of(Direction.WEST, Direction.NORTH);
+            default -> Pair.of(Direction.NORTH, Direction.NORTH);
         };
     }
 
-    default void defineDiagonalProperty(StateDefinition.Builder<Block, BlockState> pBuilder){
+    default void defineDiagonalProperty(StateDefinition.Builder<Block, BlockState> pBuilder) {
         if (isDiagonallyPlaceable()) {
             pBuilder.add(DIAGONAL);
         }
     }
 
-    default BlockState setDiagonalStateForPlacement(@NotNull BlockState state, BlockPlaceContext pContext){
+    default BlockState setDiagonalStateForPlacement(@NotNull BlockState state, BlockPlaceContext pContext) {
         return isDiagonallyPlaceable() ? state.setValue(DIAGONAL, getDiagonalState(pContext)) : state;
     }
 }

@@ -1,6 +1,5 @@
 package com.voxelutopia.ultramarine.world.block;
 
-import com.mojang.math.OctahedralGroup;
 import com.voxelutopia.ultramarine.data.shape.RawVoxelShape;
 import com.voxelutopia.ultramarine.data.shape.ShapeFunction;
 import com.voxelutopia.ultramarine.world.block.state.ModBlockStateProperties;
@@ -22,13 +21,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class OrientableWallSideBlock extends WallSideBlock implements SideBlock{
+public class OrientableWallSideBlock extends WallSideBlock implements SideBlock {
 
     public static final EnumProperty<OrientableBlockType> TYPE = ModBlockStateProperties.ORIENTABLE_BLOCK_TYPE;
     private final ShapeFunction shapeFunction;
 
     public OrientableWallSideBlock(BaseBlockProperty property) {
-        this(property, ShapeFunction.sideOrientedShape(new RawVoxelShape(0,0,15,16,16,16)));
+        this(property, ShapeFunction.sideOrientedShape(new RawVoxelShape(0, 0, 15, 16, 16, 16)));
     }
 
     public OrientableWallSideBlock(BaseBlockProperty property, ShapeFunction shapeFunction) {
@@ -48,11 +47,11 @@ public class OrientableWallSideBlock extends WallSideBlock implements SideBlock{
 
         Direction faceDir = pContext.getClickedFace();
         Direction[] lookDirs = pContext.getNearestLookingDirections();
-        if (faceDir.getAxis().isHorizontal()){
+        if (faceDir.getAxis().isHorizontal()) {
             state = state.setValue(FACING, faceDir)
                     .setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
-            for (Direction dir : lookDirs){
-                if (dir.getAxis().isHorizontal() && dir != faceDir && dir != faceDir.getOpposite()){
+            for (Direction dir : lookDirs) {
+                if (dir.getAxis().isHorizontal() && dir != faceDir && dir != faceDir.getOpposite()) {
                     if (dir == faceDir.getOpposite().getClockWise())
                         state = state.setValue(TYPE, OrientableBlockType.LEFT);
                     if (dir == faceDir.getOpposite().getCounterClockWise())

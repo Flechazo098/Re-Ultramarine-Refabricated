@@ -32,16 +32,16 @@ public class ModConfiguredFeatures {
     private static final RuleTest NETHERRACK = new BlockMatchTest(Blocks.NETHERRACK);
 
     private static final Supplier<List<OreConfiguration.TargetBlockState>> OVERWORLD_JADE_ORE_PLACEMENT = Suppliers.memoize(() -> List.of(
-            OreConfiguration.target(STONE_ORE_REPLACEABLES, BlockRegistry.JADE_ORE.get().defaultBlockState()),
-            OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.DEEPSLATE_JADE_ORE.get().defaultBlockState())));
+            OreConfiguration.target(STONE_ORE_REPLACEABLES, BlockRegistry.JADE_ORE.defaultBlockState()),
+            OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.DEEPSLATE_JADE_ORE.defaultBlockState())));
     private static final Supplier<List<OreConfiguration.TargetBlockState>> OVERWORLD_MAGNESITE_ORE_PLACEMENT = Suppliers.memoize(() -> List.of(
-            OreConfiguration.target(STONE_ORE_REPLACEABLES, BlockRegistry.MAGNESITE_ORE.get().defaultBlockState()),
-            OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.DEEPSLATE_MAGNESITE_ORE.get().defaultBlockState())));
+            OreConfiguration.target(STONE_ORE_REPLACEABLES, BlockRegistry.MAGNESITE_ORE.defaultBlockState()),
+            OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.DEEPSLATE_MAGNESITE_ORE.defaultBlockState())));
     private static final Supplier<List<OreConfiguration.TargetBlockState>> OVERWORLD_HEMATITE_ORE_PLACEMENT = Suppliers.memoize(() -> List.of(
-            OreConfiguration.target(STONE_ORE_REPLACEABLES, BlockRegistry.HEMATITE_ORE.get().defaultBlockState()),
-            OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.DEEPSLATE_HEMATITE_ORE.get().defaultBlockState())));
+            OreConfiguration.target(STONE_ORE_REPLACEABLES, BlockRegistry.HEMATITE_ORE.defaultBlockState()),
+            OreConfiguration.target(DEEPSLATE_ORE_REPLACEABLES, BlockRegistry.DEEPSLATE_HEMATITE_ORE.defaultBlockState())));
     private static final Supplier<List<OreConfiguration.TargetBlockState>> NETHER_COBALT_ORE_PLACEMENT = Suppliers.memoize(() -> List.of(
-            OreConfiguration.target(NETHERRACK, BlockRegistry.NETHER_COBALT_ORE.get().defaultBlockState())));
+            OreConfiguration.target(NETHERRACK, BlockRegistry.NETHER_COBALT_ORE.defaultBlockState())));
 
     public static void bootstrap(BootstapContext<ConfiguredFeature<?, ?>> context) {
         register(context, OVERWORLD_JADE_ORE_KEY, Feature.ORE, new OreConfiguration(OVERWORLD_JADE_ORE_PLACEMENT.get(), 4));
@@ -50,12 +50,12 @@ public class ModConfiguredFeatures {
         register(context, NETHER_COBALT_ORE_KEY, Feature.ORE, new OreConfiguration(NETHER_COBALT_ORE_PLACEMENT.get(), 6));
     }
 
-    public static ResourceKey<ConfiguredFeature<?, ?>> key(String name){
-        return ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name));
+    public static ResourceKey<ConfiguredFeature<?, ?>> key(String name) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(Ultramarine.MOD_ID, name));
     }
 
     private static <FC extends FeatureConfiguration, F extends Feature<FC>> void register
-            (BootstapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> key, F feature, FC featureConfiguration){
+            (BootstapContext<ConfiguredFeature<?, ?>> context, ResourceKey<ConfiguredFeature<?, ?>> key, F feature, FC featureConfiguration) {
         context.register(key, new ConfiguredFeature<>(feature, featureConfiguration));
     }
 

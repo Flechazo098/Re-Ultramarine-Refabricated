@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.function.Function;
 
-public class RafterEnd extends ShiftableBlock{
+public class RafterEnd extends ShiftableBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final Function<BlockState, VoxelShape> RAFTER_SHAPE = ShapeFunction.cardinalRotations(new RawVoxelShape(5.0D, 10.0D, -4.0D, 11.0D, 16.0D, 16.0D));

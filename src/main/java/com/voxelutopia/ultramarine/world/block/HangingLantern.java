@@ -49,9 +49,9 @@ public class HangingLantern extends DecorativeBlock {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        switch (this.type){
+        switch (this.type) {
             case POLE -> {
-                return switch (pState.getValue(FACING)){
+                return switch (pState.getValue(FACING)) {
                     case DOWN, UP, NORTH -> POLE_NORTH;
                     case SOUTH -> POLE_SOUTH;
                     case WEST -> POLE_WEST;
@@ -59,7 +59,7 @@ public class HangingLantern extends DecorativeBlock {
                 };
             }
             case HANGING -> {
-                return switch (pState.getValue(FACING)){
+                return switch (pState.getValue(FACING)) {
                     case DOWN, UP, NORTH, SOUTH -> POLE_HANGING_X;
                     case EAST, WEST -> POLE_HANGING_Z;
                 };
@@ -70,10 +70,10 @@ public class HangingLantern extends DecorativeBlock {
 
     @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        switch (this.type){
+        switch (this.type) {
             case POLE -> getShape(pState, pLevel, pPos, CollisionContext.empty());
             case HANGING -> {
-                return switch (pState.getValue(FACING)){
+                return switch (pState.getValue(FACING)) {
                     case DOWN, UP, NORTH, SOUTH -> HANGING_INTERACTION_X;
                     case EAST, WEST -> HANGING_INTERACTION_Z;
                 };
@@ -86,7 +86,7 @@ public class HangingLantern extends DecorativeBlock {
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
         int lanterns = pState.getValue(LANTERNS);
-        if (item.is(ItemRegistry.SMALL_RED_LANTERN.get()) && lanterns < 3){
+        if (item.is(ItemRegistry.SMALL_RED_LANTERN) && lanterns < 3) {
             pLevel.setBlock(pPos, pState.setValue(LANTERNS, lanterns + 1), Block.UPDATE_ALL);
             if (!pPlayer.isCreative()) item.shrink(1);
             return InteractionResult.sidedSuccess(pLevel.isClientSide());
@@ -106,8 +106,8 @@ public class HangingLantern extends DecorativeBlock {
         pBuilder.add(LANTERNS);
     }
 
-    public enum HangingLanternType{
-        POLE, HANGING;
+    public enum HangingLanternType {
+        POLE, HANGING
 
     }
 

@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class Icicle extends WallSideBlock{
+public class Icicle extends WallSideBlock {
 
     public static final IntegerProperty VARIANT = ModBlockStateProperties.VARIANT;
     private final int numVariants;
@@ -29,8 +29,8 @@ public class Icicle extends WallSideBlock{
         this.shapeFunction = shapeFunction;
     }
 
-    public Icicle(int numVariants){
-        this(numVariants, ShapeFunction.cardinalRotations(new RawVoxelShape(0,0,15,16,16,16)));
+    public Icicle(int numVariants) {
+        this(numVariants, ShapeFunction.cardinalRotations(new RawVoxelShape(0, 0, 15, 16, 16, 16)));
     }
 
     @Override

@@ -15,7 +15,7 @@ import net.minecraft.world.level.material.Fluids;
 
 import java.util.Arrays;
 
-public class OrientableSixSideBlock extends SixSideBlock implements SideBlock{
+public class OrientableSixSideBlock extends SixSideBlock implements SideBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final DirectionProperty DIRECTION = ModBlockStateProperties.ON_FACE_DIRECTION;
@@ -54,10 +54,10 @@ public class OrientableSixSideBlock extends SixSideBlock implements SideBlock{
         BlockState newState = pState;
         Direction facing = pState.getValue(FACING);
         Direction onFaceDir = pState.getValue(DIRECTION);
-        if (facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             newState = newState.setValue(FACING, pRot.rotate(facing));
         }
-        if (onFaceDir.getAxis().isHorizontal()){
+        if (onFaceDir.getAxis().isHorizontal()) {
             newState = newState.setValue(DIRECTION, pRot.rotate(onFaceDir));
         }
         return newState;
@@ -68,15 +68,14 @@ public class OrientableSixSideBlock extends SixSideBlock implements SideBlock{
         BlockState newState = pState;
         Direction facing = pState.getValue(FACING);
         Direction onFaceDir = pState.getValue(DIRECTION);
-        if (facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             newState = newState.setValue(FACING, pMirror.rotation().rotate(facing));
         }
-        if (onFaceDir.getAxis().isHorizontal()){
+        if (onFaceDir.getAxis().isHorizontal()) {
             newState = newState.setValue(DIRECTION, pMirror.rotation().rotate(onFaceDir));
         }
         return newState;
     }
-
 
 
 }

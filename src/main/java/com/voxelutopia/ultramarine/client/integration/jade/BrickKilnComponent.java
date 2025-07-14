@@ -7,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
@@ -19,7 +18,7 @@ import snownee.jade.impl.ui.ProgressArrowElement;
 public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
     INSTANCE;
 
-    public static final ResourceLocation BRICK_KILN = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "brick_kiln");
+    public static final ResourceLocation BRICK_KILN = new ResourceLocation(Ultramarine.MOD_ID, "brick_kiln");
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
@@ -28,7 +27,7 @@ public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataPr
             int progress = data.getInt("CookTime");
             ListTag items = data.getList("Items", 10);
             NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
-            for(int i = 0; i < items.size(); ++i) {
+            for (int i = 0; i < items.size(); ++i) {
                 inventory.set(i, ItemStack.of(items.getCompound(i)));
             }
             IElementHelper helper = IElementHelper.get();
@@ -36,7 +35,7 @@ public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataPr
             tooltip.add(helper.item(inventory.get(0)));
             tooltip.append(helper.item(inventory.get(1)));
             tooltip.append(helper.item(inventory.get(2)));
-            tooltip.append(new ProgressArrowElement((float)progress / (float)total));
+            tooltip.append(new ProgressArrowElement((float) progress / (float) total));
             tooltip.append(helper.item(inventory.get(3)));
         }
     }
@@ -44,11 +43,11 @@ public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataPr
     @Override
     public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
         BrickKilnBlockEntity kiln = (BrickKilnBlockEntity) blockAccessor.getBlockEntity();
-        CombinedInvWrapper inv = kiln.wrapHandlers();
-        ItemStack primary = inv.getStackInSlot(BrickKilnBlockEntity.SLOT_INPUT_PRIMARY);
-        ItemStack secondary = inv.getStackInSlot(BrickKilnBlockEntity.SLOT_INPUT_SECONDARY);
-        ItemStack fuel = inv.getStackInSlot(BrickKilnBlockEntity.SLOT_FUEL);
-        ItemStack result = inv.getStackInSlot(BrickKilnBlockEntity.SLOT_RESULT);
+        // 直接使用BrickKilnBlockEntity的SlottedStackStorage接口方法
+        ItemStack primary = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_INPUT_PRIMARY);
+        ItemStack secondary = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_INPUT_SECONDARY);
+        ItemStack fuel = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_FUEL);
+        ItemStack result = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_RESULT);
         if (primary.isEmpty() && secondary.isEmpty() && fuel.isEmpty() && result.isEmpty()) return;
         ListTag items = new ListTag();
         items.add(primary.save(new CompoundTag()));

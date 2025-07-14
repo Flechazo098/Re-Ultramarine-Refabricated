@@ -34,10 +34,10 @@ public class LongTableBlock extends Block implements BaseBlockPropertyHolder {
 
     protected final BaseBlockProperty property;
 
-    private static final RawVoxelShape SURFACE = new RawVoxelShape(0,14,0,16,16,16);
-    private static final RawVoxelShape SURFACE_SINGLE_X = new RawVoxelShape(-4,14,0,20,16,16);
-    private static final RawVoxelShape LEGS_SINGLE_X_LEFT = new RawVoxelShape(17.5,0,0.5,19.5,16,15.5);
-    private static final RawVoxelShape LEGS_LONG_X_LEFT = new RawVoxelShape(13.5,0,0.5,15.5,16,15.5);
+    private static final RawVoxelShape SURFACE = new RawVoxelShape(0, 14, 0, 16, 16, 16);
+    private static final RawVoxelShape SURFACE_SINGLE_X = new RawVoxelShape(-4, 14, 0, 20, 16, 16);
+    private static final RawVoxelShape LEGS_SINGLE_X_LEFT = new RawVoxelShape(17.5, 0, 0.5, 19.5, 16, 15.5);
+    private static final RawVoxelShape LEGS_LONG_X_LEFT = new RawVoxelShape(13.5, 0, 0.5, 15.5, 16, 15.5);
 
     private static final Function<BlockState, VoxelShape> SHAPE_FUNCTION = Util.memoize(blockstate -> {
         boolean left = blockstate.getValue(LEFT);
@@ -51,8 +51,8 @@ public class LongTableBlock extends Block implements BaseBlockPropertyHolder {
                 Shapes.or(SURFACE.copy().toVoxelShape(), LEGS_LONG_X_LEFT.copy().toVoxelShape()) :
                 Shapes.or(SURFACE.copy().toVoxelShape(), LEGS_LONG_X_LEFT.copy().rotateY(90).toVoxelShape());
         else return x ?
-                Shapes.or(SURFACE.copy().toVoxelShape(), LEGS_LONG_X_LEFT.copy().mirrorZ().toVoxelShape()) :
-                Shapes.or(SURFACE.copy().toVoxelShape(), LEGS_LONG_X_LEFT.copy().mirrorZ().rotateY(90).toVoxelShape());
+                    Shapes.or(SURFACE.copy().toVoxelShape(), LEGS_LONG_X_LEFT.copy().mirrorZ().toVoxelShape()) :
+                    Shapes.or(SURFACE.copy().toVoxelShape(), LEGS_LONG_X_LEFT.copy().mirrorZ().rotateY(90).toVoxelShape());
     });
 
     public LongTableBlock(BaseBlockProperty property) {
@@ -90,7 +90,7 @@ public class LongTableBlock extends Block implements BaseBlockPropertyHolder {
     private void update(Level level, BlockPos pos, Set<BlockPos> visited) {
         var toVisit = new ArrayList<BlockPos>();
         for (var x = -1; x <= 1; x++) {
-            for (var z = -1; z<= 1; z++) {
+            for (var z = -1; z <= 1; z++) {
                 var neighbor = pos.offset(x, 0, z);
                 toVisit.add(neighbor);
             }
@@ -155,14 +155,13 @@ public class LongTableBlock extends Block implements BaseBlockPropertyHolder {
     @Override
     public BlockState rotate(BlockState pState, Rotation pRot) {
         BlockState newState = pState;
-        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90){
-            newState = switch (pState.getValue(AXIS)){
+        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90) {
+            newState = switch (pState.getValue(AXIS)) {
                 case X -> pState.setValue(AXIS, Direction.Axis.Z);
                 case Z -> pState.setValue(AXIS, Direction.Axis.X);
                 default -> newState;
             };
-        }
-        else if (pRot == Rotation.CLOCKWISE_180){
+        } else if (pRot == Rotation.CLOCKWISE_180) {
             newState = pState.setValue(LEFT, !pState.getValue(LEFT)).setValue(RIGHT, !pState.getValue(RIGHT));
         }
         return newState;

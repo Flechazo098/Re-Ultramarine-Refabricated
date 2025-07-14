@@ -1,35 +1,46 @@
 package com.voxelutopia.ultramarine.data.registry;
 
-import com.voxelutopia.ultramarine.Ultramarine;
+import com.voxelutopia.ultramarine.util.IMenuType;
 import com.voxelutopia.ultramarine.world.block.menu.BrickKilnMenu;
 import com.voxelutopia.ultramarine.world.block.menu.ChiselTableMenu;
 import com.voxelutopia.ultramarine.world.block.menu.ContainerDecorativeBlockMenu;
 import com.voxelutopia.ultramarine.world.block.menu.WoodworkingWorkbenchMenu;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 public class MenuTypeRegistry {
 
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, Ultramarine.MOD_ID);
 
-    public static final RegistryObject<MenuType<ContainerDecorativeBlockMenu>> CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X1 = MENU_TYPES.register("container_decorative_block_menu_generic_9x1",
-            () -> IForgeMenuType.create((windowId, inv, data) -> ContainerDecorativeBlockMenu.genericOneRow(windowId, inv)));
-    public static final RegistryObject<MenuType<ContainerDecorativeBlockMenu>> CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X3 = MENU_TYPES.register("container_decorative_block_menu_generic_9x3",
-            () -> IForgeMenuType.create((windowId, inv, data) -> ContainerDecorativeBlockMenu.genericThreeRows(windowId, inv)));
-    public static final RegistryObject<MenuType<ContainerDecorativeBlockMenu>> CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X6 = MENU_TYPES.register("container_decorative_block_menu_generic_9x6",
-            () -> IForgeMenuType.create((windowId, inv, data) -> ContainerDecorativeBlockMenu.genericSixRows(windowId, inv)));
-    public static final RegistryObject<MenuType<ContainerDecorativeBlockMenu>> CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X3 = MENU_TYPES.register("container_decorative_block_menu_food_9x3",
-            () -> IForgeMenuType.create((windowId, inv, data) -> ContainerDecorativeBlockMenu.foodThreeRows(windowId, inv)));
-    public static final RegistryObject<MenuType<ContainerDecorativeBlockMenu>> CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X6 = MENU_TYPES.register("container_decorative_block_menu_food_9x6",
-            () -> IForgeMenuType.create((windowId, inv, data) -> ContainerDecorativeBlockMenu.foodSixRows(windowId, inv)));
-    public static final RegistryObject<MenuType<WoodworkingWorkbenchMenu>> WOODWORKING_WORKBENCH = MENU_TYPES.register("woodworking_workbench",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new WoodworkingWorkbenchMenu(windowId, inv)));
-    public static final RegistryObject<MenuType<BrickKilnMenu>> BRICK_KILN = MENU_TYPES.register("brick_kiln",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new BrickKilnMenu(windowId, data.readBlockPos(), inv)));
-    public static final RegistryObject<MenuType<ChiselTableMenu>> CHISEL_TABLE = MENU_TYPES.register("chisel_table",
-            () -> IForgeMenuType.create((windowId, inv, data) -> new ChiselTableMenu(windowId, inv)));
+    public static MenuType<ContainerDecorativeBlockMenu> CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X1;
+    public static MenuType<ContainerDecorativeBlockMenu> CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X3;
+    public static MenuType<ContainerDecorativeBlockMenu> CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X6;
+    public static MenuType<ContainerDecorativeBlockMenu> CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X3;
+    public static MenuType<ContainerDecorativeBlockMenu> CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X6;
+    public static MenuType<WoodworkingWorkbenchMenu> WOODWORKING_WORKBENCH;
+    public static MenuType<BrickKilnMenu> BRICK_KILN;
+    public static MenuType<ChiselTableMenu> CHISEL_TABLE;
+
+
+    public static void registerModMenus() {
+        CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X1 = Registry.register(BuiltInRegistries.MENU, "container_decorative_block_menu_generic_9x1", new MenuType<>(ContainerDecorativeBlockMenu::genericOneRow, FeatureFlagSet.of()));
+        CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X3 = Registry.register(BuiltInRegistries.MENU, "container_decorative_block_menu_generic_9x3", new MenuType<>(ContainerDecorativeBlockMenu::genericThreeRows, FeatureFlagSet.of()));
+        CONTAINER_DECORATIVE_BLOCK_MENU_GENERIC_9X6 = Registry.register(BuiltInRegistries.MENU, "container_decorative_block_menu_generic_9x6", new MenuType<>(ContainerDecorativeBlockMenu::genericSixRows, FeatureFlagSet.of()));
+        CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X3 = Registry.register(BuiltInRegistries.MENU, "container_decorative_block_menu_food_9x3", new MenuType<>(ContainerDecorativeBlockMenu::foodThreeRows, FeatureFlagSet.of()));
+        CONTAINER_DECORATIVE_BLOCK_MENU_FOOD_9X6 = Registry.register(BuiltInRegistries.MENU, "container_decorative_block_menu_food_9x6", new MenuType<>(ContainerDecorativeBlockMenu::foodSixRows, FeatureFlagSet.of()));
+        WOODWORKING_WORKBENCH = Registry.register(BuiltInRegistries.MENU, "woodworking_workbench", new MenuType<>(WoodworkingWorkbenchMenu::new, FeatureFlagSet.of()));
+        BRICK_KILN = Registry.register(BuiltInRegistries.MENU, "brick_kiln",
+                IMenuType.create((windowId, inv, data) -> {
+                    BlockPos pos = data != null ? data.readBlockPos() : BlockPos.ZERO;
+                    return new BrickKilnMenu(windowId, pos, inv);
+                }));
+        CHISEL_TABLE = Registry.register(BuiltInRegistries.MENU, "chisel_table",
+                IMenuType.create((windowId, inv, data) -> {
+                    return new ChiselTableMenu(windowId, inv, ContainerLevelAccess.NULL);
+                }));
+    }
 
 }

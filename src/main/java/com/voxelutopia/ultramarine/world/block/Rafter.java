@@ -24,7 +24,7 @@ public class Rafter extends ShiftableBlock {
     public static final Function<BlockState, VoxelShape> RAFTER_SHAPE = ShapeFunction.axialRotations(new RawVoxelShape(0.0D, 10.0D, 5.0D, 16.0D, 16.0D, 11.0D));
     public static final Function<BlockState, VoxelShape> RAFTER_SHAPE_SHIFTED = ShapeFunction.axialRotations(new RawVoxelShape(0.0D, 18.0D, 5.0D, 16.0D, 24.0D, 11.0D));
 
-    public Rafter(BaseBlockProperty property){
+    public Rafter(BaseBlockProperty property) {
         super(property.copy().properties.noOcclusion());
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(AXIS, Direction.Axis.X)
@@ -45,8 +45,8 @@ public class Rafter extends ShiftableBlock {
     @Override
     public BlockState rotate(BlockState pState, Rotation pRot) {
         BlockState newState = pState;
-        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90){
-            newState = switch (pState.getValue(AXIS)){
+        if (pRot == Rotation.CLOCKWISE_90 || pRot == Rotation.COUNTERCLOCKWISE_90) {
+            newState = switch (pState.getValue(AXIS)) {
                 case X -> pState.setValue(AXIS, Direction.Axis.Z);
                 case Z -> pState.setValue(AXIS, Direction.Axis.X);
                 default -> newState;
@@ -69,7 +69,6 @@ public class Rafter extends ShiftableBlock {
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
-
 
 
 }

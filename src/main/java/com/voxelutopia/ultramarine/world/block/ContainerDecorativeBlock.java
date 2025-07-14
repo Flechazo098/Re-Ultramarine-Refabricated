@@ -15,7 +15,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class ContainerDecorativeBlock extends DecorativeBlock implements EntityBlock {
@@ -29,7 +28,7 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
         this.rowCount = builder.rowCount;
     }
 
-    public static Builder with(BaseBlockProperty property){
+    public static Builder with(BaseBlockProperty property) {
         return new Builder(property);
     }
 
@@ -41,11 +40,6 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
                 containerBlockEntity.setCustomName(stackIn.getHoverName());
             }
         }
-    }
-
-    @Override
-    public PushReaction getPistonPushReaction(BlockState pState) {
-        return PushReaction.BLOCK;
     }
 
     @Override
@@ -67,8 +61,7 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rayIn) {
         if (worldIn.isClientSide) {
             return InteractionResult.SUCCESS;
-        }
-        else {
+        } else {
             BlockEntity blockEntity = worldIn.getBlockEntity(pos);
             if (blockEntity instanceof ContainerDecorativeBlockEntity container) {
                 player.openMenu(container);
@@ -89,11 +82,11 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
         }
     }
 
-    public ContainerType getContainerType(){
+    public ContainerType getContainerType() {
         return this.containerType;
     }
 
-    public static class Builder extends DecorativeBlock.Builder{
+    public static class Builder extends DecorativeBlock.Builder {
 
         private ContainerType containerType = ContainerType.COMMON_REGULAR;
         private int rowCount = 3;
@@ -102,13 +95,13 @@ public class ContainerDecorativeBlock extends DecorativeBlock implements EntityB
             super(property);
         }
 
-        public Builder content(ContainerType type){
+        public Builder content(ContainerType type) {
             this.containerType = type;
             this.rowCount = type.getRows();
             return this;
         }
 
-        public ContainerDecorativeBlock build(){
+        public ContainerDecorativeBlock build() {
             return new ContainerDecorativeBlock(this);
         }
     }

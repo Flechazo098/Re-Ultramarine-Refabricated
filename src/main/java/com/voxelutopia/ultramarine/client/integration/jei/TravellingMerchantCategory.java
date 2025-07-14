@@ -15,9 +15,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public class TravellingMerchantCategory extends AbstractRecipeCategory<TravellingMerchantWrapper>  implements IRecipeCategory<TravellingMerchantWrapper> {
+public class TravellingMerchantCategory extends AbstractRecipeCategory<TravellingMerchantWrapper> implements IRecipeCategory<TravellingMerchantWrapper> {
 
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "custom_wandering_trader");
+    public static final ResourceLocation UID = new ResourceLocation(Ultramarine.MOD_ID, "custom_wandering_trader");
 
     public static final RecipeType<TravellingMerchantWrapper> CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE =
             new RecipeType<>(UID, TravellingMerchantWrapper.class);
@@ -26,7 +26,7 @@ public class TravellingMerchantCategory extends AbstractRecipeCategory<Travellin
     public static final int HEIGHT = 34;
 
     public TravellingMerchantCategory(IGuiHelper guiHelper) {
-        super(CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE, Component.translatable("gui.jei.category.travelling_merchant"), guiHelper.createDrawableItemLike(BlockRegistry.TEAHOUSE_FLAG.get()), WIDTH, HEIGHT);
+        super(CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE, Component.translatable("gui.jei.category.travelling_merchant"), guiHelper.createDrawableItemLike(BlockRegistry.TEAHOUSE_FLAG), WIDTH, HEIGHT);
     }
 
     @Override

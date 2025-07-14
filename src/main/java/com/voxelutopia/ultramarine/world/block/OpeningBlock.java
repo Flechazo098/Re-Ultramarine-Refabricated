@@ -27,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 
-public class OpeningBlock extends DecorativeBlock{
+public class OpeningBlock extends DecorativeBlock {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
@@ -134,12 +134,12 @@ public class OpeningBlock extends DecorativeBlock{
     }
 
     @Override
-    public BlockState rotate(BlockState pState, Rotation pRotation){
+    public BlockState rotate(BlockState pState, Rotation pRotation) {
         return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState pState, Mirror pMirror){
+    public BlockState mirror(BlockState pState, Mirror pMirror) {
         return pMirror == Mirror.NONE ? pState : pState.rotate(pMirror.getRotation(pState.getValue(FACING))).cycle(HINGE);
     }
 

@@ -25,8 +25,8 @@ public class SeatEntity extends Entity {
         this.life = 0;
     }
 
-    public SeatEntity(Level level, Vec3 pos){
-        this(EntityTypeRegistry.SEAT.get(), level);
+    public SeatEntity(Level level, Vec3 pos) {
+        this(EntityTypeRegistry.SEAT, level);
         this.moveTo(pos);
     }
 

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class BrickKilnScreen extends AbstractContainerScreen<BrickKilnMenu> {
 
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "textures/gui/brick_kiln.png");
+    private static final ResourceLocation BACKGROUND = new ResourceLocation(Ultramarine.MOD_ID, "textures/gui/brick_kiln.png");
 
     public BrickKilnScreen(BrickKilnMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -31,13 +31,13 @@ public class BrickKilnScreen extends AbstractContainerScreen<BrickKilnMenu> {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BACKGROUND);
-        guiGraphics.blit(BACKGROUND, this.getGuiLeft(), this.getGuiTop(), 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(BACKGROUND, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
         if (this.menu.isLit()) {
             int k = this.menu.getLitProgress();
-            guiGraphics.blit(BACKGROUND, this.getGuiLeft() + 56, this.getGuiTop() + 36 + 12 - k, 176, 12 - k, 14, k + 1);
+            guiGraphics.blit(BACKGROUND, this.leftPos + 56, this.topPos + 36 + 12 - k, 176, 12 - k, 14, k + 1);
         }
 
         int l = this.menu.getBurnProgress();
-        guiGraphics.blit(BACKGROUND, this.getGuiLeft() + 79, this.getGuiTop() + 34, 176, 14, l + 1, 16);
+        guiGraphics.blit(BACKGROUND, this.leftPos + 79, this.topPos + 34, 176, 14, l + 1, 16);
     }
 }

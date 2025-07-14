@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class RoofRidgeConnection extends BaseAxialBlock implements SnowRoofRidge{
+public class RoofRidgeConnection extends BaseAxialBlock implements SnowRoofRidge {
 
     private final DyeColor color;
     private final RoofRidgeType type;

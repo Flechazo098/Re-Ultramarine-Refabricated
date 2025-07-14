@@ -2,6 +2,7 @@ package com.voxelutopia.ultramarine.world.block;
 
 import com.voxelutopia.ultramarine.data.registry.BlockEntityRegistry;
 import com.voxelutopia.ultramarine.world.block.entity.BottleGourdBlockEntity;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,7 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -39,14 +39,14 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
-        var optionalBlockEntity = pLevel.getBlockEntity(pPos, BlockEntityRegistry.BOTTLE_GOURD.get());
+        var optionalBlockEntity = pLevel.getBlockEntity(pPos, BlockEntityRegistry.BOTTLE_GOURD);
         BottleGourdBlockEntity blockEntity;
         if (optionalBlockEntity.isPresent())
             blockEntity = optionalBlockEntity.get();
         else
             return InteractionResult.PASS;
 
-        if (item.is(Items.POTION)){
+        if (item.is(Items.POTION)) {
             Potion potion = PotionUtils.getPotion(item);
             if (blockEntity.addPotionCharge(potion)) {
                 if (!pLevel.isClientSide()) {
@@ -58,8 +58,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
                 pLevel.playSound(null, pPos, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 1.0f, 1.0f);
                 return InteractionResult.sidedSuccess(pLevel.isClientSide);
             }
-        }
-        else if (blockEntity.hasCharges()){
+        } else if (blockEntity.hasCharges()) {
             Optional<Potion> potion1 = blockEntity.takePotionCharge();
             if (potion1.isPresent()) {
                 if (!pLevel.isClientSide()) {
@@ -73,8 +72,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
                 }
                 pLevel.playSound(null, pPlayer, SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 1.0f);
                 return InteractionResult.sidedSuccess(pLevel.isClientSide);
-            }
-            else return InteractionResult.PASS;
+            } else return InteractionResult.PASS;
         }
         return InteractionResult.PASS;
     }
@@ -82,7 +80,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
     @Override
     public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
         super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
-        pLevel.getBlockEntity(pPos, BlockEntityRegistry.BOTTLE_GOURD.get()).ifPresent(entity -> {
+        pLevel.getBlockEntity(pPos, BlockEntityRegistry.BOTTLE_GOURD).ifPresent(entity -> {
             if (entity.hasCharges() && !pLevel.isClientSide()) {
                 int charges = entity.getCharges();
                 List<MobEffectInstance> effects = entity.getPotion().getEffects();

@@ -31,7 +31,7 @@ public interface SnowRoofRidge {
 
     int MAX_SNOW_STAGES = 5;
 
-    default void handleSnow(BlockState pState, Level pLevel, BlockPos pPos){
+    default void handleSnow(BlockState pState, Level pLevel, BlockPos pPos) {
         if (!pLevel.isClientSide()) {
             int snow = pState.getValue(SNOW_LAYERS);
             snow++;
@@ -40,7 +40,7 @@ public interface SnowRoofRidge {
         }
     }
 
-    default void handleSnow(BlockState pState, LevelAccessor pLevel, BlockPos pPos){
+    default void handleSnow(BlockState pState, LevelAccessor pLevel, BlockPos pPos) {
         if (!pLevel.isClientSide()) {
             int snow = pState.getValue(SNOW_LAYERS);
             snow++;
@@ -49,7 +49,7 @@ public interface SnowRoofRidge {
         }
     }
 
-    default void removeSnow(BlockState pState, Level pLevel, BlockPos pPos){
+    default void removeSnow(BlockState pState, Level pLevel, BlockPos pPos) {
         if (!pLevel.isClientSide()) {
             int snow = pState.getValue(SNOW_LAYERS);
             snow--;
@@ -60,12 +60,12 @@ public interface SnowRoofRidge {
 
     default InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
-        if (item.is(Items.SNOWBALL)){
+        if (item.is(Items.SNOWBALL)) {
             handleSnow(pState, pLevel, pPos);
             if (!pPlayer.isCreative()) item.shrink(1);
             return InteractionResult.sidedSuccess(pLevel.isClientSide);
         }
-        if (item.getItem() instanceof ShovelItem){
+        if (item.getItem() instanceof ShovelItem) {
             removeSnow(pState, pLevel, pPos);
             if (!pPlayer.isCreative()) {
                 item.hurtAndBreak(1, pPlayer, p -> p.broadcastBreakEvent(pHand));
@@ -84,7 +84,7 @@ public interface SnowRoofRidge {
 
         String name;
 
-        RoofRidgeType(String name){
+        RoofRidgeType(String name) {
             this.name = name;
         }
 

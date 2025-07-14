@@ -4,7 +4,6 @@ import com.voxelutopia.ultramarine.data.registry.SoundRegistry;
 import com.voxelutopia.ultramarine.world.block.RailingBlock;
 import com.voxelutopia.ultramarine.world.block.state.ModBlockStateProperties;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
@@ -33,31 +32,31 @@ public class WoodenMallet extends Item {
         BlockPos blockpos = pContext.getClickedPos();
         BlockState blockstate = level.getBlockState(blockpos);
         boolean success = false;
-        if (blockstate.hasProperty(ModBlockStateProperties.SHIFTED)){
+        if (blockstate.hasProperty(ModBlockStateProperties.SHIFTED)) {
             BlockState pNewState = blockstate.setValue(ModBlockStateProperties.SHIFTED,
                     !blockstate.getValue(ModBlockStateProperties.SHIFTED));
             level.setBlock(blockpos, pNewState, Block.UPDATE_ALL);
             success = true;
         }
-        if (blockstate.hasProperty(ModBlockStateProperties.CHIRAL_BLOCK_TYPE)){
+        if (blockstate.hasProperty(ModBlockStateProperties.CHIRAL_BLOCK_TYPE)) {
             level.setBlock(blockpos, blockstate.setValue(ModBlockStateProperties.CHIRAL_BLOCK_TYPE,
                     blockstate.getValue(ModBlockStateProperties.CHIRAL_BLOCK_TYPE).getOpposite()), Block.UPDATE_ALL);
             success = true;
         }
-        if (blockstate.hasProperty(ModBlockStateProperties.LOCKED) && player.isPresent() && player.get().isCrouching()){
+        if (blockstate.hasProperty(ModBlockStateProperties.LOCKED) && player.isPresent() && player.get().isCrouching()) {
             blockstate = blockstate.setValue(ModBlockStateProperties.LOCKED,
                     !blockstate.getValue(ModBlockStateProperties.LOCKED));
-            if (blockstate.getBlock() instanceof RailingBlock railingBlock){
+            if (blockstate.getBlock() instanceof RailingBlock railingBlock) {
                 blockstate = railingBlock.updatePole(blockstate);
             }
             level.setBlock(blockpos, blockstate, Block.UPDATE_ALL);
             success = true;
         }
-        if (success){
+        if (success) {
             player.ifPresent(player1 -> {
                 item.hurtAndBreak(1, player1, p -> p.broadcastBreakEvent(pContext.getHand()));
                 player1.awardStat(Stats.ITEM_USED.get(item.getItem()));
-                level.playSound(player.get(),blockpos, SoundRegistry.WOOD_HAMMER.get(), SoundSource.BLOCKS,1,0.75f);
+                level.playSound(player.get(), blockpos, SoundRegistry.WOOD_HAMMER, SoundSource.BLOCKS, 1, 0.75f);
             });
             return InteractionResult.sidedSuccess(level.isClientSide());
         }

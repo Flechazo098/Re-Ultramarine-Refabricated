@@ -1,8 +1,8 @@
 package com.voxelutopia.ultramarine.data;
 
 import com.voxelutopia.ultramarine.Ultramarine;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -14,28 +14,29 @@ public class ModItemTags {
     public static final TagKey<Item> CHISEL_TEMPLATES = modTag("chisel_templates");
     public static final TagKey<Item> PAINTING_SCROLL_ITEMS = modTag("painting_scroll_items");
 
-    public static final TagKey<Item> FORGE_WHITE_DYE = forgeTag("dyes/white");
-    public static final TagKey<Item> FORGE_ORANGE_DYE = forgeTag("dyes/orange");
-    public static final TagKey<Item> FORGE_MAGENTA_DYE = forgeTag("dyes/magenta");
-    public static final TagKey<Item> FORGE_LIGHT_BLUE_DYE = forgeTag("dyes/light_blue");
-    public static final TagKey<Item> FORGE_YELLOW_DYE = forgeTag("dyes/yellow");
-    public static final TagKey<Item> FORGE_LIME_DYE = forgeTag("dyes/lime");
-    public static final TagKey<Item> FORGE_PINK_DYE = forgeTag("dyes/pink");
-    public static final TagKey<Item> FORGE_GRAY_DYE = forgeTag("dyes/gray");
-    public static final TagKey<Item> FORGE_LIGHT_GRAY_DYE = forgeTag("dyes/light_gray");
-    public static final TagKey<Item> FORGE_CYAN_DYE = forgeTag("dyes/cyan");
-    public static final TagKey<Item> FORGE_PURPLE_DYE = forgeTag("dyes/purple");
-    public static final TagKey<Item> FORGE_BLUE_DYE = forgeTag("dyes/blue");
-    public static final TagKey<Item> FORGE_BROWN_DYE = forgeTag("dyes/brown");
-    public static final TagKey<Item> FORGE_GREEN_DYE = forgeTag("dyes/green");
-    public static final TagKey<Item> FORGE_RED_DYE = forgeTag("dyes/red");
-    public static final TagKey<Item> FORGE_BLACK_DYE = forgeTag("dyes/black");
-    public static final TagKey<Item> FORGE_DYES = forgeTag("dyes");
+    public static final TagKey<Item> DYES = commonTag("dyes");
+    public static final TagKey<Item> WHITE_DYES = commonTag("white_dyes");
+    public static final TagKey<Item> ORANGE_DYES = commonTag("orange_dyes");
+    public static final TagKey<Item> MAGENTA_DYES = commonTag("magenta_dyes");
+    public static final TagKey<Item> LIGHT_BLUE_DYES = commonTag("light_blue_dyes");
+    public static final TagKey<Item> YELLOW_DYES = commonTag("yellow_dyes");
+    public static final TagKey<Item> LIME_DYES = commonTag("lime_dyes");
+    public static final TagKey<Item> PINK_DYES = commonTag("pink_dyes");
+    public static final TagKey<Item> GRAY_DYES = commonTag("gray_dyes");
+    public static final TagKey<Item> LIGHT_GRAY_DYES = commonTag("light_gray_dyes");
+    public static final TagKey<Item> CYAN_DYES = commonTag("cyan_dyes");
+    public static final TagKey<Item> PURPLE_DYES = commonTag("purple_dyes");
+    public static final TagKey<Item> BLUE_DYES = commonTag("blue_dyes");
+    public static final TagKey<Item> BROWN_DYES = commonTag("brown_dyes");
+    public static final TagKey<Item> GREEN_DYES = commonTag("green_dyes");
+    public static final TagKey<Item> RED_DYES = commonTag("red_dyes");
+    public static final TagKey<Item> BLACK_DYES = commonTag("black_dyes");
 
-    private static TagKey<Item> forgeTag(String path){
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", path));
+    private static TagKey<Item> commonTag(String path) {
+        return TagKey.create(Registries.ITEM, new ResourceLocation("c", path)); // 社区通用标签
     }
-    private static TagKey<Item> modTag(String path){
-        return ItemTags.create(ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, path));
+
+    private static TagKey<Item> modTag(String path) {
+        return TagKey.create(Registries.ITEM, new ResourceLocation(Ultramarine.MOD_ID, path)); // 模组私有标签
     }
 }

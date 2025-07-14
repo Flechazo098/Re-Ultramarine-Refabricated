@@ -44,14 +44,14 @@ public class SixSideBlock extends Block implements BaseBlockPropertyHolder, Simp
     }
 
     public SixSideBlock(BaseBlockProperty property) {
-        this(property,  1);
+        this(property, 1);
     }
 
     public SixSideBlock(BaseBlockProperty property, ShapeFunction shapeFunction) {
         this(property, shapeFunction, false);
     }
 
-    public SixSideBlock(BaseBlockProperty property, int sideThickness){
+    public SixSideBlock(BaseBlockProperty property, int sideThickness) {
         this(property, sideThickness, false);
     }
 
@@ -84,7 +84,7 @@ public class SixSideBlock extends Block implements BaseBlockPropertyHolder, Simp
     public BlockState rotate(BlockState pState, Rotation pRot) {
         BlockState newState = pState;
         Direction facing = pState.getValue(FACING);
-        if (facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             newState = newState.setValue(FACING, pRot.rotate(facing));
         }
         return newState;
@@ -94,7 +94,7 @@ public class SixSideBlock extends Block implements BaseBlockPropertyHolder, Simp
     public BlockState mirror(BlockState pState, Mirror pMirror) {
         BlockState newState = pState;
         Direction facing = pState.getValue(FACING);
-        if (facing.getAxis().isHorizontal()){
+        if (facing.getAxis().isHorizontal()) {
             newState = newState.rotate(pMirror.getRotation(facing));
         }
         return newState;
@@ -104,7 +104,6 @@ public class SixSideBlock extends Block implements BaseBlockPropertyHolder, Simp
     public BaseBlockProperty getProperty() {
         return this.property;
     }
-
 
 
 }

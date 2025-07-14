@@ -50,7 +50,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
     }
 
     public WoodworkingWorkbenchMenu(int id, Inventory inventory, final ContainerLevelAccess levelAccess) {
-        super(MenuTypeRegistry.WOODWORKING_WORKBENCH.get(), id);
+        super(MenuTypeRegistry.WOODWORKING_WORKBENCH, id);
         this.access = levelAccess;
         this.level = inventory.player.level();
         this.inputSlot = this.addSlot(new Slot(this.container, INPUT_SLOT, 20, 33));
@@ -70,20 +70,20 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
                 levelAccess.execute((level, pos) -> {
                     long l = level.getGameTime();
                     if (WoodworkingWorkbenchMenu.this.lastSoundTime != l) {
-                        level.playSound((Player) null, pos, SoundRegistry.WOODWORK.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                        level.playSound(null, pos, SoundRegistry.WOODWORK, SoundSource.BLOCKS, 1.0F, 1.0F);
                         WoodworkingWorkbenchMenu.this.lastSoundTime = l;
                     }
                 });
             }
         });
 
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 9; ++j) {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 9; ++j) {
                 this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        for(int k = 0; k < 9; ++k) {
+        for (int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
         }
 
@@ -107,7 +107,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
     }
 
     public boolean stillValid(Player pPlayer) {
-        return stillValid(this.access, pPlayer, BlockRegistry.WOODWORKING_WORKBENCH.get());
+        return stillValid(this.access, pPlayer, BlockRegistry.WOODWORKING_WORKBENCH);
     }
 
     public boolean clickMenuButton(Player pPlayer, int pId) {
@@ -137,7 +137,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
         this.selectedRecipeIndex.set(-1);
         this.resultSlot.set(ItemStack.EMPTY);
         if (!pStack.isEmpty()) {
-            this.recipes = this.level.getRecipeManager().getRecipesFor(RecipeTypeRegistry.WOODWORKING.get(), pInventory, this.level);
+            this.recipes = this.level.getRecipeManager().getRecipesFor(RecipeTypeRegistry.WOODWORKING, pInventory, this.level);
         }
 
     }
@@ -155,7 +155,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
     }
 
     public MenuType<?> getType() {
-        return MenuTypeRegistry.WOODWORKING_WORKBENCH.get();
+        return MenuTypeRegistry.WOODWORKING_WORKBENCH;
     }
 
     public void registerUpdateListener(Runnable pListener) {
@@ -184,7 +184,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(slotItem, 2, 38, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (this.level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.WOODWORKING.get(), new SimpleContainer(slotItem), this.level).isPresent()) {
+            } else if (this.level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.WOODWORKING, new SimpleContainer(slotItem), this.level).isPresent()) {
                 if (!this.moveItemStackTo(slotItem, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }

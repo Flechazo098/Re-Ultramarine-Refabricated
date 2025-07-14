@@ -14,11 +14,11 @@ public class BaseHorizontalDirectionalBlock extends HorizontalDirectionalBlock i
     protected final BaseBlockProperty property;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public BaseHorizontalDirectionalBlock(BaseBlock block){
+    public BaseHorizontalDirectionalBlock(BaseBlock block) {
         this(block.getProperty());
     }
 
-    public BaseHorizontalDirectionalBlock(BaseBlockProperty property){
+    public BaseHorizontalDirectionalBlock(BaseBlockProperty property) {
         super(property.properties);
         this.property = property;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));

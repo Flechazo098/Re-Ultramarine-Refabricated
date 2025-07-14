@@ -134,19 +134,19 @@ public final class BaseBlockProperty {
 
     //todo map colors
 
-    final BlockBehaviour.Properties properties;
+    BlockBehaviour.Properties properties;
     final BlockMaterial material;
 
-    BaseBlockProperty(final BlockBehaviour.Properties properties, final BlockMaterial material){
+    BaseBlockProperty(final BlockBehaviour.Properties properties, final BlockMaterial material) {
         this.properties = properties;
         this.material = material;
     }
 
-    public BlockMaterial getMaterial(){
+    public BlockMaterial getMaterial() {
         return material;
     }
 
-    public BaseBlockProperty copy(){
+    public BaseBlockProperty copy() {
         BlockBehaviour.Properties properties1 = BlockBehaviour.Properties.copy(new BlockBehaviour(this.properties) {
             @Override
             public Item asItem() {
@@ -161,7 +161,7 @@ public final class BaseBlockProperty {
         return new BaseBlockProperty(properties1, this.material);
     }
 
-    public enum BlockMaterial{
+    public enum BlockMaterial {
         STONE(BlockTags.MINEABLE_WITH_PICKAXE),
         METAL(BlockTags.MINEABLE_WITH_PICKAXE),
         ICE(BlockTags.MINEABLE_WITH_PICKAXE),
@@ -174,10 +174,12 @@ public final class BaseBlockProperty {
         FLAX(BlockTags.MINEABLE_WITH_HOE);
 
         final TagKey<Block> tool;
-        public TagKey<Block> getTool(){
+
+        public TagKey<Block> getTool() {
             return tool;
         }
-        BlockMaterial(TagKey<Block> tool){
+
+        BlockMaterial(TagKey<Block> tool) {
             this.tool = tool;
         }
     }

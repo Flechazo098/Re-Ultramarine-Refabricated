@@ -23,12 +23,12 @@ import static mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT;
 
 public class CompositeSmeltingRecipeCategory implements IRecipeCategory<CompositeSmeltingRecipe> {
 
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "composite_smelting");
+    public static final ResourceLocation UID = new ResourceLocation(Ultramarine.MOD_ID, "composite_smelting");
 
     public static final RecipeType<CompositeSmeltingRecipe> COMPOSITE_SMELTING_RECIPE_TYPE =
             new RecipeType<>(UID, CompositeSmeltingRecipe.class);
 
-    public static final ResourceLocation TEXTURE_GUI = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "textures/gui/brick_kiln.png");
+    public static final ResourceLocation TEXTURE_GUI = new ResourceLocation(Ultramarine.MOD_ID, "textures/gui/brick_kiln.png");
 
     private final IDrawable background;
     private final int regularCookTime;
@@ -38,7 +38,7 @@ public class CompositeSmeltingRecipeCategory implements IRecipeCategory<Composit
     public CompositeSmeltingRecipeCategory(IGuiHelper guiHelper) {
         this.background = guiHelper.createDrawable(TEXTURE_GUI, 45, 16, 92, 54);
         this.regularCookTime = 200;
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BlockRegistry.BRICK_KILN.get()));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BlockRegistry.BRICK_KILN));
         this.localizedName = Component.translatable("gui.jei.category.composite_smelting");
     }
 

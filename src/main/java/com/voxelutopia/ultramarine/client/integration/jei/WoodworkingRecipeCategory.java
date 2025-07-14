@@ -16,10 +16,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-public class WoodworkingRecipeCategory extends AbstractRecipeCategory<WoodworkingRecipe> implements IRecipeCategory<WoodworkingRecipe>{
+public class WoodworkingRecipeCategory extends AbstractRecipeCategory<WoodworkingRecipe> implements IRecipeCategory<WoodworkingRecipe> {
 
 
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "woodworking");
+    public static final ResourceLocation UID = new ResourceLocation(Ultramarine.MOD_ID, "woodworking");
 
     public static final RecipeType<WoodworkingRecipe> WOODWORKING_RECIPE_TYPE =
             new RecipeType<>(UID, WoodworkingRecipe.class);
@@ -28,7 +28,7 @@ public class WoodworkingRecipeCategory extends AbstractRecipeCategory<Woodworkin
     public static final int HEIGHT = 34;
 
     public WoodworkingRecipeCategory(IGuiHelper guiHelper) {
-        super(WOODWORKING_RECIPE_TYPE, Component.translatable("gui.jei.category.woodworking"), guiHelper.createDrawableItemLike(BlockRegistry.WOODWORKING_WORKBENCH.get()), WIDTH, HEIGHT);
+        super(WOODWORKING_RECIPE_TYPE, Component.translatable("gui.jei.category.woodworking"), guiHelper.createDrawableItemLike(BlockRegistry.WOODWORKING_WORKBENCH), WIDTH, HEIGHT);
     }
 
     @Override

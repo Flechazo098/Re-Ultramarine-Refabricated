@@ -1,111 +1,29 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0,6.2)', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.+'
-    }
-}
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'org.spongepowered.mixin'
-
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-
-version = "${minecraft_version}-${mod_version}"
-group = mod_base_package
-archivesBaseName = mod_id
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-minecraft {
-    mappings channel: mappings_channel, version: mappings_version
-
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'info'
-            property 'forge.enabledGameTestNamespaces', mod_id
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            if (project.hasProperty('mc_uuid')) {
-                args '--uuid', project.getProperty('mc_uuid')
-            }
-            if (project.hasProperty('mc_username')) {
-                args '--username', project.getProperty('mc_username')
-            }
-            if (project.hasProperty('mc_accessToken')) {
-                args '--accessToken', project.getProperty('mc_accessToken')
-            }
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        gameTestServer {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/') ,'--existing', file('src/generated/resources/')
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
+plugins {
+    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'maven-publish'
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
 
 repositories {
-
+    // Add repositories to retrieve artifacts from in here.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
+    maven { url = "https://mvn.devos.one/releases/" }
+    maven {
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
+    }
     maven { // JEI
         url "https://dvs1.progwml6.com/files/maven"
     }
@@ -126,101 +44,98 @@ repositories {
     }
 }
 
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
-    debug.export = true
-}
+def portingLibModules = [
+        "common", "items", "fluids", "extensions", "tags", "recipe_book_categories",
+        "entity", "tool_actions", "transfer", "registries", "lazy_registration",
+        "data", "model_builders", "model_generators", "model_loader", "model_materials",
+        "models", "networking", "utility", "base", "blocks", "client_events", "level_events"
+]
+
+
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    portingLibModules.each {
+        modApi(include("io.github.fabricators_of_create.Porting-Lib:${it}:${port_version}"))
+    }
 
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
-    implementation fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    implementation fg.deobf("curse.maven:jade-324717:${jade_version_id}")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${minecraft_version}-${patchouli_version}-FORGE:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${minecraft_version}-${patchouli_version}-FORGE")
+    modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
+    modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    // at runtime, use the full JEI jar for Fabric
+    modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modImplementation ("curse.maven:jade-324717:${jade_version_id}")
+    modRuntimeOnly ("vazkii.patchouli:Patchouli:${minecraft_version}-${patchouli_version}-FABRIC")
 
-    runtimeOnly fg.deobf("curse.maven:just-enough-resources-jer-240630:${jer_version_id}")
-    runtimeOnly fg.deobf("curse.maven:worldedit-225608:${worldedit_version_id}")
-    runtimeOnly fg.deobf("curse.maven:journeymap-32274:${journeymap_version_id}")
+    modRuntimeOnly ("curse.maven:just-enough-resources-jer-240630:${jer_version_id}")
+    modRuntimeOnly "curse.maven:worldedit-225608:${worldedit_version_id}"
 
+    modImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 }
 
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
-def intoTargets = ["$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/"]
-def replaceProperties = [
-        mod_id: mod_id,
-        mod_name: mod_name,
-        mod_version: mod_version,
-        mod_authors: mod_authors,
-        mod_description: mod_description,
-        mod_icon: mod_icon,
-        mod_credits: mod_credits,
-        minecraft_version_range: minecraft_version_range,
-        forge_version_range: forge_version_range,
-        loader_version_range: loader_version_range,
-        jei_version: jei_version,
-        jade_version_id: jade_version_id,
-        patchouli_version: patchouli_version,
-        jer_version_id: jer_version_id,
-        worldedit_version_id: worldedit_version_id,
-        journeymap_version_id: journeymap_version_id,
-]
 processResources {
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
 
-    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
-    filesMatching(resourceTargets) {
-        expand replaceProperties
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
     }
+}
 
-    intoTargets.each { target ->
-        if (file(target).exists()) {
-            copy {
-                from(sourceSets.main.resources) {
-                    include resourceTargets
-                    expand replaceProperties
-                }
-                into target
-            }
+fabricApi {
+    configureDataGeneration()
+}
+loom {
+    runs {
+        datagen {
+            client()
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=ultramarine"
+            // 禁用 porting_lib_tool_actions 的数据生成
+            vmArg "-Dfabric-api.datagen.disabled-mods=porting_lib_tool_actions"
+
+            // 添加调试输出
+            vmArg "-Dfabric-api.datagen.verbose=true"
         }
     }
+    accessWidenerPath = file("src/main/resources/ultramarine.accesswidener")
+}
+
+
+def targetJavaVersion = 17
+tasks.withType(JavaCompile).configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release.set(targetJavaVersion)
+    }
+}
+
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
 }
 
 jar {
-    manifest {
-        attributes([
-                'Specification-Title': mod_id,
-                'Specification-Vendor': mod_authors,
-                'Specification-Version': '1', // We are version 1 of ourselves
-                'Implementation-Title': project.name,
-                'Implementation-Version': mod_version,
-                'Implementation-Vendor': mod_authors,
-                'Implementation-Timestamp': new Date().format('yyyy-MM-dd\'T\'HH:mm:ssZ')
-        ])
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-jar.finalizedBy('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
     }
 }

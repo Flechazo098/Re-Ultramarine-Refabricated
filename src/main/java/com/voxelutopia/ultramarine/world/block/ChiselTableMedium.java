@@ -4,7 +4,6 @@ import com.voxelutopia.ultramarine.data.shape.BlockShapes;
 import com.voxelutopia.ultramarine.world.block.menu.ChiselTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -14,7 +13,6 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 
 public class ChiselTableMedium extends DecorativeBlock implements BaseBlockPropertyHolder {
 
@@ -29,7 +27,7 @@ public class ChiselTableMedium extends DecorativeBlock implements BaseBlockPrope
         if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
-            NetworkHooks.openScreen((ServerPlayer) pPlayer, this.getMenuProvider(pState, pLevel, pPos), pPos);
+            pPlayer.openMenu(this.getMenuProvider(pState, pLevel, pPos));
             return InteractionResult.CONSUME;
         }
     }

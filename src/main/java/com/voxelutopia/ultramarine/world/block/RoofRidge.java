@@ -11,12 +11,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 
-public class RoofRidge extends BaseBlock implements SnowRoofRidge{
+public class RoofRidge extends BaseBlock implements SnowRoofRidge {
 
     private final DyeColor color;
     private final RoofRidgeType type;
 
-    public RoofRidge(DyeColor color, RoofRidgeType type){
+    public RoofRidge(DyeColor color, RoofRidgeType type) {
         super(BaseBlockProperty.STONE);
         this.type = type;
         this.color = color;
