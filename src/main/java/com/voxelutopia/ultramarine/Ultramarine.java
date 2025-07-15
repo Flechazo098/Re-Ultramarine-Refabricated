@@ -17,6 +17,7 @@ public class Ultramarine implements ModInitializer {
     @Override
     public void onInitialize() {
         ModBiomeModifiers.register();
+        SoundRegistry.registerModSounds();
         ReplaceToSingleItemLootModifier.register();
         ModFoods.registerModFoods();
         BlockRegistry.registerModBlocks();
@@ -28,7 +29,6 @@ public class Ultramarine implements ModInitializer {
         MenuTypeRegistry.registerModMenus();
         RecipeTypeRegistry.registerModRecipeTypes();
         RecipeSerializerRegistry.registerModRecipeSerializers();
-        SoundRegistry.registerModSounds();
         CreativeTabRegistry.registerModGroups();
         VillagerTradingsRegister.loadTrades();
         CommonEventHandler.init();
