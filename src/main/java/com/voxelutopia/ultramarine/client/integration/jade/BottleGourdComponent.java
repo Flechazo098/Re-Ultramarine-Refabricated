@@ -1,73 +1,47 @@
 package com.voxelutopia.ultramarine.client.integration.jade;
 
 import com.voxelutopia.ultramarine.Ultramarine;
-import com.voxelutopia.ultramarine.common.tile.BottleGourdBlockEntity;
-import net.minecraft.core.component.DataComponents;
+import com.voxelutopia.ultramarine.world.block.entity.BottleGourdBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.phys.Vec2;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
-import snownee.jade.api.theme.IThemeHelper;
 import snownee.jade.api.ui.IElementHelper;
-
-import java.util.Optional;
 
 public enum BottleGourdComponent implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
     INSTANCE;
 
-    public static final ResourceLocation BOTTLE_GOURD = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "bottle_gourd");
+    public static final ResourceLocation BOTTLE_GOURD = new ResourceLocation(Ultramarine.MOD_ID, "bottle_gourd");
 
     @Override
-    public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig config) {
-
+    public void appendTooltip(ITooltip tooltip, BlockAccessor blockAccessor, IPluginConfig iPluginConfig) {
         CompoundTag data = blockAccessor.getServerData();
-        if (data.contains("BottleGourd", 10)) {
-            CompoundTag tag = data.getCompound("BottleGourd");
-            int charges = tag.getInt("Charges");
-            ResourceLocation potionId = ResourceLocation.parse(tag.getString("Potion"));
-
-            ItemStack potionStack = new ItemStack(Items.POTION);
-            var potionHolder = BuiltInRegistries.POTION.getHolder(potionId).orElseThrow();
-
-            potionStack.set(DataComponents.POTION_CONTENTS,
-                    new PotionContents(potionHolder));
-
-            String potionKey = Potion.getName(Optional.of(potionHolder), "item.minecraft.potion.effect.");
-            Component potionName = Component.translatable(potionKey);
-
+        if (data.contains("Potion")) {
+            int charges = data.getInt("Charges");
+            Potion potion = Potion.byName(data.getString("Potion"));
             IElementHelper helper = IElementHelper.get();
-            IThemeHelper themeHelper = IThemeHelper.get();
-
-            tooltip.add(helper.smallItem(potionStack));
-
-            tooltip.append(potionName);
-            tooltip.append(helper.spacer(5, 0));
-            tooltip.append(themeHelper.info(charges + "/" + BottleGourdBlockEntity.MAX_CHARGE));
+            tooltip.add(helper.item(PotionUtils.setPotion(Items.POTION.getDefaultInstance(), potion), 0.6f).translate(new Vec2(-2, -2.5f)));
+            tooltip.append(Component.literal("× " + charges));
         }
     }
 
     @Override
-    public void appendServerData(CompoundTag tag, BlockAccessor blockAccessor) {
-
-        if (blockAccessor.getBlockEntity() instanceof BottleGourdBlockEntity gourd) {
-            if (gourd.hasCharges()) {
-                CompoundTag compound = new CompoundTag();
-                int charges = gourd.getCharges();
-                ResourceLocation potionId = BuiltInRegistries.POTION.getKey(gourd.getPotion());
-
-                compound.putInt("Charges", charges);
-                compound.putString("Potion", potionId.toString());
-                tag.put("BottleGourd", compound);
-            }
+    public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
+        BottleGourdBlockEntity gourd = (BottleGourdBlockEntity) blockAccessor.getBlockEntity();
+        if (gourd.hasCharges()) {
+            int charges = gourd.getCharges();
+            Potion potion = gourd.getPotion();
+            compoundTag.putInt("Charges", charges);
+            compoundTag.putString("Potion", BuiltInRegistries.POTION.getKey(potion).toString());
         }
     }
 

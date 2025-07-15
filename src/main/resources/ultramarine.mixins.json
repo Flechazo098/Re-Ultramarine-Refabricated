@@ -1,14 +1,9 @@
 {
   "required": true,
-  "minVersion": "0.8",
-  "package": "com.voxelutopia.ultramarine.init.mixin",
+  "package": "com.voxelutopia.ultramarine.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "BlockBehaviourMixin"
-  ],
-  "client": [
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  "refmap": "ultramarine.refmap.json",
+  "mixins": [],
+  "client": [],
+  "minVersion": "0.8.5"
 }

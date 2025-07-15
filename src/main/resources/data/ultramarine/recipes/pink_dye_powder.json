@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:dyes/pink"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "ultramarine:pink_dye_powder"
+  }
+}

@@ -2,7 +2,7 @@ package com.voxelutopia.ultramarine.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.voxelutopia.ultramarine.Ultramarine;
-import com.voxelutopia.ultramarine.common.menu.ChiselTableMenu;
+import com.voxelutopia.ultramarine.world.block.menu.ChiselTableMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class ChiselTableScreen extends AbstractContainerScreen<ChiselTableMenu> {
 
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "textures/gui/chisel_table.png");
+    private static final ResourceLocation BACKGROUND = new ResourceLocation(Ultramarine.MOD_ID, "textures/gui/chisel_table.png");
 
     public ChiselTableScreen(ChiselTableMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -20,12 +20,14 @@ public class ChiselTableScreen extends AbstractContainerScreen<ChiselTableMenu> 
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
+        this.renderBackground(guiGraphics);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BACKGROUND);

@@ -3,12 +3,12 @@ package com.voxelutopia.ultramarine.client.integration.jei;
 import com.voxelutopia.ultramarine.Ultramarine;
 import com.voxelutopia.ultramarine.client.screen.BrickKilnScreen;
 import com.voxelutopia.ultramarine.client.screen.ChiselTableScreen;
-import com.voxelutopia.ultramarine.common.recipe.ChiselTableRecipe;
-import com.voxelutopia.ultramarine.common.recipe.CompositeSmeltingRecipe;
-import com.voxelutopia.ultramarine.common.recipe.WoodworkingRecipe;
-import com.voxelutopia.ultramarine.common.tile.TravellingMerchant;
-import com.voxelutopia.ultramarine.init.registry.ModBlocks;
-import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
+import com.voxelutopia.ultramarine.data.recipe.ChiselTableRecipe;
+import com.voxelutopia.ultramarine.data.recipe.CompositeSmeltingRecipe;
+import com.voxelutopia.ultramarine.data.recipe.WoodworkingRecipe;
+import com.voxelutopia.ultramarine.data.registry.BlockRegistry;
+import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
+import com.voxelutopia.ultramarine.world.entity.TravellingMerchant;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -20,8 +20,8 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +29,8 @@ import java.util.Objects;
 @JeiPlugin
 public class UltramarineJEIPlugin implements IModPlugin {
 
-    public static final ResourceLocation JEI_GUI_VANILLA = ResourceLocation.fromNamespaceAndPath("jei", "textures/gui/gui_vanilla.png");
-    private static final Logger LOGGER = Ultramarine.getLogger();
+    public static final ResourceLocation JEI_GUI_VANILLA = new ResourceLocation("jei", "textures/gui/gui_vanilla.png");
+    private static final Logger LOGGER = LoggerFactory.getLogger(UltramarineJEIPlugin.class);
 
     public UltramarineJEIPlugin() {
         LOGGER.info("JEI Integration Loaded");
@@ -38,7 +38,7 @@ public class UltramarineJEIPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "jei_plugin");
+        return new ResourceLocation(Ultramarine.MOD_ID, "jei_plugin");
     }
 
     @Override
@@ -61,34 +61,22 @@ public class UltramarineJEIPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         Objects.requireNonNull(Minecraft.getInstance().level);
         var recipeManager = Minecraft.getInstance().level.getRecipeManager();
-
-        List<WoodworkingRecipe> woodworkingRecipes = recipeManager.getAllRecipesFor(ModRecipeTypes.WOODWORKING)
-                .stream()
-                .map(RecipeHolder::value)
-                .toList();
+        List<WoodworkingRecipe> woodworkingRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.WOODWORKING);
         registration.addRecipes(WoodworkingRecipeCategory.WOODWORKING_RECIPE_TYPE, woodworkingRecipes);
-
-        List<CompositeSmeltingRecipe> compositeSmeltingRecipes = recipeManager.getAllRecipesFor(ModRecipeTypes.COMPOSITE_SMELTING)
-                .stream()
-                .map(RecipeHolder::value)
-                .toList();
+        List<CompositeSmeltingRecipe> compositeSmeltingRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.COMPOSITE_SMELTING);
         registration.addRecipes(CompositeSmeltingRecipeCategory.COMPOSITE_SMELTING_RECIPE_TYPE, compositeSmeltingRecipes);
-
-        List<ChiselTableRecipe> chiselTableRecipes = recipeManager.getAllRecipesFor(ModRecipeTypes.CHISEL_TABLE)
-                .stream()
-                .map(RecipeHolder::value)
-                .toList();
+        List<ChiselTableRecipe> chiselTableRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.CHISEL_TABLE);
         registration.addRecipes(ChiselTableRecipeCategory.CHISEL_TABLE_RECIPE_TYPE, chiselTableRecipes);
-
         List<TravellingMerchantWrapper> customWanderingTraderTrades = TravellingMerchant.getTradeOptions().stream().map(TravellingMerchantWrapper::new).toList();
         registration.addRecipes(TravellingMerchantCategory.CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE, customWanderingTraderTrades);
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.WOODWORKING_WORKBENCH), WoodworkingRecipeCategory.WOODWORKING_RECIPE_TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.BRICK_KILN), CompositeSmeltingRecipeCategory.COMPOSITE_SMELTING_RECIPE_TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.CHISEL_TABLE), ChiselTableRecipeCategory.CHISEL_TABLE_RECIPE_TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.TEAHOUSE_FLAG), TravellingMerchantCategory.CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(BlockRegistry.WOODWORKING_WORKBENCH), WoodworkingRecipeCategory.WOODWORKING_RECIPE_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(BlockRegistry.BRICK_KILN), CompositeSmeltingRecipeCategory.COMPOSITE_SMELTING_RECIPE_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(BlockRegistry.CHISEL_TABLE), ChiselTableRecipeCategory.CHISEL_TABLE_RECIPE_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(BlockRegistry.TEAHOUSE_FLAG), TravellingMerchantCategory.CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE);
     }
+
 }

@@ -37,7 +37,7 @@
       "ultramarine:block_bamboo_wood_step4",
       "ultramarine:block_bamboo_wood_step5",
       "ultramarine:block_bamboo_wood_step6"
-    ]
+  ]
   },
   "bamboo_wood_fall": {
     "subtitle": "subtitles.entity.generic.big_fall",
@@ -47,14 +47,14 @@
     ]
   },
   "wood_hammer": {
-    "subtitle": "subtitles.ultramarine.wood_hammer",
-    "sounds": [
-      "ultramarine:wood_hammer1",
-      "ultramarine:wood_hammer2",
-      "ultramarine:wood_hammer3",
-      "ultramarine:wood_hammer4"
-    ]
-  },
+  "subtitle": "subtitles.ultramarine.wood_hammer",
+  "sounds": [
+    "ultramarine:wood_hammer1",
+    "ultramarine:wood_hammer2",
+    "ultramarine:wood_hammer3",
+    "ultramarine:wood_hammer4"
+  ]
+},
   "sack_break": {
     "subtitle": "subtitles.block.generic.break",
     "sounds": [

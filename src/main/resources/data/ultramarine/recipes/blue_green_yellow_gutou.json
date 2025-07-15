@@ -1,0 +1,21 @@
+{
+  "type": "ultramarine:chisel_table",
+  "colors": [
+    {
+      "tag": "c:dyes/blue"
+    },
+    {
+      "tag": "c:dyes/green"
+    },
+    {
+      "tag": "c:dyes/yellow"
+    }
+  ],
+  "material": {
+    "tag": "minecraft:logs"
+  },
+  "result": "ultramarine:blue_green_yellow_gutou",
+  "template": {
+    "item": "ultramarine:gutou_template"
+  }
+}

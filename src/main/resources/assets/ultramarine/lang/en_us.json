@@ -626,7 +626,6 @@
   "item.ultramarine.blue_and_white_porcelain_shovel": "Blue and White Porcelain Shovel",
   "item.ultramarine.blue_and_white_porcelain_pickaxe": "Blue and White Porcelain Pickaxe",
   "item.ultramarine.blue_and_white_porcelain_axe": "Blue and White Porcelain Axe",
-  "item.ultramarine.blue_and_white_porcelain_upgrade_smithing_template": "Forged formwork",
   "upgrade.ultramarine.blue_and_white_porcelain_upgrade": "Blue and White Porcelain Upgrade",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.additions_slot_description": "Add Blue and White Porcelain Piece",
   "item.ultramarine.smithing_template.blue_and_white_porcelain_upgrade.applies_to": "Gold Weapons & Tools",
@@ -680,8 +679,6 @@
   "container.oak_cabinet": "Oak Cabinet",
   "container.warped_cabinet": "Warped Cabinet",
   "container.ebony_cabinet": "Ebony Cabinet",
-  "container.empty_bamboo_tea_basket": "Empty Bamboo Tea Basket",
-  "container.bamboo_tea_basket": "Bamboo Tea Basket",
 
   "container.woodworking_workbench": "Woodworking Workbench",
   "container.brick_kiln": "Brick Kiln",
@@ -695,13 +692,11 @@
   "entity.minecraft.villager.ultramarine.cook": "Cook",
   "entity.minecraft.villager.cook": "Cook",
 
-  "__comment24__": "REI Categories",
-  "gui.rei.category.woodworking": "Woodworking",
-  "gui.rei.category.composite_smelting": "Composite Smelting",
-  "gui.rei.category.chisel_table": "Chisel Table",
-  "gui.rei.category.travelling_merchant": "Travelling Merchant",
-  "gui.rei.experience": "%s xp",
-
+  "__comment24__": "JEI Categories",
+  "gui.jei.category.woodworking": "Woodworking",
+  "gui.jei.category.composite_smelting": "Composite Smelting",
+  "gui.jei.category.chisel_table": "Chisel Table",
+  "gui.jei.category.travelling_merchant": "Travelling Merchant",
 
   "__comment25__": "Patchouli Strings",
   "guide.patchouli.tiangong_kaiwu.title": "Tiangong Kaiwu",
@@ -715,12 +710,6 @@
   "config.jade.plugin_ultramarine.bottle_gourd": "Bottle Gourd",
   "gui.jade.plugin_ultramarine.mallet_toggleable": "Toggleable",
   "gui.jade.plugin_ultramarine.censer_burn_time": "Incense: %d s",
-
-  "__comment27__": "JEI Categories",
-  "gui.jei.category.woodworking": "Woodworking",
-  "gui.jei.category.composite_smelting": "Composite Smelting",
-  "gui.jei.category.chisel_table": "Chisel Table",
-  "gui.jei.category.travelling_merchant": "Travelling Merchant",
 
   "__EOF__": ""
 }

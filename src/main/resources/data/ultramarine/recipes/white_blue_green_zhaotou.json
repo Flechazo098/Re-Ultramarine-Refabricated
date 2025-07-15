@@ -1,0 +1,21 @@
+{
+  "type": "ultramarine:chisel_table",
+  "colors": [
+    {
+      "tag": "c:dyes/white"
+    },
+    {
+      "tag": "c:dyes/blue"
+    },
+    {
+      "tag": "c:dyes/green"
+    }
+  ],
+  "material": {
+    "tag": "minecraft:logs"
+  },
+  "result": "ultramarine:white_blue_green_zhaotou",
+  "template": {
+    "item": "ultramarine:zhaotou_template"
+  }
+}

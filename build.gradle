@@ -1,80 +1,79 @@
 plugins {
-    id 'fabric-loom' version "${fabric_loom_version}"
+    id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
 }
 
-version = "$project.minecraft_version+$project.mod_version"
+version = project.mod_version
 group = project.maven_group
 
-repositories {
-    mavenCentral()
-    maven { url = "https://maven.quiltmc.org/repository/release" }
-    maven { url = "https://hephaestus.dev/release" }
-    maven { url = "https://api.modrinth.com/maven" }
-    maven { url = "https://maven.bai.lol" }
-    maven { url = "https://maven.terraformersmc.com/releases/" }
-    maven { url = "https://maven.parchmentmc.org" }
-    maven { url = "https://maven.shedaniel.me/" }
-    maven { url = "https://mvn.devos.one/releases/" }
-    maven { url = "https://mvn.devos.one/snapshots/" }
-    maven { url = "https://maven.wispforest.io" }
-    maven { url = "https://cursemaven.com" }
-    maven { url = "https://maven.vram.io" }
-    maven {
-        url = "https://jitpack.io"
-        content {
-            includeGroup("com.github.Chocohead")
-            includeGroup("com.github.llamalad7.mixinextras")
-        }
-    }
-    maven { url = "https://mvn.devos.one/releases/" }
-    maven {
-        // location of the maven that hosts JEI files since January 2023
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }
-        maven { url 'https://maven.blamejared.com' }
+base {
+    archivesName = project.archives_base_name
 }
 
+
+repositories {
+    // Add repositories to retrieve artifacts from in here.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
+    maven { url = "https://mvn.devos.one/releases/" }
+    maven {
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
+    }
+    maven { // JEI
+        url "https://dvs1.progwml6.com/files/maven"
+    }
+
+    maven { // TOP
+        url "https://maven.k-4u.nl"
+    }
+
+    maven {
+        url 'https://maven.blamejared.com'
+    }
+
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+def portingLibModules = [
+        "common", "items", "fluids", "extensions", "tags", "recipe_book_categories",
+        "entity", "tool_actions", "transfer", "registries", "lazy_registration",
+        "data", "model_builders", "model_generators", "model_loader", "model_materials",
+        "models", "networking", "utility", "base", "blocks", "client_events", "level_events"
+]
+
+
+
 dependencies {
-    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-//    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${mixin_extra_version}")))
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
-//    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-    // Visit https://www.curseforge.com/minecraft/mc-mods/jade/files/all?filter-status=1&filter-game-version=2020709689%3A7499
-    // to get the latest version's jade_id
-    modImplementation "curse.maven:jade-324717:${jade_id}"
+    portingLibModules.each {
+        modApi(include("io.github.fabricators_of_create.Porting-Lib:${it}:${port_version}"))
+    }
 
-    // compile against the JEI API but do not include it at runtime
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
     modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
     // at runtime, use the full JEI jar for Fabric
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modImplementation ("curse.maven:jade-324717:${jade_version_id}")
+    modRuntimeOnly ("vazkii.patchouli:Patchouli:${minecraft_version}-${patchouli_version}-FABRIC")
 
+    modRuntimeOnly ("curse.maven:just-enough-resources-jer-240630:${jer_version_id}")
+    modRuntimeOnly "curse.maven:worldedit-225608:${worldedit_version_id}"
 
-    dependencies {
-        modImplementation "vazkii.patchouli:Patchouli:1.21-88-FABRIC"
-    }
-}
-
-fabricApi {
-    configureDataGeneration() {
-        client = true
-    }
+    modImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 }
 
 processResources {
@@ -90,7 +89,29 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+fabricApi {
+    configureDataGeneration()
+}
+loom {
+    runs {
+        datagen {
+            client()
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=ultramarine"
+            // 禁用 porting_lib_tool_actions 的数据生成
+            vmArg "-Dfabric-api.datagen.disabled-mods=porting_lib_tool_actions"
+
+            // 添加调试输出
+            vmArg "-Dfabric-api.datagen.verbose=true"
+        }
+    }
+    accessWidenerPath = file("src/main/resources/ultramarine.accesswidener")
+}
+
+
+def targetJavaVersion = 17
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
@@ -98,7 +119,7 @@ tasks.withType(JavaCompile).configureEach {
     // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        it.options.release = targetJavaVersion
+        it.options.release.set(targetJavaVersion)
     }
 }
 
@@ -107,7 +128,6 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
-    archivesBaseName = project.archives_base_name
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
@@ -117,28 +137,5 @@ java {
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = "${mod_id}-${minecraft_version}"
-            version = mod_version
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        maven {
-            name = "release"
-            url = 'https://maven.nova-committee.cn/releases'
-            credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
-            }
-        }
     }
 }

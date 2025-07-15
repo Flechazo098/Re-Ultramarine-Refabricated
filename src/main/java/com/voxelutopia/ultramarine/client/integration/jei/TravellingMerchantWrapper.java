@@ -4,7 +4,7 @@ import mezz.jei.api.recipe.category.extensions.IRecipeCategoryExtension;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 
-public class TravellingMerchantWrapper implements IRecipeCategoryExtension<TravellingMerchantWrapper> {
+public class TravellingMerchantWrapper implements IRecipeCategoryExtension {
 
     private final ItemStack input;
     private final ItemStack output;
