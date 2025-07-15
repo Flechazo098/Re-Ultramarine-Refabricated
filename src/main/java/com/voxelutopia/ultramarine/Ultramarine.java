@@ -1,6 +1,7 @@
 package com.voxelutopia.ultramarine;
 
 import com.voxelutopia.ultramarine.data.ModFoods;
+import com.voxelutopia.ultramarine.data.loot.ReplaceToSingleItemLootModifier;
 import com.voxelutopia.ultramarine.data.registry.*;
 import com.voxelutopia.ultramarine.event.CommonEventHandler;
 import com.voxelutopia.ultramarine.world.worldgen.ModBiomeModifiers;
@@ -16,7 +17,7 @@ public class Ultramarine implements ModInitializer {
     @Override
     public void onInitialize() {
         ModBiomeModifiers.register();
-
+        ReplaceToSingleItemLootModifier.register();
         ModFoods.registerModFoods();
         BlockRegistry.registerModBlocks();
         ItemRegistry.registerModItems();
@@ -30,7 +31,6 @@ public class Ultramarine implements ModInitializer {
         SoundRegistry.registerModSounds();
         CreativeTabRegistry.registerModGroups();
         VillagerTradingsRegister.loadTrades();
-
         CommonEventHandler.init();
     }
 }
