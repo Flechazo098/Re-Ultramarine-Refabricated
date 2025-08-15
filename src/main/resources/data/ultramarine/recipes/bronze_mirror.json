@@ -1,23 +1,23 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "C": {
-      "item": "minecraft:copper_ingot"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "C": {
+            "item": "minecraft:copper_ingot"
+        },
+        "I": {
+            "item": "ultramarine:bronze_ingot"
+        },
+        "P": {
+            "item": "ultramarine:bronze_parts"
+        }
     },
-    "I": {
-      "item": "ultramarine:bronze_ingot"
+    "pattern": [
+        "PIP",
+        "CIC"
+    ],
+    "result": {
+        "item": "ultramarine:bronze_mirror"
     },
-    "P": {
-      "item": "ultramarine:bronze_parts"
-    }
-  },
-  "pattern": [
-    "PIP",
-    "CIC"
-  ],
-  "result": {
-    "item": "ultramarine:bronze_mirror"
-  },
-  "show_notification": true
+    "show_notification": true
 }

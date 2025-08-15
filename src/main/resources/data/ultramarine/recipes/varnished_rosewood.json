@@ -1,24 +1,24 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "B": {
-      "item": "ultramarine:rosewood_planks"
+    "type": "minecraft:crafting_shaped",
+    "category": "building",
+    "key": {
+        "B": {
+            "item": "ultramarine:rosewood_planks"
+        },
+        "D": {
+            "tag": "c:dyes/red"
+        },
+        "P": {
+            "item": "ultramarine:polished_rosewood_plank"
+        }
     },
-    "D": {
-      "tag": "c:dyes/red"
+    "pattern": [
+        "DPD",
+        "PBP",
+        "DPD"
+    ],
+    "result": {
+        "item": "ultramarine:varnished_rosewood"
     },
-    "P": {
-      "item": "ultramarine:polished_rosewood_plank"
-    }
-  },
-  "pattern": [
-    "DPD",
-    "PBP",
-    "DPD"
-  ],
-  "result": {
-    "item": "ultramarine:varnished_rosewood"
-  },
-  "show_notification": true
+    "show_notification": true
 }

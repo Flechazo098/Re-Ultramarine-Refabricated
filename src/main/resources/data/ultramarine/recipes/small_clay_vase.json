@@ -1,17 +1,17 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "o": {
-      "item": "minecraft:clay_ball"
-    }
-  },
-  "pattern": [
-    "o",
-    "o"
-  ],
-  "result": {
-    "item": "ultramarine:small_clay_vase"
-  },
-  "show_notification": true
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "o": {
+            "item": "minecraft:clay_ball"
+        }
+    },
+    "pattern": [
+        "o",
+        "o"
+    ],
+    "result": {
+        "item": "ultramarine:small_clay_vase"
+    },
+    "show_notification": true
 }

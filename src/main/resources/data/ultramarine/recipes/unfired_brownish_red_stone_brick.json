@@ -1,31 +1,30 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:magnesite_dust"
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "minecraft:nether_wart"
+        }
+    ],
+    "result": {
+        "count": 6,
+        "item": "ultramarine:unfired_brownish_red_stone_brick"
     }
-  ],
-  "result": {
-    "count": 6,
-    "item": "ultramarine:unfired_brownish_red_stone_brick"
-  }
 }

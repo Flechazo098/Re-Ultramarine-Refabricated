@@ -1,17 +1,15 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "A": {
-      "item": "ultramarine:cyan_brick"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "AA",
+        "AA"
+    ],
+    "key": {
+        "A": {
+            "item": "ultramarine:cyan_brick"
+        }
+    },
+    "result": {
+        "item": "ultramarine:cyan_bricks"
     }
-  },
-  "pattern": [
-    "AA",
-    "AA"
-  ],
-  "result": {
-    "item": "ultramarine:cyan_bricks"
-  },
-  "show_notification": true
 }

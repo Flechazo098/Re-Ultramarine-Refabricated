@@ -1,19 +1,17 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "B": {
-      "item": "ultramarine:black_bricks"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "B  ",
+        "BB ",
+        "BBB"
+    ],
+    "key": {
+        "B": {
+            "item": "ultramarine:black_bricks"
+        }
+    },
+    "result": {
+        "count": 4,
+        "item": "ultramarine:black_brick_stairs"
     }
-  },
-  "pattern": [
-    "B  ",
-    "BB ",
-    "BBB"
-  ],
-  "result": {
-    "count": 4,
-    "item": "ultramarine:black_brick_stairs"
-  },
-  "show_notification": true
 }

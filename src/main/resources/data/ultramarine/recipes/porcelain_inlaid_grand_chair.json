@@ -1,27 +1,27 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "A": {
-      "item": "ultramarine:wooden_parts"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "A": {
+            "item": "ultramarine:wooden_parts"
+        },
+        "F": {
+            "item": "ultramarine:wooden_frame"
+        },
+        "I": {
+            "item": "ultramarine:porcelain_parts"
+        },
+        "W": {
+            "item": "ultramarine:polished_rosewood_plank"
+        }
     },
-    "F": {
-      "item": "ultramarine:wooden_frame"
+    "pattern": [
+        "FIA",
+        "WIA",
+        "WFW"
+    ],
+    "result": {
+        "item": "ultramarine:porcelain_inlaid_grand_chair"
     },
-    "I": {
-      "item": "ultramarine:porcelain_parts"
-    },
-    "W": {
-      "item": "ultramarine:polished_rosewood_plank"
-    }
-  },
-  "pattern": [
-    "FIA",
-    "WIA",
-    "WFW"
-  ],
-  "result": {
-    "item": "ultramarine:porcelain_inlaid_grand_chair"
-  },
-  "show_notification": true
+    "show_notification": true
 }

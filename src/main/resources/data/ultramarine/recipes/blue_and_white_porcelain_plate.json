@@ -1,12 +1,16 @@
 {
-  "type": "ultramarine:composite_smelting",
-  "cookingtime": 200,
-  "experience": 0.1,
-  "primary_ingredient": {
-    "item": "ultramarine:clay_plate"
-  },
-  "result": "ultramarine:blue_and_white_porcelain_plate",
-  "secondary_ingredient": {
-    "item": "ultramarine:blue_and_white_glaze_powder"
-  }
+    "id": "ultramarine:blue_and_white_porcelain_plate",
+    "type": "ultramarine:composite_smelting",
+    "cookingtime": 200,
+    "experience": 0.1,
+    "primary_ingredient": {
+        "item": "ultramarine:clay_plate"
+    },
+    "result": {
+        "id": "ultramarine:blue_and_white_porcelain_plate",
+        "Count": 1
+    },
+    "secondary_ingredient": {
+        "item": "ultramarine:blue_and_white_glaze_powder"
+    }
 }

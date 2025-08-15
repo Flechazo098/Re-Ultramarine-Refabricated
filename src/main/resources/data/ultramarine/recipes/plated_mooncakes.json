@@ -1,24 +1,24 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "ultramarine:blue_and_white_porcelain_plate"
-    },
-    {
-      "item": "ultramarine:mooncake"
-    },
-    {
-      "item": "ultramarine:mooncake"
-    },
-    {
-      "item": "ultramarine:mooncake"
-    },
-    {
-      "item": "ultramarine:mooncake"
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        {
+            "item": "ultramarine:blue_and_white_porcelain_plate"
+        },
+        {
+            "item": "ultramarine:mooncake"
+        },
+        {
+            "item": "ultramarine:mooncake"
+        },
+        {
+            "item": "ultramarine:mooncake"
+        },
+        {
+            "item": "ultramarine:mooncake"
+        }
+    ],
+    "result": {
+        "item": "ultramarine:plated_mooncakes"
     }
-  ],
-  "result": {
-    "item": "ultramarine:plated_mooncakes"
-  }
 }

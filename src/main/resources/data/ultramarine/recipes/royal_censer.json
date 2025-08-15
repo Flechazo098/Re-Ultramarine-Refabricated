@@ -1,12 +1,16 @@
 {
-  "type": "ultramarine:composite_smelting",
-  "cookingtime": 200,
-  "experience": 0.5,
-  "primary_ingredient": {
-    "item": "ultramarine:bronze_censer"
-  },
-  "result": "ultramarine:royal_censer",
-  "secondary_ingredient": {
-    "tag": "c:dyes/cyan"
-  }
+    "id": "ultramarine:royal_censer",
+    "type": "ultramarine:composite_smelting",
+    "cookingtime": 200,
+    "experience": 0.5,
+    "primary_ingredient": {
+        "item": "ultramarine:bronze_censer"
+    },
+    "result": {
+        "id": "ultramarine:royal_censer",
+        "Count": 1
+    },
+    "secondary_ingredient": {
+        "tag": "c:dyes/cyan"
+    }
 }

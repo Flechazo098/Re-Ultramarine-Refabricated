@@ -1,15 +1,15 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "minecraft:vine"
-    },
-    {
-      "tag": "c:dyes/green"
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        {
+            "item": "minecraft:vine"
+        },
+        {
+            "tag": "c:dyes/green"
+        }
+    ],
+    "result": {
+        "item": "ultramarine:small_green_ivy"
     }
-  ],
-  "result": {
-    "item": "ultramarine:small_green_ivy"
-  }
 }

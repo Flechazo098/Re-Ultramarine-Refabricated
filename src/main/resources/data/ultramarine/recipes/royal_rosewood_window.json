@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 2,
-  "ingredient": {
-    "item": "ultramarine:varnished_rosewood"
-  },
-  "result": "ultramarine:royal_rosewood_window"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "item": "ultramarine:varnished_rosewood"
+    },
+    "result": {
+        "id": "ultramarine:royal_rosewood_window",
+        "Count": 2
+    }
 }

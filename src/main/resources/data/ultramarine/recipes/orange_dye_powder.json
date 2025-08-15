@@ -1,13 +1,13 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "tag": "c:dyes/orange"
+    "type": "minecraft:crafting_shapeless",
+    "category": "misc",
+    "ingredients": [
+        {
+            "tag": "c:dyes/orange"
+        }
+    ],
+    "result": {
+        "count": 4,
+        "item": "ultramarine:orange_dye_powder"
     }
-  ],
-  "result": {
-    "count": 4,
-    "item": "ultramarine:orange_dye_powder"
-  }
 }

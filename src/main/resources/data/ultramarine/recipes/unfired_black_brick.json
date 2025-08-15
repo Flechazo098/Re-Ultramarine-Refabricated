@@ -1,31 +1,30 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:hematite_dust"
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:hematite_dust"
+        }
+    ],
+    "result": {
+        "count": 6,
+        "item": "ultramarine:unfired_black_brick"
     }
-  ],
-  "result": {
-    "count": 6,
-    "item": "ultramarine:unfired_black_brick"
-  }
 }

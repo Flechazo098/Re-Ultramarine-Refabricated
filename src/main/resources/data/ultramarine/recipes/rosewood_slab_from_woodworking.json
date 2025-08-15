@@ -1,8 +1,11 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 2,
-  "ingredient": {
-    "item": "ultramarine:rosewood_planks"
-  },
-  "result": "ultramarine:rosewood_slab"
+    "type": "ultramarine:woodworking",
+    "group": "",
+    "ingredient": {
+        "item": "ultramarine:rosewood_planks"
+    },
+    "result": {
+        "id": "ultramarine:rosewood_slab",
+        "Count": 2
+    }
 }

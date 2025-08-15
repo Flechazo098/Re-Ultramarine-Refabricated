@@ -1,16 +1,15 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "building",
-  "ingredients": [
-    {
-      "item": "minecraft:stone"
-    },
-    {
-      "item": "minecraft:sand"
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:stone"
+        },
+        {
+            "item": "minecraft:sand"
+        }
+    ],
+    "result": {
+        "count": 2,
+        "item": "ultramarine:pale_yellow_stone"
     }
-  ],
-  "result": {
-    "count": 2,
-    "item": "ultramarine:pale_yellow_stone"
-  }
 }

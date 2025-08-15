@@ -1,16 +1,14 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "T": {
-      "item": "ultramarine:blue_roof_tile"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "TTT"
+    ],
+    "key": {
+        "T": {
+            "item": "ultramarine:blue_roof_tile"
+        }
+    },
+    "result": {
+        "item": "ultramarine:blue_roof_tiles"
     }
-  },
-  "pattern": [
-    "TTT"
-  ],
-  "result": {
-    "item": "ultramarine:blue_roof_tiles"
-  },
-  "show_notification": true
 }

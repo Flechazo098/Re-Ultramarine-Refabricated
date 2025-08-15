@@ -1,18 +1,22 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/yellow"
+    "id": "ultramarine:yellow_carved_pattern",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:yellow_dye"
+        },
+        {
+            "item": "minecraft:yellow_dye"
+        }
+    ],
+    "material": {
+        "tag": "ultramarine:polished_planks"
     },
-    {
-      "tag": "c:dyes/yellow"
+    "result": {
+        "id": "ultramarine:yellow_carved_pattern",
+        "Count": 1
+    },
+    "template": {
+        "item": "ultramarine:caihua_template"
     }
-  ],
-  "material": {
-    "tag": "ultramarine:polished_planks"
-  },
-  "result": "ultramarine:yellow_carved_pattern",
-  "template": {
-    "item": "ultramarine:caihua_template"
-  }
 }

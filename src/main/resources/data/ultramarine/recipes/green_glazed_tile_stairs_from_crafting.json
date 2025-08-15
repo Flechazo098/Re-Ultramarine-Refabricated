@@ -1,19 +1,17 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "B": {
-      "item": "ultramarine:green_glazed_tiles"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "B  ",
+        "BB ",
+        "BBB"
+    ],
+    "key": {
+        "B": {
+            "item": "ultramarine:green_glazed_tiles"
+        }
+    },
+    "result": {
+        "count": 4,
+        "item": "ultramarine:green_glazed_tile_stairs"
     }
-  },
-  "pattern": [
-    "B  ",
-    "BB ",
-    "BBB"
-  ],
-  "result": {
-    "count": 4,
-    "item": "ultramarine:green_glazed_tile_stairs"
-  },
-  "show_notification": true
 }

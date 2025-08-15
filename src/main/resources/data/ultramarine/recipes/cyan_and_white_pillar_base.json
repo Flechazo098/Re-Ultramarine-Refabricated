@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/red"
+    "id": "ultramarine:cyan_and_white_pillar_base",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:red_dye"
+        },
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "minecraft:white_dye"
+        },
+        {
+            "item": "ultramarine:black_dye_powder"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/green"
+    "result": {
+        "id": "ultramarine:cyan_and_white_pillar_base",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/white"
-    },
-    {
-      "item": "ultramarine:black_dye_powder"
+    "template": {
+        "item": "ultramarine:zhaotou_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:cyan_and_white_pillar_base",
-  "template": {
-    "item": "ultramarine:zhaotou_template"
-  }
 }

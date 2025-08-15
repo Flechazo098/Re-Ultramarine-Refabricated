@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 1,
-  "ingredient": {
-    "item": "minecraft:stripped_dark_oak_log"
-  },
-  "result": "ultramarine:dark_oak_rafter_end"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "item": "minecraft:stripped_dark_oak_log"
+    },
+    "result": {
+        "id": "ultramarine:dark_oak_rafter_end",
+        "Count": 1
+    }
 }

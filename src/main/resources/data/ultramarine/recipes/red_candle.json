@@ -1,20 +1,18 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "C": {
-      "item": "minecraft:red_candle"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "C",
+        "P"
+    ],
+    "key": {
+        "C": {
+            "item": "minecraft:red_candle"
+        },
+        "P": {
+            "item": "ultramarine:wooden_parts"
+        }
     },
-    "P": {
-      "item": "ultramarine:wooden_parts"
+    "result": {
+        "item": "ultramarine:red_candle"
     }
-  },
-  "pattern": [
-    "C",
-    "P"
-  ],
-  "result": {
-    "item": "ultramarine:red_candle"
-  },
-  "show_notification": true
 }

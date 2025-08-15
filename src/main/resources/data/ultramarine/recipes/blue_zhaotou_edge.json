@@ -1,21 +1,25 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/green"
+    "id": "ultramarine:blue_zhaotou_edge",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "ultramarine:red_dye_powder"
+        },
+        {
+            "item": "minecraft:blue_dye"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "item": "ultramarine:red_dye_powder"
+    "result": {
+        "id": "ultramarine:blue_zhaotou_edge",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/blue"
+    "template": {
+        "item": "ultramarine:zhaotou_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:blue_zhaotou_edge",
-  "template": {
-    "item": "ultramarine:zhaotou_template"
-  }
 }

@@ -1,21 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "B": {
-      "item": "ultramarine:rosewood_planks"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "BSB",
+        "BSB"
+    ],
+    "key": {
+        "B": {
+            "item": "ultramarine:rosewood_planks"
+        },
+        "S": {
+            "item": "minecraft:stick"
+        }
     },
-    "S": {
-      "item": "minecraft:stick"
+    "result": {
+        "count": 3,
+        "item": "ultramarine:rosewood_fence"
     }
-  },
-  "pattern": [
-    "BSB",
-    "BSB"
-  ],
-  "result": {
-    "count": 3,
-    "item": "ultramarine:rosewood_fence"
-  },
-  "show_notification": true
 }

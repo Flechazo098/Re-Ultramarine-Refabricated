@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 1,
-  "ingredient": {
-    "tag": "minecraft:mangrove_logs"
-  },
-  "result": "ultramarine:mangrove_bracket"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "tag": "minecraft:mangrove_logs"
+    },
+    "result": {
+        "id": "ultramarine:mangrove_bracket",
+        "Count": 1
+    }
 }

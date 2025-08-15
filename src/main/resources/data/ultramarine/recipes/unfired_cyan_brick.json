@@ -1,31 +1,30 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:prismarine_dust"
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:unfired_clay_brick"
+        },
+        {
+            "item": "ultramarine:prismarine_dust"
+        }
+    ],
+    "result": {
+        "count": 6,
+        "item": "ultramarine:unfired_cyan_brick"
     }
-  ],
-  "result": {
-    "count": 6,
-    "item": "ultramarine:unfired_cyan_brick"
-  }
 }

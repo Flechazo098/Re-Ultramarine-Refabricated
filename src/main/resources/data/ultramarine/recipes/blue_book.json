@@ -1,19 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "B": {
-      "item": "minecraft:book"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "B": {
+            "item": "minecraft:book"
+        },
+        "D": {
+            "item": "ultramarine:blue_dye_powder"
+        }
     },
-    "D": {
-      "item": "ultramarine:blue_dye_powder"
-    }
-  },
-  "pattern": [
-    "BD"
-  ],
-  "result": {
-    "item": "ultramarine:blue_book"
-  },
-  "show_notification": true
+    "pattern": [
+        "BD"
+    ],
+    "result": {
+        "item": "ultramarine:blue_book"
+    },
+    "show_notification": true
 }

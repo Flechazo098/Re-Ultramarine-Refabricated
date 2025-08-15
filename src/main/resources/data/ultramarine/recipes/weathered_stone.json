@@ -1,16 +1,15 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "building",
-  "ingredients": [
-    {
-      "item": "minecraft:stone"
-    },
-    {
-      "item": "minecraft:gravel"
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:stone"
+        },
+        {
+            "item": "minecraft:gravel"
+        }
+    ],
+    "result": {
+        "count": 2,
+        "item": "ultramarine:weathered_stone"
     }
-  ],
-  "result": {
-    "count": 2,
-    "item": "ultramarine:weathered_stone"
-  }
 }

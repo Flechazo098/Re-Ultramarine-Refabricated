@@ -1,20 +1,20 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "F": {
-      "item": "minecraft:spore_blossom"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "F": {
+            "item": "minecraft:spore_blossom"
+        },
+        "L": {
+            "item": "minecraft:big_dripleaf"
+        }
     },
-    "L": {
-      "item": "minecraft:big_dripleaf"
-    }
-  },
-  "pattern": [
-    "F",
-    "L"
-  ],
-  "result": {
-    "item": "ultramarine:lotus_bud"
-  },
-  "show_notification": true
+    "pattern": [
+        "F",
+        "L"
+    ],
+    "result": {
+        "item": "ultramarine:lotus_bud"
+    },
+    "show_notification": true
 }

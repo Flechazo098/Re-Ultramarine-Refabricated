@@ -1,22 +1,22 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "B": {
-      "item": "minecraft:vine"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "B": {
+            "item": "minecraft:vine"
+        },
+        "D": {
+            "tag": "c:dyes/yellow"
+        }
     },
-    "D": {
-      "tag": "c:dyes/yellow"
-    }
-  },
-  "pattern": [
-    "BBB",
-    "BDB",
-    "BBB"
-  ],
-  "result": {
-    "count": 8,
-    "item": "ultramarine:small_yellow_ivy"
-  },
-  "show_notification": true
+    "pattern": [
+        "BBB",
+        "BDB",
+        "BBB"
+    ],
+    "result": {
+        "count": 8,
+        "item": "ultramarine:small_yellow_ivy"
+    },
+    "show_notification": true
 }

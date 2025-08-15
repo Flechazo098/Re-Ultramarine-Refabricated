@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "item": "ultramarine:green_dye_powder"
+    "id": "ultramarine:yuan_patterned_wuchaizhuang_fangxin",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "ultramarine:green_dye_powder"
+        },
+        {
+            "item": "minecraft:blue_dye"
+        },
+        {
+            "item": "minecraft:cyan_dye"
+        },
+        {
+            "item": "ultramarine:orange_dye_powder"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/blue"
+    "result": {
+        "id": "ultramarine:yuan_patterned_wuchaizhuang_fangxin",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/cyan"
-    },
-    {
-      "item": "ultramarine:orange_dye_powder"
+    "template": {
+        "item": "ultramarine:fangxin_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:yuan_patterned_wuchaizhuang_fangxin",
-  "template": {
-    "item": "ultramarine:fangxin_template"
-  }
 }

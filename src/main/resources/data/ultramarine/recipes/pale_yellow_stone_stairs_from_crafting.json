@@ -1,19 +1,17 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "B": {
-      "item": "ultramarine:pale_yellow_stone"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "B  ",
+        "BB ",
+        "BBB"
+    ],
+    "key": {
+        "B": {
+            "item": "ultramarine:pale_yellow_stone"
+        }
+    },
+    "result": {
+        "count": 4,
+        "item": "ultramarine:pale_yellow_stone_stairs"
     }
-  },
-  "pattern": [
-    "B  ",
-    "BB ",
-    "BBB"
-  ],
-  "result": {
-    "count": 4,
-    "item": "ultramarine:pale_yellow_stone_stairs"
-  },
-  "show_notification": true
 }

@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/blue"
+    "id": "ultramarine:ming_yanzhuomo_shinianyu_outer_gutou_edge",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:blue_dye"
+        },
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "minecraft:blue_dye"
+        },
+        {
+            "item": "minecraft:green_dye"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/green"
+    "result": {
+        "id": "ultramarine:ming_yanzhuomo_shinianyu_outer_gutou_edge",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/blue"
-    },
-    {
-      "tag": "c:dyes/green"
+    "template": {
+        "item": "ultramarine:gutou_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:ming_yanzhuomo_shinianyu_outer_gutou_edge",
-  "template": {
-    "item": "ultramarine:gutou_template"
-  }
 }

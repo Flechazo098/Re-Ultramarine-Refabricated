@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "item": "ultramarine:green_dye_powder"
+    "id": "ultramarine:green_white_red_carved_wood",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "ultramarine:green_dye_powder"
+        },
+        {
+            "item": "ultramarine:white_dye_powder"
+        },
+        {
+            "item": "minecraft:red_dye"
+        },
+        {
+            "item": "ultramarine:blue_dye_powder"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "item": "ultramarine:white_dye_powder"
+    "result": {
+        "id": "ultramarine:green_white_red_carved_wood",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/red"
-    },
-    {
-      "item": "ultramarine:blue_dye_powder"
+    "template": {
+        "item": "ultramarine:carved_wood_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:green_white_red_carved_wood",
-  "template": {
-    "item": "ultramarine:carved_wood_template"
-  }
 }

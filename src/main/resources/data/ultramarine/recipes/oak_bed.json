@@ -1,24 +1,24 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "A": {
-      "item": "ultramarine:wooden_parts"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "A": {
+            "item": "ultramarine:wooden_parts"
+        },
+        "F": {
+            "item": "ultramarine:wooden_frame"
+        },
+        "W": {
+            "item": "ultramarine:polished_oak_plank"
+        }
     },
-    "F": {
-      "item": "ultramarine:wooden_frame"
+    "pattern": [
+        "FAF",
+        "WWW",
+        "WFW"
+    ],
+    "result": {
+        "item": "ultramarine:oak_bed"
     },
-    "W": {
-      "item": "ultramarine:polished_oak_plank"
-    }
-  },
-  "pattern": [
-    "FAF",
-    "WWW",
-    "WFW"
-  ],
-  "result": {
-    "item": "ultramarine:oak_bed"
-  },
-  "show_notification": true
+    "show_notification": true
 }

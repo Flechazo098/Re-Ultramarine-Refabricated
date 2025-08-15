@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "item": "ultramarine:white_dye_powder"
+    "id": "ultramarine:white_and_red_slab",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "ultramarine:white_dye_powder"
+        },
+        {
+            "item": "minecraft:red_dye"
+        },
+        {
+            "item": "minecraft:red_dye"
+        },
+        {
+            "item": "ultramarine:white_dye_powder"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/red"
+    "result": {
+        "id": "ultramarine:white_and_red_slab",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/red"
-    },
-    {
-      "item": "ultramarine:white_dye_powder"
+    "template": {
+        "item": "ultramarine:architrave_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:white_and_red_slab",
-  "template": {
-    "item": "ultramarine:architrave_template"
-  }
 }

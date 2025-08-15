@@ -1,21 +1,25 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/red"
+    "id": "ultramarine:red_and_cyan_carved_architrave",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:red_dye"
+        },
+        {
+            "item": "ultramarine:white_dye_powder"
+        },
+        {
+            "item": "minecraft:cyan_dye"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "item": "ultramarine:white_dye_powder"
+    "result": {
+        "id": "ultramarine:red_and_cyan_carved_architrave",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/cyan"
+    "template": {
+        "item": "ultramarine:architrave_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:red_and_cyan_carved_architrave",
-  "template": {
-    "item": "ultramarine:architrave_template"
-  }
 }

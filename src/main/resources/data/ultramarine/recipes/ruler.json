@@ -1,19 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "P": {
-      "item": "ultramarine:wooden_parts"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "P": {
+            "item": "ultramarine:wooden_parts"
+        },
+        "S": {
+            "item": "minecraft:stick"
+        }
     },
-    "S": {
-      "item": "minecraft:stick"
-    }
-  },
-  "pattern": [
-    "SPS"
-  ],
-  "result": {
-    "item": "ultramarine:ruler"
-  },
-  "show_notification": true
+    "pattern": [
+        "SPS"
+    ],
+    "result": {
+        "item": "ultramarine:ruler"
+    },
+    "show_notification": true
 }

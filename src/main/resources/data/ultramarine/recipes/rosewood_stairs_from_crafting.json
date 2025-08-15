@@ -1,19 +1,17 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "B": {
-      "item": "ultramarine:rosewood_planks"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "B  ",
+        "BB ",
+        "BBB"
+    ],
+    "key": {
+        "B": {
+            "item": "ultramarine:rosewood_planks"
+        }
+    },
+    "result": {
+        "count": 4,
+        "item": "ultramarine:rosewood_stairs"
     }
-  },
-  "pattern": [
-    "B  ",
-    "BB ",
-    "BBB"
-  ],
-  "result": {
-    "count": 4,
-    "item": "ultramarine:rosewood_stairs"
-  },
-  "show_notification": true
 }

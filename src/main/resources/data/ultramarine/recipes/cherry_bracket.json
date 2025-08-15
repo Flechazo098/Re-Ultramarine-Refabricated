@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 1,
-  "ingredient": {
-    "tag": "minecraft:cherry_logs"
-  },
-  "result": "ultramarine:cherry_bracket"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "tag": "minecraft:cherry_logs"
+    },
+    "result": {
+        "id": "ultramarine:cherry_bracket",
+        "Count": 1
+    }
 }

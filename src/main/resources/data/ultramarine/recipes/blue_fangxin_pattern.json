@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "item": "ultramarine:black_dye_powder"
+    "id": "ultramarine:blue_fangxin_pattern",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "ultramarine:black_dye_powder"
+        },
+        {
+            "item": "ultramarine:light_blue_dye_powder"
+        },
+        {
+            "item": "ultramarine:brown_dye_powder"
+        },
+        {
+            "item": "minecraft:blue_dye"
+        }
+    ],
+    "material": {
+        "tag": "ultramarine:polished_planks"
     },
-    {
-      "item": "ultramarine:light_blue_dye_powder"
+    "result": {
+        "id": "ultramarine:blue_fangxin_pattern",
+        "Count": 1
     },
-    {
-      "item": "ultramarine:brown_dye_powder"
-    },
-    {
-      "tag": "c:dyes/blue"
+    "template": {
+        "item": "ultramarine:fangxin_template"
     }
-  ],
-  "material": {
-    "tag": "ultramarine:polished_planks"
-  },
-  "result": "ultramarine:blue_fangxin_pattern",
-  "template": {
-    "item": "ultramarine:fangxin_template"
-  }
 }

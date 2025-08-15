@@ -1,21 +1,25 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/green"
+    "id": "ultramarine:green_wanzi_rafter_end",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "ultramarine:gold_dye_powder"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/green"
+    "result": {
+        "id": "ultramarine:green_wanzi_rafter_end",
+        "Count": 1
     },
-    {
-      "item": "ultramarine:gold_dye_powder"
+    "template": {
+        "item": "ultramarine:rafter_end_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:green_wanzi_rafter_end",
-  "template": {
-    "item": "ultramarine:rafter_end_template"
-  }
 }

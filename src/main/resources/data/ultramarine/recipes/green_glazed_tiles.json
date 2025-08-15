@@ -1,22 +1,20 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "key": {
-    "B": {
-      "item": "minecraft:green_glazed_terracotta"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " T ",
+        "TBT",
+        " T "
+    ],
+    "key": {
+        "B": {
+            "item": "minecraft:green_glazed_terracotta"
+        },
+        "T": {
+            "item": "ultramarine:green_roof_tile"
+        }
     },
-    "T": {
-      "item": "ultramarine:green_roof_tile"
+    "result": {
+        "count": 2,
+        "item": "ultramarine:green_glazed_tiles"
     }
-  },
-  "pattern": [
-    " T ",
-    "TBT",
-    " T "
-  ],
-  "result": {
-    "count": 2,
-    "item": "ultramarine:green_glazed_tiles"
-  },
-  "show_notification": true
 }

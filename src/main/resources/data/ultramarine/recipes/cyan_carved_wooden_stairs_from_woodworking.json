@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 1,
-  "ingredient": {
-    "item": "ultramarine:cyan_carved_wood"
-  },
-  "result": "ultramarine:cyan_carved_wooden_stairs"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "item": "ultramarine:cyan_carved_wood"
+    },
+    "result": {
+        "id": "ultramarine:cyan_carved_wooden_stairs",
+        "Count": 1
+    }
 }

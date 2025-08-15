@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 2,
-  "ingredient": {
-    "tag": "minecraft:planks"
-  },
-  "result": "ultramarine:wooden_queti_edge"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "tag": "minecraft:planks"
+    },
+    "result": {
+        "id": "ultramarine:wooden_queti_edge",
+        "Count": 2
+    }
 }

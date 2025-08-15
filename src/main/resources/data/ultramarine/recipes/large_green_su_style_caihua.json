@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "item": "ultramarine:yellow_dye_powder"
+    "id": "ultramarine:large_green_su_style_caihua",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "ultramarine:yellow_dye_powder"
+        },
+        {
+            "item": "ultramarine:blue_dye_powder"
+        },
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "minecraft:green_dye"
+        }
+    ],
+    "material": {
+        "tag": "ultramarine:polished_planks"
     },
-    {
-      "item": "ultramarine:blue_dye_powder"
+    "result": {
+        "id": "ultramarine:large_green_su_style_caihua",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/green"
-    },
-    {
-      "tag": "c:dyes/green"
+    "template": {
+        "item": "ultramarine:caihua_template"
     }
-  ],
-  "material": {
-    "tag": "ultramarine:polished_planks"
-  },
-  "result": "ultramarine:large_green_su_style_caihua",
-  "template": {
-    "item": "ultramarine:caihua_template"
-  }
 }

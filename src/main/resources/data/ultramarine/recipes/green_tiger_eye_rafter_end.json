@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/green"
+    "id": "ultramarine:green_tiger_eye_rafter_end",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "ultramarine:blue_dye_powder"
+        },
+        {
+            "item": "ultramarine:gold_dye_powder"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/green"
+    "result": {
+        "id": "ultramarine:green_tiger_eye_rafter_end",
+        "Count": 1
     },
-    {
-      "item": "ultramarine:blue_dye_powder"
-    },
-    {
-      "item": "ultramarine:gold_dye_powder"
+    "template": {
+        "item": "ultramarine:rafter_end_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:green_tiger_eye_rafter_end",
-  "template": {
-    "item": "ultramarine:rafter_end_template"
-  }
 }

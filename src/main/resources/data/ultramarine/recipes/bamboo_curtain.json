@@ -1,21 +1,21 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": {
-    "B": {
-      "item": "minecraft:bamboo"
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "key": {
+        "B": {
+            "item": "minecraft:bamboo"
+        },
+        "S": {
+            "item": "minecraft:string"
+        }
     },
-    "S": {
-      "item": "minecraft:string"
-    }
-  },
-  "pattern": [
-    "BBB",
-    "SSS",
-    "BBB"
-  ],
-  "result": {
-    "item": "ultramarine:bamboo_curtain"
-  },
-  "show_notification": true
+    "pattern": [
+        "BBB",
+        "SSS",
+        "BBB"
+    ],
+    "result": {
+        "item": "ultramarine:bamboo_curtain"
+    },
+    "show_notification": true
 }

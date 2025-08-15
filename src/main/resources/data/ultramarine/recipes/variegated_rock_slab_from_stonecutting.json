@@ -1,8 +1,8 @@
 {
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "ultramarine:variegated_rocks"
-  },
-  "result": "ultramarine:variegated_rock_slab"
+    "type": "minecraft:stonecutting",
+    "ingredient": {
+        "item": "ultramarine:variegated_rocks"
+    },
+    "result": "ultramarine:variegated_rock_slab",
+    "count": 1
 }

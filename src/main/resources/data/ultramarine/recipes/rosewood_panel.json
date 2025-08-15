@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 2,
-  "ingredient": {
-    "item": "ultramarine:varnished_rosewood"
-  },
-  "result": "ultramarine:rosewood_panel"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "item": "ultramarine:varnished_rosewood"
+    },
+    "result": {
+        "id": "ultramarine:rosewood_panel",
+        "Count": 2
+    }
 }

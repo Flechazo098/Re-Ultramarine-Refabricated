@@ -1,8 +1,10 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 1,
-  "ingredient": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:small_wooden_guardian_lion"
+    "type": "ultramarine:woodworking",
+    "ingredient": {
+        "tag": "minecraft:logs"
+    },
+    "result": {
+        "id": "ultramarine:small_wooden_guardian_lion",
+        "Count": 1
+    }
 }

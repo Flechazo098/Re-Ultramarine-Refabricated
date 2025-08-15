@@ -1,8 +1,20 @@
 {
-  "type": "ultramarine:woodworking",
-  "count": 1,
-  "ingredient": {
-    "item": "minecraft:bamboo_mosaic"
-  },
-  "result": "ultramarine:bamboo_mat"
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "BSB",
+        "BSB",
+        "BSB"
+    ],
+    "key": {
+        "B": {
+            "item": "minecraft:bamboo"
+        },
+        "S": {
+            "item": "minecraft:string"
+        }
+    },
+    "result": {
+        "count": 4,
+        "item": "ultramarine:bamboo_mat"
+    }
 }

@@ -1,24 +1,28 @@
 {
-  "type": "ultramarine:chisel_table",
-  "colors": [
-    {
-      "tag": "c:dyes/green"
+    "id": "ultramarine:cyan_and_blue_fangxin_edge_variant",
+    "type": "ultramarine:chisel_table",
+    "colors": [
+        {
+            "item": "minecraft:green_dye"
+        },
+        {
+            "item": "minecraft:cyan_dye"
+        },
+        {
+            "item": "minecraft:blue_dye"
+        },
+        {
+            "item": "minecraft:blue_dye"
+        }
+    ],
+    "material": {
+        "tag": "minecraft:logs"
     },
-    {
-      "tag": "c:dyes/cyan"
+    "result": {
+        "id": "ultramarine:cyan_and_blue_fangxin_edge_variant",
+        "Count": 1
     },
-    {
-      "tag": "c:dyes/blue"
-    },
-    {
-      "tag": "c:dyes/blue"
+    "template": {
+        "item": "ultramarine:fangxin_edge_template"
     }
-  ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
-  "result": "ultramarine:cyan_and_blue_fangxin_edge_variant",
-  "template": {
-    "item": "ultramarine:fangxin_edge_template"
-  }
 }
