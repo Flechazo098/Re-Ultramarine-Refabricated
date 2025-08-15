@@ -5,11 +5,9 @@ import com.voxelutopia.ultramarine.world.block.entity.BottleGourdBlockEntity;
 import com.voxelutopia.ultramarine.world.block.entity.BrickKilnBlockEntity;
 import com.voxelutopia.ultramarine.world.block.entity.CenserBlockEntity;
 import com.voxelutopia.ultramarine.world.block.entity.ContainerDecorativeBlockEntity;
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 

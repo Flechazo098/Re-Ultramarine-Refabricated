@@ -1,8 +1,6 @@
 package com.voxelutopia.ultramarine.data.registry;
 
-import com.voxelutopia.ultramarine.world.block.entity.BrickKilnBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.minecraft.core.Direction;
 
 public class BlockApiLookupRegistry {
 
