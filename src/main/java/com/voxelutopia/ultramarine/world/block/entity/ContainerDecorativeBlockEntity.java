@@ -31,6 +31,10 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
             ).apply(instance, (pos, state, rows, block) -> {
                 ContainerDecorativeBlockEntity entity = new ContainerDecorativeBlockEntity(pos, state, rows);
                 entity.block = block;
+                // 兜底：如果block为null
+                if (entity.block == null) {
+                    entity.block = state.getBlock();
+                }
                 return entity;
             })
     );
@@ -41,11 +45,12 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
 
     public ContainerDecorativeBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.CONTAINER_DECORATIVE_BLOCK, pos, state);
+        this.block = state.getBlock();
+        this.items = NonNullList.withSize(this.rows * 9, ItemStack.EMPTY);
     }
 
     public ContainerDecorativeBlockEntity(BlockPos pos, BlockState state, int rows) {
         this(pos, state);
-        block = state.getBlock();
         this.rows = rows;
         this.items = NonNullList.withSize(rows * 9, ItemStack.EMPTY);
     }
@@ -81,18 +86,37 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
     @Override
     protected void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
-        nbt.putString("Block", BuiltInRegistries.BLOCK.getKey(block).toString());
-        nbt.putByte("Rows", (byte) rows);
         if (!this.trySaveLootTable(nbt)) {
             ContainerHelper.saveAllItems(nbt, this.items);
         }
+
+        // 保存行数
+        nbt.putInt("Rows", this.rows);
+
+        // 保存方块信息
+        if (this.block != null) {
+            nbt.putString("BlockId", BuiltInRegistries.BLOCK.getKey(this.block).toString());
+        }
     }
 
-    @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        this.block = BuiltInRegistries.BLOCK.get(ResourceLocation.tryParse(nbt.getString("Block")));
-        this.rows = nbt.getByte("Rows");
+        // 加载行数
+        if (nbt.contains("Rows")) {
+            this.rows = nbt.getInt("Rows");
+        }
+
+        // 加载方块信息
+        if (nbt.contains("BlockId")) {
+            String blockId = nbt.getString("BlockId");
+            this.block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blockId));
+        } else if (this.level != null) {
+            this.block = this.level.getBlockState(this.worldPosition).getBlock();
+        }
+        // 兜底：如果block依然为null
+        if (this.block == null && this.level != null) {
+            this.block = this.level.getBlockState(this.worldPosition).getBlock();
+        }
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (!this.tryLoadLootTable(nbt)) {
             ContainerHelper.loadAllItems(nbt, this.items);

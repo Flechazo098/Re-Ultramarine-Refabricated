@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
 
@@ -46,10 +47,6 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float pPartialTick, int pX, int pY) {
-        this.renderBackground(guiGraphics);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, BG_LOCATION);
         int i = this.leftPos;
         int j = this.topPos;
         guiGraphics.blit(BG_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight);
@@ -69,14 +66,14 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
             int i = this.leftPos + 52;
             int j = this.topPos + 14;
             int k = this.startIndex + 12;
-            List<WoodworkingRecipe> list = this.menu.getRecipes();
+            List<RecipeHolder<WoodworkingRecipe>> list = this.menu.getRecipes();
 
             for (int l = this.startIndex; l < k && l < this.menu.getNumRecipes(); ++l) {
                 int i1 = l - this.startIndex;
                 int j1 = i + i1 % 4 * 16;
                 int k1 = j + i1 / 4 * 18 + 2;
                 if (pX >= j1 && pX < j1 + 16 && pY >= k1 && pY < k1 + 18) {
-                    guiGraphics.renderTooltip(this.font, list.get(l).getResultItem(this.minecraft.level.registryAccess()), pX, pY);
+                    guiGraphics.renderTooltip(this.font, list.get(l).value().getResultItem(this.minecraft.level.registryAccess()), pX, pY);
                 }
             }
         }
@@ -102,14 +99,14 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
     }
 
     private void renderRecipes(GuiGraphics guiGraphics, int pLeft, int pTop, int pRecipeIndexOffsetMax) {
-        List<WoodworkingRecipe> list = this.menu.getRecipes();
+        List<RecipeHolder<WoodworkingRecipe>> list = this.menu.getRecipes();
 
         for (int i = this.startIndex; i < pRecipeIndexOffsetMax && i < this.menu.getNumRecipes(); ++i) {
             int j = i - this.startIndex;
             int k = pLeft + j % 4 * 16;
             int l = j / 4;
             int i1 = pTop + l * 18 + 2;
-            guiGraphics.renderItem(list.get(i).getResultItem(this.minecraft.level.registryAccess()), k, i1);
+            guiGraphics.renderItem(list.get(i).value().getResultItem(this.minecraft.level.registryAccess()), k, i1);
         }
 
     }
@@ -158,10 +155,10 @@ public class WoodworkingWorkbenchScreen extends AbstractContainerScreen<Woodwork
     }
 
     @Override
-    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
         if (this.isScrollBarActive()) {
             int i = this.getOffscreenRows();
-            float f = (float) pDelta / (float) i;
+            float f = (float) pScrollY / (float) i;
             this.scrollOffs = Mth.clamp(this.scrollOffs - f, 0.0F, 1.0F);
             this.startIndex = (int) ((double) (this.scrollOffs * (float) i) + 0.5D) * 4;
         }

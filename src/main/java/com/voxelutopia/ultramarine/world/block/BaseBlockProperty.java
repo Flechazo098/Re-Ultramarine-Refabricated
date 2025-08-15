@@ -1,19 +1,32 @@
 package com.voxelutopia.ultramarine.world.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.data.ModBlockTags;
 import com.voxelutopia.ultramarine.data.registry.SoundRegistry;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.PushReaction;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public final class BaseBlockProperty {
+
+    public static final Codec<BaseBlockProperty> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    BlockMaterial.CODEC.fieldOf("material").forGetter(BaseBlockProperty::getMaterial)
+            ).apply(instance, BaseBlockProperty::fromMaterial)
+    );
+
+    // ... existing code ...
     public static BaseBlockProperty STONE = new BaseBlockProperty(BlockBehaviour.Properties.of()
             .sound(SoundType.STONE)
             .strength(1.5F, 6.0F)
@@ -147,41 +160,61 @@ public final class BaseBlockProperty {
     }
 
     public BaseBlockProperty copy() {
-        BlockBehaviour.Properties properties1 = BlockBehaviour.Properties.copy(new BlockBehaviour(this.properties) {
-            @Override
-            public Item asItem() {
-                return Items.AIR;
-            }
-
-            @Override
-            protected Block asBlock() {
-                return Blocks.AIR;
-            }
-        });
-        return new BaseBlockProperty(properties1, this.material);
+        return new BaseBlockProperty(this.properties, this.material);
     }
 
-    public enum BlockMaterial {
-        STONE(BlockTags.MINEABLE_WITH_PICKAXE),
-        METAL(BlockTags.MINEABLE_WITH_PICKAXE),
-        ICE(BlockTags.MINEABLE_WITH_PICKAXE),
-        WOOD(BlockTags.MINEABLE_WITH_AXE),
-        PORCELAIN(BlockTags.MINEABLE_WITH_PICKAXE),
-        BAMBOO(BlockTags.MINEABLE_WITH_AXE),
-        FABRIC(ModBlockTags.MINEABLE_WITH_SHEARS),
-        PAPER(ModBlockTags.MINEABLE_WITH_SHEARS),
-        PLANT(BlockTags.MINEABLE_WITH_HOE),
-        FLAX(BlockTags.MINEABLE_WITH_HOE);
+    // 用于从材质创建默认属性的工厂方法
+    public static BaseBlockProperty fromMaterial(BlockMaterial material) {
+        return switch (material) {
+            case STONE -> STONE;
+            case METAL -> IRON;
+            case ICE -> ICE;
+            case WOOD -> WOOD;
+            case PORCELAIN -> PORCELAIN;
+            case BAMBOO -> BAMBOO;
+            case FABRIC -> SILK;
+            case PAPER -> PAPER;
+            case PLANT -> PLANT;
+            case FLAX -> FLAX;
+        };
+    }
 
-        final TagKey<Block> tool;
+    public enum BlockMaterial implements StringRepresentable {
+        STONE("stone", BlockTags.MINEABLE_WITH_PICKAXE),
+        METAL("metal", BlockTags.MINEABLE_WITH_PICKAXE),
+        ICE("ice", BlockTags.MINEABLE_WITH_PICKAXE),
+        WOOD("wood", BlockTags.MINEABLE_WITH_AXE),
+        PORCELAIN("porcelain", BlockTags.MINEABLE_WITH_PICKAXE),
+        BAMBOO("bamboo", BlockTags.MINEABLE_WITH_AXE),
+        FABRIC("fabric", ModBlockTags.MINEABLE_WITH_SHEARS),
+        PAPER("paper", ModBlockTags.MINEABLE_WITH_SHEARS),
+        PLANT("plant", BlockTags.MINEABLE_WITH_HOE),
+        FLAX("flax", BlockTags.MINEABLE_WITH_HOE);
+
+        public static final Codec<BlockMaterial> CODEC = StringRepresentable.fromEnum(BlockMaterial::values);
+
+        private static final Map<String, BlockMaterial> BY_NAME = Arrays.stream(values())
+                .collect(Collectors.toMap(BlockMaterial::getSerializedName, Function.identity()));
+
+        private final String name;
+        private final TagKey<Block> tool;
+
+        BlockMaterial(String name, TagKey<Block> tool) {
+            this.name = name;
+            this.tool = tool;
+        }
 
         public TagKey<Block> getTool() {
             return tool;
         }
 
-        BlockMaterial(TagKey<Block> tool) {
-            this.tool = tool;
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
+
+        public static BlockMaterial byName(String name) {
+            return BY_NAME.get(name);
         }
     }
-
 }

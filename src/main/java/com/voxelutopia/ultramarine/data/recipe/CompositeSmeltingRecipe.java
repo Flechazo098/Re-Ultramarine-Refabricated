@@ -1,62 +1,54 @@
 package com.voxelutopia.ultramarine.data.recipe;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.data.registry.RecipeSerializerRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
-import com.voxelutopia.ultramarine.world.block.entity.BrickKilnBlockEntity;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
-public class CompositeSmeltingRecipe implements Recipe<Container> {
+public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.CompositeSmeltingRecipeInput> {
 
-    protected final ResourceLocation id;
-    protected final String group;
     protected final Ingredient primaryIngredient;
     protected final Ingredient secondaryIngredient;
     protected final ItemStack result;
     protected final float experience;
     protected final int cookingTime;
 
-    public CompositeSmeltingRecipe(ResourceLocation pId, String pGroup, Ingredient primaryIngredient, Ingredient secondaryIngredient, ItemStack pResult, float pExperience, int pCookingTime) {
-        this.id = pId;
-        this.group = pGroup;
+    public CompositeSmeltingRecipe(Ingredient primaryIngredient, Ingredient secondaryIngredient, ItemStack result, float experience, int cookingTime) {
         this.primaryIngredient = primaryIngredient;
         this.secondaryIngredient = secondaryIngredient;
-        this.result = pResult;
-        this.experience = pExperience;
-        this.cookingTime = pCookingTime;
+        this.result = result;
+        this.experience = experience;
+        this.cookingTime = cookingTime;
     }
 
     @Override
-    public boolean matches(Container pContainer, Level pLevel) {
-        return this.primaryIngredient.test(pContainer.getItem(BrickKilnBlockEntity.SLOT_INPUT_PRIMARY)) &&
-                this.secondaryIngredient.test(pContainer.getItem(BrickKilnBlockEntity.SLOT_INPUT_SECONDARY));
+    public boolean matches(CompositeSmeltingRecipeInput input, Level level) {
+        return this.primaryIngredient.test(input.primaryItem()) &&
+                this.secondaryIngredient.test(input.secondaryItem());
     }
 
-    public boolean partialMatch(Container pContainer, Level pLevel) {
-        return primaryIngredient.or(secondaryIngredient).test(pContainer.getItem(0));
+    public boolean partialMatch(CompositeSmeltingRecipeInput input, Level level) {
+        return primaryIngredient.test(input.primaryItem()) || secondaryIngredient.test(input.secondaryItem());
     }
+
 
     @Override
-    public ItemStack assemble(Container pContainer, RegistryAccess registryAccess) {
+    public ItemStack assemble(CompositeSmeltingRecipeInput recipeInput, RegistryAccess provider) {
         return this.result.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int pWidth, int pHeight) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
@@ -71,11 +63,6 @@ public class CompositeSmeltingRecipe implements Recipe<Container> {
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess) {
         return result.copy();
-    }
-
-    @Override
-    public ResourceLocation getId() {
-        return id;
     }
 
     @Override
@@ -99,62 +86,97 @@ public class CompositeSmeltingRecipe implements Recipe<Container> {
     public static class Serializer implements RecipeSerializer<CompositeSmeltingRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
-        private static final int defaultCookingTime = 200;
+        private static final int DEFAULT_COOKING_TIME = 200;
+
+        // Codec for serialization
+        private static final Codec<CompositeSmeltingRecipe> CODEC = RecordCodecBuilder.create(instance ->
+                instance.group(
+                        Ingredient.CODEC.fieldOf("primary_ingredient").forGetter(recipe -> recipe.primaryIngredient),
+                        Ingredient.CODEC.fieldOf("secondary_ingredient").forGetter(recipe -> recipe.secondaryIngredient),
+                        ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+                        Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
+                        Codec.INT.optionalFieldOf("cookingtime", DEFAULT_COOKING_TIME).forGetter(recipe -> recipe.cookingTime)
+                ).apply(instance, CompositeSmeltingRecipe::new)
+        );
 
         protected Serializer() {
         }
 
-
         @Override
-        public CompositeSmeltingRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-            if (!pJson.has("result"))
-                throw new JsonSyntaxException("Missing result, expected to find a string or object");
-
-            String group = GsonHelper.getAsString(pJson, "group", "");
-            Ingredient primaryIngredient = parseIngredient(pJson, "primary_ingredient");
-            Ingredient secondaryIngredient = parseIngredient(pJson, "secondary_ingredient");
-
-            ItemStack result;
-            if (pJson.get("result").isJsonObject())
-                result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
-            else {
-                String s1 = GsonHelper.getAsString(pJson, "result");
-                ResourceLocation resourcelocation = ResourceLocation.tryParse(s1);
-                ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, resourcelocation);
-                result = new ItemStack(BuiltInRegistries.ITEM.getHolder(itemKey).orElseThrow(() -> new IllegalStateException("Item: " + s1 + " does not exist")));
-            }
-            float exp = GsonHelper.getAsFloat(pJson, "experience", 0.0F);
-            int cookingTime = GsonHelper.getAsInt(pJson, "cookingtime", defaultCookingTime);
-            return new CompositeSmeltingRecipe(pRecipeId, group, primaryIngredient, secondaryIngredient, result, exp, cookingTime);
-        }
-
-        @Nullable
-        @Override
-        public CompositeSmeltingRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-            String group = pBuffer.readUtf();
-            Ingredient primary = Ingredient.fromNetwork(pBuffer);
-            Ingredient secondary = Ingredient.fromNetwork(pBuffer);
-            ItemStack result = pBuffer.readItem();
-            float exp = pBuffer.readFloat();
-            int cookingTime = pBuffer.readVarInt();
-            return new CompositeSmeltingRecipe(pRecipeId, group, primary, secondary, result, exp, cookingTime);
+        public Codec<CompositeSmeltingRecipe> codec() {
+            return CODEC;
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, CompositeSmeltingRecipe pRecipe) {
-            pBuffer.writeUtf(pRecipe.group);
-            pRecipe.primaryIngredient.toNetwork(pBuffer);
-            pRecipe.secondaryIngredient.toNetwork(pBuffer);
-            pBuffer.writeItem(pRecipe.result);
-            pBuffer.writeFloat(pRecipe.experience);
-            pBuffer.writeVarInt(pRecipe.cookingTime);
+        public CompositeSmeltingRecipe fromNetwork(FriendlyByteBuf buffer) {
+            Ingredient primaryIngredient = Ingredient.fromNetwork(buffer);
+            Ingredient secondaryIngredient = Ingredient.fromNetwork(buffer);
+            ItemStack result = buffer.readItem();
+            float experience = buffer.readFloat();
+            int cookingTime = buffer.readVarInt();
+            return new CompositeSmeltingRecipe(primaryIngredient, secondaryIngredient, result, experience, cookingTime);
         }
 
-        private static Ingredient parseIngredient(JsonObject json, String member) {
-            JsonElement ingredientRaw = GsonHelper.isArrayNode(json, member) ? GsonHelper.getAsJsonArray(json, member) : GsonHelper.getAsJsonObject(json, member);
-            return Ingredient.fromJson(ingredientRaw);
+        @Override
+        public void toNetwork(FriendlyByteBuf buffer, CompositeSmeltingRecipe recipe) {
+            recipe.primaryIngredient.toNetwork(buffer);
+            recipe.secondaryIngredient.toNetwork(buffer);
+            buffer.writeItem(recipe.result);
+            buffer.writeFloat(recipe.experience);
+            buffer.writeVarInt(recipe.cookingTime);
         }
-
     }
 
+    // RecipeInput implementation for CompositeSmeltingRecipe
+    public record CompositeSmeltingRecipeInput(ItemStack primaryItem, ItemStack secondaryItem) implements Container {
+
+        @Override
+        public ItemStack getItem(int index) {
+            return switch (index) {
+                case 0 -> primaryItem;
+                case 1 -> secondaryItem;
+                default -> ItemStack.EMPTY;
+            };
+        }
+
+        @Override
+        public ItemStack removeItem(int i, int j) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int i) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public void setItem(int i, ItemStack itemStack) {
+
+        }
+
+        @Override
+        public void setChanged() {
+
+        }
+
+        @Override
+        public boolean stillValid(Player player) {
+            return false;
+        }
+
+        @Override
+        public int getContainerSize() {
+            return 2;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return primaryItem.isEmpty() && secondaryItem.isEmpty();
+        }
+
+        @Override
+        public void clearContent() {
+
+        }
+    }
 }

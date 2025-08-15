@@ -1,5 +1,7 @@
 package com.voxelutopia.ultramarine.world.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
@@ -11,6 +13,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 
 public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockPropertyHolder {
 
+    public static final MapCodec<BaseDirectionalBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    BaseBlockProperty.CODEC.fieldOf("property").forGetter(block -> block.property)
+            ).apply(instance, BaseDirectionalBlock::new)
+    );
+
     protected final BaseBlockProperty property;
 
     public BaseDirectionalBlock(BaseBlock block) {
@@ -21,6 +29,11 @@ public class BaseDirectionalBlock extends DirectionalBlock implements BaseBlockP
         super(property.properties);
         this.property = property;
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
+    }
+
+    @Override
+    protected MapCodec<? extends BaseDirectionalBlock> codec() {
+        return CODEC;
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {

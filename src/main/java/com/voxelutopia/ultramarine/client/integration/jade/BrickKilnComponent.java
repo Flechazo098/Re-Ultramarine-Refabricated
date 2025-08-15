@@ -7,13 +7,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec2;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElementHelper;
-import snownee.jade.impl.ui.ProgressArrowElement;
 
 public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
     INSTANCE;
@@ -34,8 +34,9 @@ public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataPr
             int total = data.getInt("CookTimeTotal");
             tooltip.add(helper.item(inventory.get(0)));
             tooltip.append(helper.item(inventory.get(1)));
+            tooltip.append(helper.spacer(4, 0));
+            tooltip.append(helper.progress((float) progress / (float) total).translate(new Vec2(-2.0F, 0.0F)));
             tooltip.append(helper.item(inventory.get(2)));
-            tooltip.append(new ProgressArrowElement((float) progress / (float) total));
             tooltip.append(helper.item(inventory.get(3)));
         }
     }
@@ -43,11 +44,10 @@ public enum BrickKilnComponent implements IBlockComponentProvider, IServerDataPr
     @Override
     public void appendServerData(CompoundTag compoundTag, BlockAccessor blockAccessor) {
         BrickKilnBlockEntity kiln = (BrickKilnBlockEntity) blockAccessor.getBlockEntity();
-        // 直接使用BrickKilnBlockEntity的SlottedStackStorage接口方法
-        ItemStack primary = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_INPUT_PRIMARY);
-        ItemStack secondary = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_INPUT_SECONDARY);
-        ItemStack fuel = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_FUEL);
-        ItemStack result = kiln.getStackInSlot(BrickKilnBlockEntity.SLOT_RESULT);
+        ItemStack primary = kiln.getItem(BrickKilnBlockEntity.SLOT_INPUT_PRIMARY);
+        ItemStack secondary = kiln.getItem(BrickKilnBlockEntity.SLOT_INPUT_SECONDARY);
+        ItemStack fuel = kiln.getItem(BrickKilnBlockEntity.SLOT_FUEL);
+        ItemStack result = kiln.getItem(BrickKilnBlockEntity.SLOT_RESULT);
         if (primary.isEmpty() && secondary.isEmpty() && fuel.isEmpty() && result.isEmpty()) return;
         ListTag items = new ListTag();
         items.add(primary.save(new CompoundTag()));

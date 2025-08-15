@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class RoofTiles extends ShiftableBlock {
 
-    public static final BlockBehaviour.Properties PROPERTIES = BlockBehaviour.Properties.of()
+    public static final Properties PROPERTIES = Properties.of()
             .requiresCorrectToolForDrops().strength(1.5F, 4.0F).sound(SoundType.DEEPSLATE_TILES);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty SNOW_LAYERS = ModBlockStateProperties.SNOW_LAYERS;

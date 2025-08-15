@@ -1,7 +1,7 @@
 package com.voxelutopia.ultramarine.world.block;
 
-import io.github.fabricators_of_create.porting_lib.common.util.IPlantable;
-import io.github.fabricators_of_create.porting_lib.common.util.PlantType;
+import com.voxelutopia.ultramarine.util.IPlantable;
+import com.voxelutopia.ultramarine.util.PlantType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -28,7 +28,7 @@ public class AquaticPlantBlock extends DecorativeBlock implements IPlantable {
     public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
         BlockPos blockpos = pPos.below();
         if (pState.getBlock() == this)
-            return pLevel.getBlockState(blockpos).canSustainPlant(pLevel, blockpos, Direction.UP, this);
+            return pLevel.getBlockState(blockpos).canSurvive(pLevel, blockpos);
         return this.mayPlaceOn(pLevel.getBlockState(blockpos), pLevel, blockpos);
     }
 

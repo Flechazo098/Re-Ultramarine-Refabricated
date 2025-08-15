@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final DataSlot selectedRecipeIndex = DataSlot.standalone();
     private final Level level;
-    private List<WoodworkingRecipe> recipes = Lists.newArrayList();
+    private List<RecipeHolder<WoodworkingRecipe>> recipes = Lists.newArrayList();
     private ItemStack input = ItemStack.EMPTY;
     final Slot inputSlot;
     final Slot resultSlot;
@@ -94,7 +95,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
         return this.selectedRecipeIndex.get();
     }
 
-    public List<WoodworkingRecipe> getRecipes() {
+    public List<RecipeHolder<WoodworkingRecipe>> getRecipes() {
         return this.recipes;
     }
 
@@ -132,6 +133,7 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
 
     }
 
+
     private void setupRecipeList(Container pInventory, ItemStack pStack) {
         this.recipes.clear();
         this.selectedRecipeIndex.set(-1);
@@ -144,9 +146,9 @@ public class WoodworkingWorkbenchMenu extends AbstractContainerMenu {
 
     void setupResultSlot() {
         if (!this.recipes.isEmpty() && this.isValidRecipeIndex(this.selectedRecipeIndex.get())) {
-            WoodworkingRecipe woodworkingRecipe = this.recipes.get(this.selectedRecipeIndex.get());
+            RecipeHolder<WoodworkingRecipe> woodworkingRecipe = this.recipes.get(this.selectedRecipeIndex.get());
             this.resultContainer.setRecipeUsed(woodworkingRecipe);
-            this.resultSlot.set(woodworkingRecipe.assemble(this.container, level.registryAccess()));
+            this.resultSlot.set(woodworkingRecipe.value().assemble(this.container, level.registryAccess()));
         } else {
             this.resultSlot.set(ItemStack.EMPTY);
         }

@@ -1,5 +1,7 @@
 package com.voxelutopia.ultramarine.world.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
@@ -10,6 +12,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class BaseHorizontalDirectionalBlock extends HorizontalDirectionalBlock implements BaseBlockPropertyHolder {
+
+    public static final MapCodec<BaseHorizontalDirectionalBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    BaseBlockProperty.CODEC.fieldOf("property").forGetter(block -> block.property)
+            ).apply(instance, BaseHorizontalDirectionalBlock::new)
+    );
 
     protected final BaseBlockProperty property;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -24,10 +32,14 @@ public class BaseHorizontalDirectionalBlock extends HorizontalDirectionalBlock i
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
+    @Override
+    protected MapCodec<? extends BaseHorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
+
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection());
     }
-
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(FACING);

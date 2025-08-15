@@ -24,6 +24,7 @@ public class Ultramarine implements ModInitializer {
         ItemRegistry.registerModItems();
         BlockEntityRegistry.registerModBlockEntities();
         EntityTypeRegistry.registerModEntities();
+        ItemStorageRegistry.register();
         VillagerProfessionRegistry.registerModVillagerProfession();
         PoiTypeRegistry.registerModPOI();
         MenuTypeRegistry.registerModMenus();

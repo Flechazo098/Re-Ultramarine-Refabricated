@@ -1,25 +1,21 @@
 package com.voxelutopia.ultramarine.data.recipe;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.data.registry.RecipeSerializerRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
 import com.voxelutopia.ultramarine.world.block.menu.ChiselTableMenu;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ChiselTableRecipe implements Recipe<Container> {
+public class ChiselTableRecipe implements Recipe<ChiselTableRecipe.ChiselTableRecipeInput> {
+
 
     protected final ResourceLocation id;
     protected final String group;
@@ -46,31 +43,47 @@ public class ChiselTableRecipe implements Recipe<Container> {
         this.result = pResult;
     }
 
+
     @Override
-    public boolean matches(Container pContainer, Level pLevel) {
-        ItemStack usedMaterial = pContainer.getItem(ChiselTableMenu.SLOT_MATERIAL);
-        ItemStack usedTemplate = pContainer.getItem(ChiselTableMenu.SLOT_TEMPLATE);
+    public boolean matches(ChiselTableRecipeInput input, Level level) {
+        Container container = input.container();
+
+        ItemStack usedMaterial = container.getItem(ChiselTableMenu.SLOT_MATERIAL);
+        ItemStack usedTemplate = container.getItem(ChiselTableMenu.SLOT_TEMPLATE);
         List<ItemStack> usedColors = Arrays.asList(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
-        for (int i = 0, j = 2; j < pContainer.getContainerSize(); i++, j++) {
-            usedColors.set(i, pContainer.getItem(j));
+
+        for (int i = 0, j = ChiselTableMenu.SLOT_COLOR_START; j < ChiselTableMenu.SLOT_COLOR_END; i++, j++) {
+            usedColors.set(i, container.getItem(j));
         }
         usedColors = usedColors.stream().filter(item -> !item.isEmpty()).collect(Collectors.toList());
+
         return material.test(usedMaterial) && template.test(usedTemplate) && compareColors(this.colors, usedColors);
     }
 
+
     @Override
-    public ItemStack assemble(Container pContainer, RegistryAccess registryAccess) {
-        return this.result.copy();
+    public ItemStack assemble(ChiselTableRecipeInput input, RegistryAccess registryAccess) {
+        return result.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int pWidth, int pHeight) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
     public ItemStack getResultItem(RegistryAccess registryAccess) {
         return result.copy();
+    }
+
+    @Override
+    public RecipeSerializer<?> getSerializer() {
+        return RecipeSerializerRegistry.CHISEL_TABLE_SERIALIZER;
+    }
+
+    @Override
+    public RecipeType<?> getType() {
+        return RecipeTypeRegistry.CHISEL_TABLE;
     }
 
     public Ingredient getMaterial() {
@@ -85,102 +98,118 @@ public class ChiselTableRecipe implements Recipe<Container> {
         return colors;
     }
 
-    @Override
     public ResourceLocation getId() {
         return id;
     }
 
-    @Override
-    public RecipeSerializer<?> getSerializer() {
-        return RecipeSerializerRegistry.CHISEL_TABLE_SERIALIZER;
-    }
-
-    @Override
-    public RecipeType<?> getType() {
-        return RecipeTypeRegistry.CHISEL_TABLE;
-    }
-
     private static boolean compareColors(List<Ingredient> recipeColors, List<ItemStack> usedColors) {
         if (recipeColors.size() != usedColors.size()) return false;
-        List<ItemStack> usedColorsReverse = new ArrayList<>(usedColors);
-        Collections.reverse(usedColorsReverse);
-        boolean fwd = true, rvs = true;
+        List<ItemStack> reversed = new ArrayList<>(usedColors);
+        Collections.reverse(reversed);
+        boolean fwd = true, rev = true;
         for (int i = 0; i < recipeColors.size(); i++) {
-            fwd = recipeColors.get(i).test(usedColors.get(i)) && fwd;
-            rvs = recipeColors.get(i).test(usedColorsReverse.get(i)) && rvs;
+            fwd = fwd && recipeColors.get(i).test(usedColors.get(i));
+            rev = rev && recipeColors.get(i).test(reversed.get(i));
         }
-        return fwd || rvs;
+        return fwd || rev;
     }
 
     public static class Serializer implements RecipeSerializer<ChiselTableRecipe> {
 
         public static final Serializer INSTANCE = new Serializer();
 
-        protected Serializer() {
+        private static final Codec<ChiselTableRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ResourceLocation.CODEC.fieldOf("id").forGetter(ChiselTableRecipe::getId),
+                Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
+                Ingredient.CODEC.fieldOf("material").forGetter(ChiselTableRecipe::getMaterial),
+                Ingredient.CODEC.fieldOf("template").forGetter(ChiselTableRecipe::getTemplate),
+                Ingredient.CODEC.listOf().fieldOf("colors").forGetter(ChiselTableRecipe::getColors),
+                ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result)
+        ).apply(instance, (id, group, material, template, colors, result) ->
+                new ChiselTableRecipe(id, group, material, template, colors.toArray(new Ingredient[0]), result)));
+
+        @Override
+        public Codec<ChiselTableRecipe> codec() {
+            return CODEC;
         }
 
         @Override
-        public ChiselTableRecipe fromJson(ResourceLocation pRecipeId, JsonObject pJson) {
-            if (!pJson.has("result"))
-                throw new JsonSyntaxException("Missing result, expected to find a string or object");
+        public ChiselTableRecipe fromNetwork(FriendlyByteBuf buffer) {
+            ResourceLocation id = buffer.readResourceLocation();
+            String group = buffer.readUtf();
+            Ingredient material = Ingredient.fromNetwork(buffer);
+            Ingredient template = Ingredient.fromNetwork(buffer);
 
-            String group = GsonHelper.getAsString(pJson, "group", "");
-            Ingredient material = parseIngredient(pJson, "material");
-            Ingredient template = parseIngredient(pJson, "template");
-            JsonArray colorsJson = GsonHelper.getAsJsonArray(pJson, "colors");
-            Ingredient[] colors = new Ingredient[colorsJson.size()];
-            for (int i = 0; i < colors.length; i++) {
-                colors[i] = Ingredient.fromJson(colorsJson.get(i));
+            int colorCount = buffer.readVarInt();
+            Ingredient[] colors = new Ingredient[colorCount];
+            for (int i = 0; i < colorCount; i++) {
+                colors[i] = Ingredient.fromNetwork(buffer);
             }
 
-            ItemStack result;
-            if (pJson.get("result").isJsonObject())
-                result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pJson, "result"));
-            else {
-                String s1 = GsonHelper.getAsString(pJson, "result");
-                ResourceLocation resourcelocation = ResourceLocation.tryParse(s1);
-                ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, resourcelocation);
-                result = new ItemStack(BuiltInRegistries.ITEM.getHolder(itemKey).orElseThrow(() -> new IllegalStateException("Item: " + s1 + " does not exist")));
-            }
-
-            return new ChiselTableRecipe(pRecipeId, group, material, template, colors, result);
-        }
-
-        @Nullable
-        @Override
-        public ChiselTableRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-            String group = pBuffer.readUtf();
-            Ingredient material = Ingredient.fromNetwork(pBuffer);
-            Ingredient template = Ingredient.fromNetwork(pBuffer);
-            Ingredient[] colors = new Ingredient[4];
-            for (int i = 0; i < 4; i++) {
-                colors[i] = Ingredient.fromNetwork(pBuffer);
-            }
-            colors = Arrays.stream(colors).filter(i -> !i.isEmpty()).toList().toArray(new Ingredient[0]);
-            ItemStack result = pBuffer.readItem();
-            return new ChiselTableRecipe(pRecipeId, group, material, template, colors, result);
+            ItemStack result = buffer.readItem();
+            return new ChiselTableRecipe(id, group, material, template, colors, result);
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, ChiselTableRecipe pRecipe) {
-            pBuffer.writeUtf(pRecipe.group);
-            pRecipe.material.toNetwork(pBuffer);
-            pRecipe.template.toNetwork(pBuffer);
-            Ingredient[] colors = new Ingredient[4];
-            for (int i = 0; i < 4; i++) {
-                colors[i] = i < pRecipe.colors.size() ? pRecipe.colors.get(i) : Ingredient.EMPTY;
-            }
-            for (int i = 0; i < 4; i++) {
-                colors[i].toNetwork(pBuffer);
-            }
-            pBuffer.writeItem(pRecipe.result);
-        }
+        public void toNetwork(FriendlyByteBuf buffer, ChiselTableRecipe recipe) {
+            buffer.writeResourceLocation(recipe.getId());
+            buffer.writeUtf(recipe.group);
+            recipe.material.toNetwork(buffer);
+            recipe.template.toNetwork(buffer);
 
-        private static Ingredient parseIngredient(JsonObject json, String member) {
-            JsonElement ingredientRaw = GsonHelper.isArrayNode(json, member) ? GsonHelper.getAsJsonArray(json, member) : GsonHelper.getAsJsonObject(json, member);
-            return Ingredient.fromJson(ingredientRaw);
-        }
+            buffer.writeVarInt(recipe.colors.size());
+            for (Ingredient color : recipe.colors) {
+                color.toNetwork(buffer);
+            }
 
+            buffer.writeItem(recipe.result);
+        }
     }
 
+    public record ChiselTableRecipeInput(Container container) implements Container {
+        @Override
+        public int getContainerSize() {
+            return container.getContainerSize();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public ItemStack getItem(int slot) {
+            return container.getItem(slot);
+        }
+
+        @Override
+        public ItemStack removeItem(int i, int j) {
+            return null;
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int i) {
+            return null;
+        }
+
+        @Override
+        public void setItem(int i, ItemStack itemStack) {
+
+        }
+
+        @Override
+        public void setChanged() {
+
+        }
+
+        @Override
+        public boolean stillValid(Player player) {
+            return false;
+        }
+
+        @Override
+        public void clearContent() {
+
+        }
+    }
 }

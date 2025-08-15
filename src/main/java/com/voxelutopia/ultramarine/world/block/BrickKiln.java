@@ -3,7 +3,7 @@ package com.voxelutopia.ultramarine.world.block;
 import com.voxelutopia.ultramarine.data.registry.BlockEntityRegistry;
 import com.voxelutopia.ultramarine.world.block.entity.BlockEntityHelper;
 import com.voxelutopia.ultramarine.world.block.entity.BrickKilnBlockEntity;
-import io.github.fabricators_of_create.porting_lib.transfer.item.RecipeWrapper;
+import com.voxelutopia.ultramarine.world.block.menu.BrickKilnMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -79,7 +79,7 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
             if (blockentity instanceof BrickKilnBlockEntity furnace) {
                 if (pLevel instanceof ServerLevel) {
-                    Containers.dropContents(pLevel, pPos, new RecipeWrapper(furnace.wrapHandlers()));
+                    Containers.dropContents(pLevel, pPos, new BrickKilnMenu.BrickKilnInventory(furnace));
                     furnace.getRecipesToAwardAndPopExperience((ServerLevel) pLevel, Vec3.atCenterOf(pPos));
                 }
 
@@ -97,7 +97,7 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
             double d1 = pPos.getY();
             double d2 = (double) pPos.getZ() + 0.5D;
             if (pRand.nextDouble() < 0.1D) {
-                pLevel.playLocalSound(d0, d1, d2, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F, false); //todo custom sound event
+                pLevel.playLocalSound(d0, d1, d2, SoundEvents.FURNACE_FIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.0F, false);
             }
 
             Direction direction = pState.getValue(FACING);

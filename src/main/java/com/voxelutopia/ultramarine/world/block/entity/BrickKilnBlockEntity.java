@@ -1,40 +1,37 @@
 package com.voxelutopia.ultramarine.world.block.entity;
 
-import com.google.common.collect.Lists;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.data.recipe.CompositeSmeltingRecipe;
 import com.voxelutopia.ultramarine.data.registry.BlockEntityRegistry;
 import com.voxelutopia.ultramarine.data.registry.RecipeTypeRegistry;
 import com.voxelutopia.ultramarine.world.block.menu.BrickKilnMenu;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
-import io.github.fabricators_of_create.porting_lib.transfer.item.RecipeWrapper;
-import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
-import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
@@ -46,30 +43,12 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import java.util.*;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
-public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, RecipeHolder, SlottedStackStorage {
-
-    public static final Codec<BrickKilnBlockEntity> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                    BlockPos.CODEC.fieldOf("pos").forGetter(entity -> entity.worldPosition),
-                    BlockState.CODEC.fieldOf("blockState").forGetter(entity -> entity.getBlockState()),
-                    Codec.INT.fieldOf("litTime").forGetter(entity -> entity.litTime),
-                    Codec.INT.fieldOf("litDuration").forGetter(entity -> entity.litDuration),
-                    Codec.INT.fieldOf("cookingProgress").forGetter(entity -> entity.cookingProgress),
-                    Codec.INT.fieldOf("cookingTotalTime").forGetter(entity -> entity.cookingTotalTime)
-            ).apply(instance, (pos, state, litTime, litDuration, cookingProgress, cookingTotalTime) -> {
-                BrickKilnBlockEntity entity = new BrickKilnBlockEntity(pos, state);
-                entity.litTime = litTime;
-                entity.litDuration = litDuration;
-                entity.cookingProgress = cookingProgress;
-                entity.cookingTotalTime = cookingTotalTime;
-                return entity;
-            })
-    );
+public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
 
     public static final int SLOT_INPUT_PRIMARY = 0;
     public static final int SLOT_INPUT_SECONDARY = 1;
@@ -91,44 +70,9 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
     int cookingProgress;
     int cookingTotalTime;
 
+    private final ItemStack[] items = new ItemStack[NUM_SLOTS];
 
-    private final ItemStackHandler ingredientsHandler = new ItemStackHandler(2) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-        }
-    };
-
-    private final ItemStackHandler fuelHandler = new ItemStackHandler(1) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-        }
-
-        @Override
-        public boolean isItemValid(int slot, ItemVariant resource, int amount) {
-            ItemStack stack = resource.toStack(amount);
-            return FuelRegistry.INSTANCE.get(stack.getItem()) != null;
-        }
-    };
-
-    private final ItemStackHandler resultHandler = new ItemStackHandler(1) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-        }
-
-        @Override
-        public boolean isItemValid(int slot, ItemVariant resource, int count) {
-            return false;
-        }
-    };
-
-    private LazyOptional<ItemStackHandler> ingredientsLazyHandler = LazyOptional.empty();
-    private LazyOptional<ItemStackHandler> fuelLazyHandler = LazyOptional.empty();
-    private LazyOptional<ItemStackHandler> resultLazyHandler = LazyOptional.empty();
-
-    protected final ContainerData dataAccess = new ContainerData() {
+    public final ContainerData dataAccess = new ContainerData() {
         public int get(int key) {
             return switch (key) {
                 case DATA_LIT_TIME -> BrickKilnBlockEntity.this.litTime;
@@ -157,149 +101,188 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 
     public BrickKilnBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(BlockEntityRegistry.BRICK_KILN, blockPos, blockState);
+        // 初始化物品数组
+        Arrays.fill(items, ItemStack.EMPTY);
     }
 
-    public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, BrickKilnBlockEntity pBlockEntity) {
-        boolean lit = pBlockEntity.isLit();
+    public static void serverTick(Level level, BlockPos pos, BlockState state, BrickKilnBlockEntity blockEntity) {
+        boolean lit = blockEntity.isLit();
         boolean changed = false;
 
-        ItemStack fuelItem = pBlockEntity.fuelHandler.getStackInSlot(0);
-        ItemStack primaryItem = pBlockEntity.ingredientsHandler.getStackInSlot(0);
-        ItemStack secondaryItem = pBlockEntity.ingredientsHandler.getStackInSlot(1);
-        ItemStack resultItem = pBlockEntity.resultHandler.getStackInSlot(0);
-        CompositeSmeltingRecipe recipe = pLevel.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING, wrapRecipe(pBlockEntity), pLevel).orElse(null);
+        ItemStack fuelItem = blockEntity.getItem(SLOT_FUEL);
+        ItemStack primaryItem = blockEntity.getItem(SLOT_INPUT_PRIMARY);
+        ItemStack secondaryItem = blockEntity.getItem(SLOT_INPUT_SECONDARY);
+        ItemStack resultItem = blockEntity.getItem(SLOT_RESULT);
 
-        if (pBlockEntity.isLit()) {
-            --pBlockEntity.litTime;
-        }
+        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input =
+                new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primaryItem, secondaryItem);
 
-        if (recipe != null) {
-            pBlockEntity.cookingTotalTime = recipe.getCookingTime();
-        }
+        Optional<net.minecraft.world.item.crafting.RecipeHolder<CompositeSmeltingRecipe>> recipeHolder = level
+                .getRecipeManager()
+                .getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING, input, level);
 
-        if (pBlockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
+        if (recipeHolder.isPresent()) {
+            net.minecraft.world.item.crafting.RecipeHolder<CompositeSmeltingRecipe> holder = recipeHolder.get();
+            CompositeSmeltingRecipe recipe = holder.value();
 
-            int maxStack = 64;
-            if (!pBlockEntity.isLit() && recipe != null && pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                pBlockEntity.litTime = FuelRegistry.INSTANCE.get(fuelItem.getItem());
-                pBlockEntity.litDuration = pBlockEntity.litTime;
-                if (pBlockEntity.isLit()) {
-                    changed = true;
-                    fuelItem.shrink(1);
-                    pBlockEntity.fuelHandler.setStackInSlot(0, fuelItem);
-                    //no lava buckets
-                }
+            if (blockEntity.isLit()) {
+                --blockEntity.litTime;
             }
 
-            if (pBlockEntity.isLit() && pBlockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                ++pBlockEntity.cookingProgress;
-                if (pBlockEntity.cookingProgress == pBlockEntity.cookingTotalTime) {
-                    pBlockEntity.cookingProgress = 0;
-                    pBlockEntity.cookingTotalTime = getTotalCookTime(pLevel, pBlockEntity);
-                    if (pBlockEntity.burn(recipe, pBlockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                        pBlockEntity.setRecipeUsed(recipe);
-                    }
+            blockEntity.cookingTotalTime = recipe.getCookingTime();
 
-                    changed = true;
+            if (blockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
+                int maxStack = 64;
+                if (!blockEntity.isLit() && blockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                    blockEntity.litTime = FuelRegistry.INSTANCE.get(fuelItem.getItem());
+                    blockEntity.litDuration = blockEntity.litTime;
+                    if (blockEntity.isLit()) {
+                        changed = true;
+                        fuelItem.shrink(1);
+                        blockEntity.setItem(SLOT_FUEL, fuelItem);
+                    }
+                }
+
+                if (blockEntity.isLit() && blockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                    ++blockEntity.cookingProgress;
+                    if (blockEntity.cookingProgress == blockEntity.cookingTotalTime) {
+                        blockEntity.cookingProgress = 0;
+                        blockEntity.cookingTotalTime = getTotalCookTime(level, blockEntity);
+
+                        if (blockEntity.burn(recipe, blockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                            blockEntity.setRecipeUsed(holder);
+                        }
+                        changed = true;
+                    }
                 }
             } else {
-                pBlockEntity.cookingProgress = 0;
+                blockEntity.cookingProgress = 0;
             }
-        } else if (!pBlockEntity.isLit() && pBlockEntity.cookingProgress > 0) {
-            pBlockEntity.cookingProgress = Mth.clamp(pBlockEntity.cookingProgress - 2, 0, pBlockEntity.cookingTotalTime);
+        } else if (blockEntity.cookingProgress > 0) {
+            blockEntity.cookingProgress = Mth.clamp(blockEntity.cookingProgress - 2, 0, blockEntity.cookingTotalTime);
         }
 
-        if (lit != pBlockEntity.isLit()) {
+        if (lit != blockEntity.isLit()) {
             changed = true;
-            pState = pState.setValue(AbstractFurnaceBlock.LIT, pBlockEntity.isLit());
-            pLevel.setBlock(pPos, pState, 3);
+            state = state.setValue(AbstractFurnaceBlock.LIT, blockEntity.isLit());
+            level.setBlock(pos, state, 3);
         }
 
         if (changed) {
-            setChanged(pLevel, pPos, pState);
+            setChanged(level, pos, state);
         }
     }
 
-    private boolean canBurn(@Nullable Recipe<Container> pRecipe, ItemStack fuel, ItemStack primary, ItemStack secondary, ItemStack resultPrev, int maxStackSize) {
-        if (!primary.isEmpty() && !secondary.isEmpty() && pRecipe != null) {
-            ItemStack result = (pRecipe.assemble(new SimpleContainer(primary, secondary), level.registryAccess()));
-            if (result.isEmpty()) {
+    public ItemStack getItem(int slot) {
+        return slot >= 0 && slot < items.length ? items[slot] : ItemStack.EMPTY;
+    }
+
+    public void setItem(int slot, ItemStack stack) {
+        if (slot >= 0 && slot < items.length) {
+            items[slot] = stack;
+            setChanged();
+        }
+    }
+
+    public boolean isEmpty() {
+        for (ItemStack item : items) {
+            if (!item.isEmpty()) {
                 return false;
-            } else {
-                if (resultPrev.isEmpty()) {
-                    return true;
-                } else if (!ItemStack.isSameItem(resultPrev, result)) {
-                    return false;
-                } else if (resultPrev.getCount() + result.getCount() <= maxStackSize && resultPrev.getCount() + result.getCount() <= resultPrev.getMaxStackSize()) { // Forge fix: make furnace respect stack sizes in furnace recipes
-                    return true;
-                } else {
-                    return resultPrev.getCount() + result.getCount() <= result.getMaxStackSize(); // Forge fix: make furnace respect stack sizes in furnace recipes
-                }
             }
-        } else {
-            return false;
         }
+        return true;
     }
 
-    private boolean burn(Recipe<Container> pRecipe, BrickKilnBlockEntity entity, ItemStack fuel, ItemStack primary, ItemStack secondary, ItemStack resultPrev, int maxStackSize) {
-        if (this.canBurn(pRecipe, fuel, primary, secondary, resultPrev, maxStackSize)) {
-            ItemStack newResult = (pRecipe.assemble(new SimpleContainer(primary, secondary), level.registryAccess()));
+    private boolean canBurn(@Nullable CompositeSmeltingRecipe recipe, ItemStack fuel, ItemStack primary, ItemStack secondary, ItemStack resultPrev, int maxStackSize) {
+        if (recipe == null || primary.isEmpty() || secondary.isEmpty()) return false;
+
+        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input = new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primary, secondary);
+        ItemStack result = recipe.assemble(input, level.registryAccess());
+        if (result.isEmpty()) {
+            return false;
+        } else {
             if (resultPrev.isEmpty()) {
-                entity.resultHandler.setStackInSlot(0, newResult.copy());
-            } else if (resultPrev.is(newResult.getItem())) {
-                resultPrev.grow(newResult.getCount());
+                return true;
+            } else if (!ItemStack.isSameItem(resultPrev, result)) {
+                return false;
+            } else if (resultPrev.getCount() + result.getCount() <= maxStackSize && resultPrev.getCount() + result.getCount() <= resultPrev.getMaxStackSize()) {
+                return true;
+            } else {
+                return resultPrev.getCount() + result.getCount() <= result.getMaxStackSize();
             }
-
-            primary.shrink(1);
-            secondary.shrink(1);
-            entity.ingredientsHandler.setStackInSlot(0, primary);
-            entity.ingredientsHandler.setStackInSlot(1, secondary);
-            return true;
-        } else {
-            return false;
         }
     }
 
-    private static int getTotalCookTime(Level pLevel, BrickKilnBlockEntity entity) {
-        return pLevel.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING, wrapRecipe(entity), pLevel).map(CompositeSmeltingRecipe::getCookingTime).orElse(200);
-    }
-
-    public void setRecipeUsed(@Nullable Recipe<?> pRecipe) {
-        if (pRecipe != null) {
-            ResourceLocation resourcelocation = pRecipe.getId();
-            this.recipesUsed.addTo(resourcelocation, 1);
+    private boolean burn(CompositeSmeltingRecipe recipe, BrickKilnBlockEntity entity, ItemStack fuel, ItemStack primary, ItemStack secondary, ItemStack resultPrev, int maxStackSize) {
+        if (!canBurn(recipe, fuel, primary, secondary, resultPrev, maxStackSize)) return false;
+        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input = new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primary, secondary);
+        ItemStack newResult = recipe.assemble(input, level.registryAccess());
+        if (resultPrev.isEmpty()) {
+            entity.setItem(SLOT_RESULT, newResult.copy());
+        } else if (resultPrev.is(newResult.getItem())) {
+            resultPrev.grow(newResult.getCount());
         }
 
+        primary.shrink(1);
+        secondary.shrink(1);
+        entity.setItem(SLOT_INPUT_PRIMARY, primary);
+        entity.setItem(SLOT_INPUT_SECONDARY, secondary);
+        return true;
     }
 
-    @Nullable
-    @Override
-    public Recipe<?> getRecipeUsed() {
-        return null;
+    private static int getTotalCookTime(Level level, BrickKilnBlockEntity entity) {
+        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input =
+                new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(
+                        entity.getItem(SLOT_INPUT_PRIMARY),
+                        entity.getItem(SLOT_INPUT_SECONDARY)
+                );
+        return level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COMPOSITE_SMELTING, input, level)
+                .map(holder -> holder.value().getCookingTime()).orElse(200);
     }
 
-    public void awardUsedRecipes(Player pPlayer) {
+    public void setRecipeUsed(@Nullable net.minecraft.world.item.crafting.RecipeHolder<?> holder) {
+        if (holder != null) {
+            ResourceLocation id = holder.id();
+            this.recipesUsed.addTo(id, 1);
+        }
     }
 
-    public void awardUsedRecipesAndPopExperience(ServerPlayer pPlayer) {
-        if (!pPlayer.level().isClientSide()) {
-            List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience((ServerLevel) pPlayer.level(), pPlayer.position());
-            pPlayer.awardRecipes(list);
+    public void awardUsedRecipes(Player player) {
+    }
+
+    public void awardUsedRecipesAndPopExperience(ServerPlayer player) {
+        if (!player.level().isClientSide()) {
+            List<net.minecraft.world.item.crafting.RecipeHolder<?>> toAward = new ArrayList<>();
+            for (Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
+                player.level().getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+                    toAward.add(holder);
+                    Recipe<?> recipe = holder.value();
+                    if (recipe instanceof AbstractCookingRecipe cooking) {
+                        createExperience(player.serverLevel(), player.position(), entry.getIntValue(), cooking.getExperience());
+                    }
+                });
+            }
+            player.awardRecipes(toAward);
             this.recipesUsed.clear();
         }
     }
 
-    public List<Recipe<?>> getRecipesToAwardAndPopExperience(ServerLevel pLevel, Vec3 pos) {
-        List<Recipe<?>> list = Lists.newArrayList();
+    public List<net.minecraft.world.item.crafting.RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 pos) {
+        List<net.minecraft.world.item.crafting.RecipeHolder<?>> holders = new ArrayList<>();
 
         for (Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
-            pLevel.getRecipeManager().byKey(entry.getKey()).ifPresent((p_155023_) -> {
-                list.add(p_155023_);
-                createExperience(pLevel, pos, entry.getIntValue(), ((AbstractCookingRecipe) p_155023_).getExperience());
+            level.getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+                holders.add(holder);
+
+                Recipe<?> recipe = holder.value();
+                if (recipe instanceof AbstractCookingRecipe cooking) {
+                    int used = entry.getIntValue();
+                    createExperience(level, pos, used, cooking.getExperience());
+                }
             });
         }
 
-        return list;
+        return holders;
     }
 
     private static void createExperience(ServerLevel pLevel, Vec3 p_155000_, int p_155001_, float p_155002_) {
@@ -323,202 +306,246 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider, R
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
-        return new BrickKilnMenu(pContainerId, this.worldPosition, pInventory,
-                this, this.dataAccess);
+    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+        return new BrickKilnMenu(containerId, this.worldPosition, inventory, this, this.dataAccess);
     }
 
-    private static RecipeWrapper wrapRecipe(BrickKilnBlockEntity entity) {
-        return new RecipeWrapper(entity.ingredientsHandler);
+    @Override
+    public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
     }
 
-    public void load(CompoundTag pTag) {
-        super.load(pTag);
-        this.litTime = pTag.getInt("BurnTime");
-        this.cookingProgress = pTag.getInt("CookTime");
-        this.cookingTotalTime = pTag.getInt("CookTimeTotal");
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
 
-        ListTag itemListTag = pTag.getList("Items", 10);
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        this.litTime = tag.getInt("BurnTime");
+        this.cookingProgress = tag.getInt("CookTime");
+        this.cookingTotalTime = tag.getInt("CookTimeTotal");
+
+        Arrays.fill(items, ItemStack.EMPTY);
+
+        ListTag itemListTag = tag.getList("Items", 10);
         for (int i = 0; i < itemListTag.size(); ++i) {
             CompoundTag itemTag = itemListTag.getCompound(i);
             int j = itemTag.getByte("Slot") & 255;
-            switch (j) {
-                case SLOT_INPUT_PRIMARY -> this.ingredientsHandler.setStackInSlot(0, ItemStack.of(itemTag));
-                case SLOT_INPUT_SECONDARY -> this.ingredientsHandler.setStackInSlot(1, ItemStack.of(itemTag));
-                case SLOT_FUEL -> this.fuelHandler.setStackInSlot(0, ItemStack.of(itemTag));
-                case SLOT_RESULT -> this.resultHandler.setStackInSlot(0, ItemStack.of(itemTag));
+            if (j < items.length) {
+                items[j] = ItemStack.of(itemTag);
             }
         }
 
-        this.litDuration = getBurnTime(this.fuelHandler.getStackInSlot(0));
-
-        CompoundTag recipesTag = pTag.getCompound("RecipesUsed");
-
-        for (String s : recipesTag.getAllKeys()) {
-            this.recipesUsed.put(new ResourceLocation(s), recipesTag.getInt(s));
+        ItemStack fuelItem = this.getItem(SLOT_FUEL);
+        if (!fuelItem.isEmpty()) {
+            Integer fuelValue = FuelRegistry.INSTANCE.get(fuelItem.getItem());
+            this.litDuration = fuelValue != null ? fuelValue : 0;
+        } else {
+            this.litDuration = 0;
         }
 
+        CompoundTag recipesTag = tag.getCompound("RecipesUsed");
+        for (String s : recipesTag.getAllKeys()) {
+            this.recipesUsed.put(ResourceLocation.tryParse(s), recipesTag.getInt(s));
+        }
     }
 
-    protected void saveAdditional(CompoundTag pTag) {
-        super.saveAdditional(pTag);
-        pTag.putInt("BurnTime", this.litTime);
-        pTag.putInt("CookTime", this.cookingProgress);
-        pTag.putInt("CookTimeTotal", this.cookingTotalTime);
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putInt("BurnTime", this.litTime);
+        tag.putInt("CookTime", this.cookingProgress);
+        tag.putInt("CookTimeTotal", this.cookingTotalTime);
 
         ListTag itemListTag = new ListTag();
-        var items = this.wrapHandlers();
-        for (int i = 0; i < items.getSlots().size(); i++) {
-            ItemStack item = items.getStackInSlot(i);
+        for (int i = 0; i < items.length; i++) {
+            ItemStack item = items[i];
             if (!item.isEmpty()) {
                 CompoundTag itemTag = new CompoundTag();
-                itemTag.putByte("Slot", (byte) i);
                 item.save(itemTag);
+                itemTag.putByte("Slot", (byte) i);
                 itemListTag.add(itemTag);
             }
         }
         if (!itemListTag.isEmpty()) {
-            pTag.put("Items", itemListTag);
+            tag.put("Items", itemListTag);
         }
 
         CompoundTag recipesTag = new CompoundTag();
         this.recipesUsed.forEach((resourceLocation, count) -> recipesTag.putInt(resourceLocation.toString(), count));
-        pTag.put("RecipesUsed", recipesTag);
+        tag.put("RecipesUsed", recipesTag);
     }
 
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        createLazyHandlers();
-    }
+    public Storage<ItemVariant> getItemStorage(@Nullable Direction direction) {
+        if (direction == null) {
+            return new CombinedStorage<>(List.of(
+                    new BrickKilnSlotStorage(SLOT_INPUT_PRIMARY),
+                    new BrickKilnSlotStorage(SLOT_INPUT_SECONDARY),
+                    new BrickKilnSlotStorage(SLOT_FUEL),
+                    new BrickKilnSlotStorage(SLOT_RESULT)
+            ));
+        }
 
-    private int getBurnTime(ItemStack stack) {
-        if (stack.isEmpty()) return 0;
-        return FuelRegistry.INSTANCE.get(stack.getItem());
-    }
-
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        ingredientsLazyHandler.invalidate();
-        resultLazyHandler.invalidate();
-        fuelLazyHandler.invalidate();
-    }
-
-    private void createLazyHandlers() {
-        this.ingredientsLazyHandler = LazyOptional.of(() -> ingredientsHandler);
-        this.resultLazyHandler = LazyOptional.of(() -> resultHandler);
-        this.fuelLazyHandler = LazyOptional.of(() -> fuelHandler);
-    }
-
-    public ItemStackHandler getIngredientsHandler() {
-        return ingredientsHandler;
-    }
-
-    public ItemStackHandler getFuelHandler() {
-        return fuelHandler;
-    }
-
-    public ItemStackHandler getResultHandler() {
-        return resultHandler;
-    }
-
-    @Override
-    public int getSlotCount() {
-        return NUM_SLOTS;
-    }
-
-    @Override
-    public SingleSlotStorage<ItemVariant> getSlot(int slot) {
-        return switch (slot) {
-            case SLOT_INPUT_PRIMARY -> ingredientsHandler.getSlot(0);
-            case SLOT_INPUT_SECONDARY -> ingredientsHandler.getSlot(1);
-            case SLOT_FUEL -> fuelHandler.getSlot(0);
-            case SLOT_RESULT -> resultHandler.getSlot(0);
-            default -> null;
+        return switch (direction) {
+            case UP ->
+                    new CombinedStorage<>(List.of(
+                            new BrickKilnSlotStorage(SLOT_INPUT_PRIMARY),
+                            new BrickKilnSlotStorage(SLOT_INPUT_SECONDARY)
+                    ));
+            case DOWN ->
+                    new BrickKilnSlotStorage(SLOT_RESULT) {
+                        @Override
+                        public boolean supportsInsertion() {
+                            return false;
+                        }
+                    };
+            default ->
+                    new BrickKilnSlotStorage(SLOT_FUEL) {
+                        @Override
+                        protected boolean canInsert(ItemVariant itemVariant) {
+                            Integer fuelValue = FuelRegistry.INSTANCE.get(itemVariant.getItem());
+                            return fuelValue != null && fuelValue > 0;
+                        }
+                    };
         };
     }
 
-    @Override
-    public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-        long inserted = 0;
+    private class BrickKilnSlotStorage implements SingleSlotStorage<ItemVariant> {
+        private final int slot;
 
-        // 尝试插入到ingredients slots
-        if (inserted < maxAmount) {
-            inserted += ingredientsHandler.insert(resource, maxAmount - inserted, transaction);
+        public BrickKilnSlotStorage(int slot) {
+            this.slot = slot;
         }
 
-        // 如果是燃料，尝试插入到fuel slot
-        if (inserted < maxAmount && FuelRegistry.INSTANCE.get(resource.getItem()) != null) {
-            inserted += fuelHandler.insert(resource, maxAmount - inserted, transaction);
+        @Override
+        public boolean isResourceBlank() {
+            return getItem(slot).isEmpty();
         }
 
-        return inserted;
-    }
-
-    @Override
-    public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
-        long extracted = 0;
-
-        // 从result handler提取
-        extracted += resultHandler.extract(resource, maxAmount - extracted, transaction);
-
-        // 如果还需要提取更多，从其他handlers提取
-        if (extracted < maxAmount) {
-            extracted += ingredientsHandler.extract(resource, maxAmount - extracted, transaction);
+        @Override
+        public ItemVariant getResource() {
+            return ItemVariant.of(getItem(slot));
         }
 
-        if (extracted < maxAmount) {
-            extracted += fuelHandler.extract(resource, maxAmount - extracted, transaction);
+        @Override
+        public long getAmount() {
+            return getItem(slot).getCount();
         }
 
-        return extracted;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        return switch (slot) {
-            case SLOT_INPUT_PRIMARY -> ingredientsHandler.getStackInSlot(0);
-            case SLOT_INPUT_SECONDARY -> ingredientsHandler.getStackInSlot(1);
-            case SLOT_FUEL -> fuelHandler.getStackInSlot(0);
-            case SLOT_RESULT -> resultHandler.getStackInSlot(0);
-            default -> ItemStack.EMPTY;
-        };
-    }
-
-    @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
-        switch (slot) {
-            case SLOT_INPUT_PRIMARY -> ingredientsHandler.setStackInSlot(0, stack);
-            case SLOT_INPUT_SECONDARY -> ingredientsHandler.setStackInSlot(1, stack);
-            case SLOT_FUEL -> fuelHandler.setStackInSlot(0, stack);
-            case SLOT_RESULT -> resultHandler.setStackInSlot(0, stack);
+        @Override
+        public long getCapacity() {
+            return getItem(slot).getMaxStackSize();
         }
-    }
 
-    @Override
-    public int getSlotLimit(int slot) {
-        return 64; // 或者根据具体slot返回不同的限制
-    }
+        @Override
+        public long insert(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+            if (!canInsert(resource) || maxAmount <= 0) {
+                return 0;
+            }
 
-    @Override
-    public boolean isItemValid(int slot, ItemVariant resource, int count) {
-        return switch (slot) {
-            case SLOT_INPUT_PRIMARY, SLOT_INPUT_SECONDARY -> true;
-            case SLOT_FUEL -> FuelRegistry.INSTANCE.get(resource.getItem()) != null;
-            case SLOT_RESULT -> false;
-            default -> false;
-        };
-    }
+            ItemStack currentStack = getItem(slot);
 
-    // 添加wrapHandlers方法
-    public ItemStackHandler wrapHandlers() {
-        ItemStackHandler combined = new ItemStackHandler(NUM_SLOTS);
-        combined.setStackInSlot(SLOT_INPUT_PRIMARY, ingredientsHandler.getStackInSlot(0));
-        combined.setStackInSlot(SLOT_INPUT_SECONDARY, ingredientsHandler.getStackInSlot(1));
-        combined.setStackInSlot(SLOT_FUEL, fuelHandler.getStackInSlot(0));
-        combined.setStackInSlot(SLOT_RESULT, resultHandler.getStackInSlot(0));
-        return combined;
+            if (currentStack.isEmpty()) {
+                // 空槽位，直接插入
+                int insertAmount = (int) Math.min(maxAmount, resource.getItem().getMaxStackSize());
+                ItemStack newStack = resource.toStack(insertAmount);
+
+                transaction.addCloseCallback((context, result) -> {
+                    if (result.wasCommitted()) {
+                        setItem(slot, newStack);
+                    }
+                });
+
+                return insertAmount;
+            } else if (resource.matches(currentStack)) {
+                // 相同物品，尝试堆叠
+                int spaceLeft = currentStack.getMaxStackSize() - currentStack.getCount();
+                int insertAmount = (int) Math.min(maxAmount, spaceLeft);
+
+                if (insertAmount > 0) {
+                    ItemStack newStack = currentStack.copy();
+                    newStack.grow(insertAmount);
+
+                    transaction.addCloseCallback((context, result) -> {
+                        if (result.wasCommitted()) {
+                            setItem(slot, newStack);
+                        }
+                    });
+
+                    return insertAmount;
+                }
+            }
+
+            return 0;
+        }
+
+        @Override
+        public long extract(ItemVariant resource, long maxAmount, TransactionContext transaction) {
+            if (!canExtract(resource) || maxAmount <= 0) {
+                return 0;
+            }
+
+            ItemStack currentStack = getItem(slot);
+
+            if (resource.matches(currentStack)) {
+                int extractAmount = (int) Math.min(maxAmount, currentStack.getCount());
+
+                if (extractAmount > 0) {
+                    ItemStack newStack = currentStack.copy();
+                    newStack.shrink(extractAmount);
+
+                    transaction.addCloseCallback((context, result) -> {
+                        if (result.wasCommitted()) {
+                            setItem(slot, newStack.isEmpty() ? ItemStack.EMPTY : newStack);
+                        }
+                    });
+
+                    return extractAmount;
+                }
+            }
+
+            return 0;
+        }
+
+        @Override
+        public Iterator<StorageView<ItemVariant>> iterator() {
+            return List.<StorageView<ItemVariant>>of(this).iterator();
+        }
+
+        protected boolean canInsert(ItemVariant itemVariant) {
+            return switch (slot) {
+                case SLOT_INPUT_PRIMARY, SLOT_INPUT_SECONDARY -> {
+                    if (level == null) yield true;
+
+                    CompositeSmeltingRecipe.CompositeSmeltingRecipeInput primaryInput =
+                            new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(itemVariant.toStack(), ItemStack.EMPTY);
+                    boolean canBePrimary = level.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.COMPOSITE_SMELTING).stream()
+                            .anyMatch(recipeHolder -> recipeHolder.value().partialMatch(primaryInput, level));
+
+                    CompositeSmeltingRecipe.CompositeSmeltingRecipeInput secondaryInput =
+                            new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(ItemStack.EMPTY, itemVariant.toStack());
+                    boolean canBeSecondary = level.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.COMPOSITE_SMELTING).stream()
+                            .anyMatch(recipeHolder -> recipeHolder.value().partialMatch(secondaryInput, level));
+
+                    yield canBePrimary || canBeSecondary;
+                }
+                case SLOT_FUEL -> {
+                    Integer fuelValue = FuelRegistry.INSTANCE.get(itemVariant.getItem());
+                    yield fuelValue != null && fuelValue > 0;
+                }
+                case SLOT_RESULT -> false;
+                default -> false;
+            };
+        }
+
+        protected boolean canExtract(ItemVariant itemVariant) {
+            return switch (slot) {
+                case SLOT_RESULT -> true;
+                case SLOT_INPUT_PRIMARY, SLOT_INPUT_SECONDARY, SLOT_FUEL -> true;
+                default -> false;
+            };
+        }
     }
 }

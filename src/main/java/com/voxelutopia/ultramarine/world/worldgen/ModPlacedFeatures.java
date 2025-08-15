@@ -51,4 +51,21 @@ public class ModPlacedFeatures {
             (BootstapContext<PlacedFeature> context, ResourceKey<PlacedFeature> key, Holder<ConfiguredFeature<?, ?>> configuredFeature, List<PlacementModifier> modifiers) {
         context.register(key, new PlacedFeature(configuredFeature, List.copyOf(modifiers)));
     }
+
+    // 在 ModPlacedFeatures 类中添加这些方法
+    public static List<PlacementModifier> getJadeOrePlacement() {
+        return commonOrePlacement(7, HeightRangePlacement.triangle(VerticalAnchor.absolute(-80), VerticalAnchor.absolute(80)));
+    }
+
+    public static List<PlacementModifier> getMagnesiteOrePlacement() {
+        return commonOrePlacement(4, HeightRangePlacement.triangle(VerticalAnchor.absolute(-40), VerticalAnchor.absolute(60)));
+    }
+
+    public static List<PlacementModifier> getHematiteOrePlacement() {
+        return commonOrePlacement(10, HeightRangePlacement.triangle(VerticalAnchor.absolute(-24), VerticalAnchor.absolute(56)));
+    }
+
+    public static List<PlacementModifier> getCobaltOrePlacement() {
+        return commonOrePlacement(8, HeightRangePlacement.uniform(VerticalAnchor.absolute(0), VerticalAnchor.absolute(32)));
+    }
 }

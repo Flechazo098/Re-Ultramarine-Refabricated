@@ -59,4 +59,20 @@ public class ModConfiguredFeatures {
         context.register(key, new ConfiguredFeature<>(feature, featureConfiguration));
     }
 
+    // 在 ModConfiguredFeatures 类中添加这些方法
+    public static OreConfiguration getJadeOreConfiguration() {
+        return new OreConfiguration(OVERWORLD_JADE_ORE_PLACEMENT.get(), 4);
+    }
+
+    public static OreConfiguration getMagnesiteOreConfiguration() {
+        return new OreConfiguration(OVERWORLD_MAGNESITE_ORE_PLACEMENT.get(), 7);
+    }
+
+    public static OreConfiguration getHematiteOreConfiguration() {
+        return new OreConfiguration(OVERWORLD_HEMATITE_ORE_PLACEMENT.get(), 9);
+    }
+
+    public static OreConfiguration getCobaltOreConfiguration() {
+        return new OreConfiguration(NETHER_COBALT_ORE_PLACEMENT.get(), 6);
+    }
 }

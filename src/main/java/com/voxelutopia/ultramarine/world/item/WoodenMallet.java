@@ -20,7 +20,7 @@ import java.util.Optional;
 public class WoodenMallet extends Item {
 
     public WoodenMallet() {
-        super(new Item.Properties().durability(100));
+        super(new Properties().durability(100));
     }
 
     @NotNull

@@ -1,8 +1,8 @@
 package com.voxelutopia.ultramarine.world.block;
 
 import com.voxelutopia.ultramarine.data.registry.BlockEntityRegistry;
+import com.voxelutopia.ultramarine.util.ItemHandlerHelper;
 import com.voxelutopia.ultramarine.world.block.entity.BottleGourdBlockEntity;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -78,7 +78,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+    public BlockState playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
         super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
         pLevel.getBlockEntity(pPos, BlockEntityRegistry.BOTTLE_GOURD).ifPresent(entity -> {
             if (entity.hasCharges() && !pLevel.isClientSide()) {
@@ -99,6 +99,7 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
                 }
             }
         });
+        return pState;
     }
 
     @Nullable

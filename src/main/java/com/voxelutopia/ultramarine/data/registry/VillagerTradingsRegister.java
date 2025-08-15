@@ -58,8 +58,13 @@ public class VillagerTradingsRegister {
             for (int i = 1; i < 6; i++) {
                 mutableTrades.put(i, NonNullList.create());
             }
-            trades.int2ObjectEntrySet().forEach(e ->
-                    Arrays.stream(e.getValue()).forEach(mutableTrades.get(e.getIntKey())::add));
+            trades.int2ObjectEntrySet().forEach(e -> {
+                List<VillagerTrades.ItemListing> list = mutableTrades.get(e.getIntKey());
+                if (list != null && e.getValue() != null) {
+                    list.addAll(Arrays.asList(e.getValue()));
+                }
+            });
+
             EntityEvents.VILLAGER_TRADE.invoker().modifyVillagerTrade(mutableTrades, prof);
             Int2ObjectMap<VillagerTrades.ItemListing[]> newTrades = new Int2ObjectOpenHashMap<>();
             mutableTrades.int2ObjectEntrySet().forEach(e -> newTrades.put(e.getIntKey(), e.getValue().toArray(new VillagerTrades.ItemListing[0])));

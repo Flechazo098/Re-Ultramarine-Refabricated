@@ -20,6 +20,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,12 +62,25 @@ public class UltramarineJEIPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         Objects.requireNonNull(Minecraft.getInstance().level);
         var recipeManager = Minecraft.getInstance().level.getRecipeManager();
-        List<WoodworkingRecipe> woodworkingRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.WOODWORKING);
+
+        List<WoodworkingRecipe> woodworkingRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.WOODWORKING)
+                .stream()
+                .map(RecipeHolder::value)
+                .toList();
         registration.addRecipes(WoodworkingRecipeCategory.WOODWORKING_RECIPE_TYPE, woodworkingRecipes);
-        List<CompositeSmeltingRecipe> compositeSmeltingRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.COMPOSITE_SMELTING);
+
+        List<CompositeSmeltingRecipe> compositeSmeltingRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.COMPOSITE_SMELTING)
+                .stream()
+                .map(RecipeHolder::value)
+                .toList();
         registration.addRecipes(CompositeSmeltingRecipeCategory.COMPOSITE_SMELTING_RECIPE_TYPE, compositeSmeltingRecipes);
-        List<ChiselTableRecipe> chiselTableRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.CHISEL_TABLE);
+
+        List<ChiselTableRecipe> chiselTableRecipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.CHISEL_TABLE)
+                .stream()
+                .map(RecipeHolder::value)
+                .toList();
         registration.addRecipes(ChiselTableRecipeCategory.CHISEL_TABLE_RECIPE_TYPE, chiselTableRecipes);
+
         List<TravellingMerchantWrapper> customWanderingTraderTrades = TravellingMerchant.getTradeOptions().stream().map(TravellingMerchantWrapper::new).toList();
         registration.addRecipes(TravellingMerchantCategory.CUSTOM_WANDERING_TRADER_WRAPPER_RECIPE_TYPE, customWanderingTraderTrades);
     }

@@ -3,16 +3,16 @@ package com.voxelutopia.ultramarine.world.block;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
 
 public class BaseOreBlock extends DropExperienceBlock {
 
-    private final UniformInt xpRange;
-    public static final BlockBehaviour.Properties PROPERTIES = BlockBehaviour.Properties.of()
+    public static final Properties PROPERTIES = Properties.of()
+            .mapColor(MapColor.STONE)
             .requiresCorrectToolForDrops().strength(3.0F, 3.0F);
 
     public BaseOreBlock(UniformInt xpRange) {
-        super(PROPERTIES);
-        this.xpRange = xpRange;
+        super(xpRange, PROPERTIES);
     }
 
     public BaseOreBlock() {

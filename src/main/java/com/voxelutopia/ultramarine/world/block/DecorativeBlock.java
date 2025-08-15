@@ -1,5 +1,8 @@
 package com.voxelutopia.ultramarine.world.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.data.shape.BlockShapes;
 import com.voxelutopia.ultramarine.data.shape.ShapeFunction;
 import com.voxelutopia.ultramarine.world.block.state.ModBlockStateProperties;
@@ -28,6 +31,25 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @SuppressWarnings("deprecation")
 public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseBlockPropertyHolder, DiagonallyPlaceable {
+
+    public static final MapCodec<DecorativeBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    Properties.CODEC.fieldOf("properties").forGetter(block -> block.properties),
+                    Codec.BOOL.fieldOf("directional").forGetter(block -> block.directional),
+                    Codec.BOOL.fieldOf("diagonallyPlaceable").forGetter(block -> block.diagonallyPlaceable),
+                    Codec.BOOL.fieldOf("luminous").forGetter(block -> block.luminous),
+                    Codec.BOOL.fieldOf("noCollision").forGetter(block -> block.noCollision),
+                    Codec.BOOL.fieldOf("noFenceConnect").forGetter(block -> block.noFenceConnect)
+            ).apply(instance, (properties, directional, diagonallyPlaceable, luminous, noCollision, noFenceConnect) ->
+                    new Builder(new BaseBlockProperty(properties, BaseBlockProperty.BlockMaterial.STONE))
+                            .directional(directional)
+                            .diagonallyPlaceable(diagonallyPlaceable)
+                            .luminous(luminous)
+                            .noCollision(noCollision)
+                            .noFenceConnect(noFenceConnect)
+                            .build()
+            ));
+
 
     public static final DirectionProperty HORIZONTAL_FACING_SHIFT = ModBlockStateProperties.HORIZONTAL_FACING_SHIFT;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -192,6 +214,11 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         return directional;
     }
 
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
+
     public static abstract class AbstractBuilder<T extends AbstractBuilder<T>> {
         public abstract T self();
     }
@@ -225,10 +252,21 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
+        public Builder diagonallyPlaceable(boolean diagonallyPlaceable) {
+            this.diagonallyPlaceable = diagonallyPlaceable;
+            return this;
+        }
+
         public Builder directional() {
             this.directional = true;
             return this;
         }
+
+        public Builder directional(boolean directional) {
+            this.directional = directional;
+            return this;
+        }
+
 
         public Builder luminous() {
             this.luminous = true;
@@ -255,18 +293,28 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
             return this;
         }
 
+        public Builder noOcclusion() {
+            this.property.properties.noOcclusion();
+            return this;
+        }
+        public Builder noCollision(boolean noCollision) {
+            this.noCollision = noCollision;
+            return this;
+        }
         public Builder pushReaction(PushReaction reaction) {
             this.property.properties.pushReaction(reaction);
             return this;
         }
 
-        public Builder noOcclusion() {
-            this.property.properties.noOcclusion();
-            return this;
-        }
+
 
         public Builder noFenceConnect() {
             noFenceConnect = true;
+            return this;
+        }
+
+        public Builder noFenceConnect(boolean noFenceConnect) {
+            this.noFenceConnect = noFenceConnect;
             return this;
         }
 

@@ -9,9 +9,11 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 public class SeatEntity extends Entity {
 
@@ -41,12 +43,10 @@ public class SeatEntity extends Entity {
             if (this.life > MAX_LIFE) this.discard();
         }
     }
-
     @Override
-    public double getPassengersRidingOffset() {
-        return 0.0;
+    protected Vector3f getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        return new Vector3f(0, 0.25F, 0); // 调整乘客位置偏移
     }
-
     @Override
     protected boolean canRide(Entity entity) {
         return true;
