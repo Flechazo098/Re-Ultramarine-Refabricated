@@ -37,9 +37,7 @@ public class ModMenuTypes {
                     return new BrickKilnMenu(windowId, pos, inv);
                 }));
         CHISEL_TABLE = Registry.register(BuiltInRegistries.MENU, "chisel_table",
-                IMenuType.create((windowId, inv, data) -> {
-                    return new ChiselTableMenu(windowId, inv, ContainerLevelAccess.NULL);
-                }));
+                IMenuType.create((windowId, inv, data) -> new ChiselTableMenu(windowId, inv, ContainerLevelAccess.NULL)));
     }
 
 }

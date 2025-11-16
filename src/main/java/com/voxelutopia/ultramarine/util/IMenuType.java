@@ -1,4 +1,4 @@
-package org.voxelutopia.ultramarine.util;
+package com.voxelutopia.ultramarine.util;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -6,8 +6,8 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 
-public interface IForgeMenuType<T> {
-    static <T extends AbstractContainerMenu> MenuType<T> create(IForgeContainerFactory<T> factory) {
+public interface IMenuType<T> {
+    static <T extends AbstractContainerMenu> MenuType<T> create(IContainerFactory<T> factory) {
         return new MenuType<>(factory, FeatureFlags.DEFAULT_FLAGS);
     }
 
