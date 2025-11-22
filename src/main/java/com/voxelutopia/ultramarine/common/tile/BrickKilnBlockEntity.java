@@ -116,28 +116,20 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
         ItemStack secondaryItem = blockEntity.getItem(SLOT_INPUT_SECONDARY);
         ItemStack resultItem = blockEntity.getItem(SLOT_RESULT);
 
-        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input =
-                new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primaryItem, secondaryItem);
-
-        Optional<RecipeHolder<CompositeSmeltingRecipe>> recipeHolder = level
-                .getRecipeManager()
-                .getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, input, level);
-
-        if (recipeHolder.isPresent()) {
-            RecipeHolder<CompositeSmeltingRecipe> holder = recipeHolder.get();
-            CompositeSmeltingRecipe recipe = holder.value();
+        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input = new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primaryItem, secondaryItem);
+        RecipeHolder<CompositeSmeltingRecipe> recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, input, level).orElse(null);
 
             if (blockEntity.isLit()) {
                 --blockEntity.litTime;
             }
 
-            if (recipe != null) {
-                blockEntity.cookingTotalTime = recipe.getCookingTime();
-            }
+        if (recipe != null) {
+            blockEntity.cookingTotalTime = recipe.value().getCookingTime();
+        }
 
             if (blockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
                 int maxStack = 64;
-                if (!blockEntity.isLit() && blockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                if (!blockEntity.isLit() && recipe != null && blockEntity.canBurn(recipe.value(), fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
                     blockEntity.litTime = FuelRegistry.INSTANCE.get(fuelItem.getItem());
                     blockEntity.litDuration = blockEntity.litTime;
                     if (blockEntity.isLit()) {
@@ -147,24 +139,23 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
                     }
                 }
 
-                if (blockEntity.isLit() && blockEntity.canBurn(recipe, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                if (recipe != null && blockEntity.isLit() && blockEntity.canBurn(recipe.value(), fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
                     ++blockEntity.cookingProgress;
                     if (blockEntity.cookingProgress == blockEntity.cookingTotalTime) {
                         blockEntity.cookingProgress = 0;
                         blockEntity.cookingTotalTime = getTotalCookTime(level, blockEntity);
-
-                        if (blockEntity.burn(recipe, blockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                            blockEntity.setRecipeUsed(holder);
+                        if (blockEntity.burn(recipe.value(), blockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                            blockEntity.setRecipeUsed(recipe);
                         }
+
                         changed = true;
                     }
+                } else {
+                    blockEntity.cookingProgress = 0;
                 }
-            } else {
-                blockEntity.cookingProgress = 0;
+            } else if (blockEntity.cookingProgress > 0) {
+                blockEntity.cookingProgress = Mth.clamp(blockEntity.cookingProgress - 2, 0, blockEntity.cookingTotalTime);
             }
-        } else if (blockEntity.cookingProgress > 0) {
-            blockEntity.cookingProgress = Mth.clamp(blockEntity.cookingProgress - 2, 0, blockEntity.cookingTotalTime);
-        }
 
         if (lit != blockEntity.isLit()) {
             changed = true;

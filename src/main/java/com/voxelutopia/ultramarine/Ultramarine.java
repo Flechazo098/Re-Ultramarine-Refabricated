@@ -39,6 +39,7 @@ public class Ultramarine implements ModInitializer {
         ModFoods.registerModFoods();
         ModBlocks.registerModBlocks();
         ModItems.registerModItems();
+        ModFuels.registerFuels();
         ModBlockEntities.registerModBlockEntities();
         ModEntityTypes.registerModEntities();
         ModVillagerProfessions.registerModVillagerProfession();

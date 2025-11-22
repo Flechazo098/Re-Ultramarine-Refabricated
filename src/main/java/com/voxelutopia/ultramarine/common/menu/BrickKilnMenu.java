@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,20 +117,8 @@ public class BrickKilnMenu extends AbstractContainerMenu {
         if (blockEntity == null || blockEntity.getLevel() == null) {
             return false;
         }
-
-        // 检查作为主要原料
-        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput primaryInput =
-                new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(item, ItemStack.EMPTY);
-        boolean canBePrimary = blockEntity.getLevel().getRecipeManager().getAllRecipesFor(ModRecipeTypes.COMPOSITE_SMELTING).stream()
-                .anyMatch(recipeHolder -> recipeHolder.value().partialMatch(primaryInput, blockEntity.getLevel()));
-
-        // 检查作为次要原料
-        CompositeSmeltingRecipe.CompositeSmeltingRecipeInput secondaryInput =
-                new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(ItemStack.EMPTY, item);
-        boolean canBeSecondary = blockEntity.getLevel().getRecipeManager().getAllRecipesFor(ModRecipeTypes.COMPOSITE_SMELTING).stream()
-                .anyMatch(recipeHolder -> recipeHolder.value().partialMatch(secondaryInput, blockEntity.getLevel()));
-
-        return canBePrimary || canBeSecondary;
+        return blockEntity.getLevel().getRecipeManager().getAllRecipesFor(ModRecipeTypes.COMPOSITE_SMELTING).stream()
+                .anyMatch(recipe -> recipe.value().partialMatch(new SingleRecipeInput(item)));
     }
 
     @Override

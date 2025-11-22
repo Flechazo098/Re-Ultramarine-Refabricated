@@ -31,12 +31,13 @@ public class ModItemTags {
     public static final TagKey<Item> GREEN_DYES = commonTag("green_dyes");
     public static final TagKey<Item> RED_DYES = commonTag("red_dyes");
     public static final TagKey<Item> BLACK_DYES = commonTag("black_dyes");
+    public static final TagKey<Item> COMMON_BRONZE_INGOT = commonTag("ingots/bronze");
 
     private static TagKey<Item> commonTag(String path) {
-        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path)); // 社区通用标签
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path));
     }
 
     private static TagKey<Item> modTag(String path) {
-        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, path)); // 模组私有标签
+        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, path));
     }
 }

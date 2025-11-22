@@ -18,6 +18,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -41,58 +43,62 @@ public class BottleGourd extends DecorativeBlock implements EntityBlock {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack item, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (item.is(Items.POTION)) {
-            var components = item.getComponents();
-            var potionContents = components.get(DataComponents.POTION_CONTENTS);
-            if (potionContents != null) {
-                Optional<Holder<Potion>> optionalPotionHolder = potionContents.potion();
-                if (optionalPotionHolder.isPresent()) {
-                    var optionalBlockEntity = pLevel.getBlockEntity(pPos, ModBlockEntities.BOTTLE_GOURD);
-                    if (optionalBlockEntity.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        var optionalBlockEntity = level.getBlockEntity(pos, ModBlockEntities.BOTTLE_GOURD);
+        if (optionalBlockEntity.isEmpty()) {
+            // It shouldn't happen!
+            return InteractionResult.PASS;
+        }
 
-                    BottleGourdBlockEntity blockEntity = optionalBlockEntity.get();
-                    Holder<Potion> potionHolder = optionalPotionHolder.get();
-                    Potion potion = potionHolder.value();
-                    if (blockEntity.addPotionCharge(potion)) {
-                        if (!pLevel.isClientSide()) {
-                            if (!pPlayer.getAbilities().instabuild) {
-                                item.shrink(1);
-                                ItemHandlerHelper.giveItemToPlayer(pPlayer, new ItemStack(Items.GLASS_BOTTLE));
-                            }
-                        }
-                        pLevel.playSound(null, pPos, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 1.0f, 1.0f);
-                        return ItemInteractionResult.sidedSuccess(pLevel.isClientSide());
+        var blockEntity = optionalBlockEntity.get();
+        if (blockEntity.hasCharges()) {
+            if (!level.isClientSide()) {
+                for (var effectInstance : blockEntity.getPotion().getEffects()) {
+                    if (effectInstance.getEffect().value().isInstantenous()) {
+                        effectInstance.getEffect().value().applyInstantenousEffect(player, player, player, effectInstance.getAmplifier(), 1.0D);
+                    } else {
+                        player.addEffect(new MobEffectInstance(effectInstance));
                     }
                 }
+                blockEntity.shrinkCharge();
+            } else {
+                level.playSound(null, player, SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 1.0f);
             }
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+        return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
-        var optionalBlockEntity = pLevel.getBlockEntity(pPos, ModBlockEntities.BOTTLE_GOURD);
-        if (optionalBlockEntity.isEmpty()) return InteractionResult.PASS;
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        var optionalBlockEntity = level.getBlockEntity(pos, ModBlockEntities.BOTTLE_GOURD);
+        if (optionalBlockEntity.isEmpty()) {
+            // It shouldn't happen!
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
 
-        BottleGourdBlockEntity blockEntity = optionalBlockEntity.get();
-        if (blockEntity.hasCharges()) {
-            Optional<Potion> potion = blockEntity.takePotionCharge();
-            if (potion.isPresent()) {
-                if (!pLevel.isClientSide()) {
-                    for (MobEffectInstance effect : potion.get().getEffects()) {
-                        if (effect.getEffect().value().isInstantenous()) {
-                            effect.getEffect().value().applyInstantenousEffect(pPlayer, pPlayer, pPlayer, effect.getAmplifier(), 1.0D);
-                        } else {
-                            pPlayer.addEffect(new MobEffectInstance(effect));
-                        }
+        var blockEntity = optionalBlockEntity.get();
+        if (stack.is(Items.POTION) && stack.has(DataComponents.POTION_CONTENTS)) {
+            var potion = Optional.ofNullable(stack.get(DataComponents.POTION_CONTENTS)).map(PotionContents::potion).flatMap(x -> x).orElse(Potions.WATER).value();
+            if (blockEntity.canAddCharge(potion)) {
+                if (!level.isClientSide()) {
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                        ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(Items.GLASS_BOTTLE));
                     }
+                    blockEntity.setPotion(potion);
+                    blockEntity.addCharge();
+                } else {
+                    level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.PLAYERS, 1.0f, 1.0f);
                 }
-                pLevel.playSound(null, pPlayer, SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 1.0f, 1.0f);
-                return InteractionResult.sidedSuccess(pLevel.isClientSide());
+                return ItemInteractionResult.SUCCESS;
+            } else {
+                return ItemInteractionResult.FAIL;
             }
         }
-        return InteractionResult.PASS;
+
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.voxelutopia.ultramarine.common.recipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeSerializers;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 import net.minecraft.core.HolderLookup;
@@ -12,40 +13,42 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.CompositeSmeltingRecipeInput> {
-
+    protected final String group;
     protected final Ingredient primaryIngredient;
     protected final Ingredient secondaryIngredient;
     protected final ItemStack result;
     protected final float experience;
     protected final int cookingTime;
 
-    public CompositeSmeltingRecipe(Ingredient primaryIngredient, Ingredient secondaryIngredient, ItemStack result, float experience, int cookingTime) {
+    public CompositeSmeltingRecipe(String pGroup, Ingredient primaryIngredient, Ingredient secondaryIngredient, ItemStack pResult, float pExperience, int pCookingTime) {
+        this.group = pGroup;
         this.primaryIngredient = primaryIngredient;
         this.secondaryIngredient = secondaryIngredient;
-        this.result = result;
-        this.experience = experience;
-        this.cookingTime = cookingTime;
+        this.result = pResult;
+        this.experience = pExperience;
+        this.cookingTime = pCookingTime;
     }
 
     @Override
-    public boolean matches(CompositeSmeltingRecipeInput input, Level level) {
-        return this.primaryIngredient.test(input.primaryItem()) &&
-                this.secondaryIngredient.test(input.secondaryItem());
+    public boolean matches(CompositeSmeltingRecipe.CompositeSmeltingRecipeInput pContainer, @NotNull Level pLevel) {
+        return this.primaryIngredient.test(pContainer.getItem(BrickKilnBlockEntity.SLOT_INPUT_PRIMARY)) &&
+                this.secondaryIngredient.test(pContainer.getItem(BrickKilnBlockEntity.SLOT_INPUT_SECONDARY));
     }
 
-    public boolean partialMatch(CompositeSmeltingRecipeInput input, Level level) {
-        return primaryIngredient.test(input.primaryItem()) || secondaryIngredient.test(input.secondaryItem());
+    public boolean partialMatch(RecipeInput pContainer) {
+        return primaryIngredient.or(secondaryIngredient).test(pContainer.getItem(0));
     }
 
     @Override
-    public ItemStack assemble(CompositeSmeltingRecipeInput recipeInput, HolderLookup.Provider provider) {
+    public @NotNull ItemStack assemble(@NotNull CompositeSmeltingRecipe.CompositeSmeltingRecipeInput pContainer, HolderLookup.@NotNull Provider provider) {
         return this.result.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
+    public boolean canCraftInDimensions(int pWidth, int pHeight) {
         return true;
     }
 
@@ -57,18 +60,22 @@ public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.C
         return secondaryIngredient;
     }
 
+    public ItemStack getResult() {
+        return result;
+    }
+
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
         return result.copy();
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.COMPOSITE_SMELTING_SERIALIZER;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return ModRecipeTypes.COMPOSITE_SMELTING;
     }
 
@@ -80,47 +87,37 @@ public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.C
         return experience;
     }
 
-    public static class Serializer implements RecipeSerializer<CompositeSmeltingRecipe> {
-
-        public static final Serializer INSTANCE = new Serializer();
-        private static final int DEFAULT_COOKING_TIME = 200;
-
-        // Codec for serialization
-        public static final MapCodec<CompositeSmeltingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
-                instance.group(
-                        Ingredient.CODEC.fieldOf("primary_ingredient").forGetter(recipe -> recipe.primaryIngredient),
-                        Ingredient.CODEC.fieldOf("secondary_ingredient").forGetter(recipe -> recipe.secondaryIngredient),
-                        ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
-                        Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(recipe -> recipe.experience),
-                        Codec.INT.optionalFieldOf("cookingtime", DEFAULT_COOKING_TIME).forGetter(recipe -> recipe.cookingTime)
-                ).apply(instance, CompositeSmeltingRecipe::new)
-        );
-
-        // StreamCodec for network serialization
-        public static final StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> STREAM_CODEC = StreamCodec.composite(
-                Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.primaryIngredient,
-                Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.secondaryIngredient,
-                ItemStack.STREAM_CODEC, recipe -> recipe.result,
-                ByteBufCodecs.FLOAT, recipe -> recipe.experience,
-                ByteBufCodecs.INT, recipe -> recipe.cookingTime,
-                CompositeSmeltingRecipe::new
-        );
-
-        protected Serializer() {
-        }
+    public enum Serializer implements RecipeSerializer<CompositeSmeltingRecipe> {
+        INSTANCE;
+        public static final MapCodec<CompositeSmeltingRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                Codec.STRING.optionalFieldOf("group", "").forGetter(CompositeSmeltingRecipe::getGroup),
+                Ingredient.CODEC.fieldOf("primary_ingredient").forGetter(CompositeSmeltingRecipe::getPrimaryIngredient),
+                Ingredient.CODEC.fieldOf("secondary_ingredient").forGetter(CompositeSmeltingRecipe::getSecondaryIngredient),
+                ItemStack.CODEC.fieldOf("result").forGetter(CompositeSmeltingRecipe::getResult),
+                Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(CompositeSmeltingRecipe::getExp),
+                Codec.INT.optionalFieldOf("cookingtime", 200).forGetter(CompositeSmeltingRecipe::getCookingTime)
+        ).apply(i, CompositeSmeltingRecipe::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> STREAM_CODEC =
+                StreamCodec.composite(
+                        ByteBufCodecs.STRING_UTF8, CompositeSmeltingRecipe::getGroup,
+                        Ingredient.CONTENTS_STREAM_CODEC, CompositeSmeltingRecipe::getPrimaryIngredient,
+                        Ingredient.CONTENTS_STREAM_CODEC, CompositeSmeltingRecipe::getSecondaryIngredient,
+                        ItemStack.STREAM_CODEC, CompositeSmeltingRecipe::getResult,
+                        ByteBufCodecs.FLOAT, CompositeSmeltingRecipe::getExp,
+                        ByteBufCodecs.INT, CompositeSmeltingRecipe::getCookingTime,
+                        CompositeSmeltingRecipe::new
+                );
 
         @Override
-        public MapCodec<CompositeSmeltingRecipe> codec() {
+        public @NotNull MapCodec<CompositeSmeltingRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> streamCodec() {
             return STREAM_CODEC;
         }
     }
-
-    // RecipeInput implementation for CompositeSmeltingRecipe
     public record CompositeSmeltingRecipeInput(ItemStack primaryItem, ItemStack secondaryItem) implements RecipeInput {
 
         @Override

@@ -7,56 +7,47 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
 public class BottleGourdBlockEntity extends BlockEntity {
 
     public static final int MAX_CHARGE = 6;
-    private static final ResourceLocation EMPTY_POTION_ID = ResourceLocation.parse("empty");
 
     private Potion potion;
     private int charges;
-    private boolean filled;
 
     public BottleGourdBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BOTTLE_GOURD, pos, state);
-        this.potion = BuiltInRegistries.POTION.get(EMPTY_POTION_ID);
-        this.charges = 0;
-        this.filled = false;
     }
 
-    public boolean addPotionCharge(Potion potion) {
-        if (!filled) {
-            this.potion = potion;
-            this.charges = 1;
-            this.filled = true;
-            return true;
-        } else if (potion.equals(this.potion) && this.charges < MAX_CHARGE) {
-            this.charges++;
-            return true;
+    public void addCharge() {
+        this.charges += 1;
+        this.charges = Math.min(MAX_CHARGE, this.charges);
+        setChanged();
+    }
+
+    public void shrinkCharge() {
+        this.charges -= 1;
+        if (charges <= 0) {
+            this.charges = 0;
+            this.potion = Potions.WATER.value();
         }
-        return false;
+        setChanged();
     }
 
-    public Optional<Potion> takePotionCharge() {
-        if (!filled || charges <= 0 || this.potion.equals(BuiltInRegistries.POTION.get(EMPTY_POTION_ID)))
-            return Optional.empty();
-        else {
-            Potion charge = this.potion;
-            this.charges--;
-            if (charges <= 0) {
-                filled = false;
-                this.potion = BuiltInRegistries.POTION.get(EMPTY_POTION_ID);
-            }
-            return Optional.of(charge);
+    public boolean canAddCharge(Potion potion) {
+        if (hasCharges()) {
+            return potion.equals(this.potion) && this.charges < MAX_CHARGE;
+        } else {
+            return true;
         }
     }
 
     public boolean hasCharges() {
-        return (filled && charges > 0 && !potion.equals(BuiltInRegistries.POTION.get(EMPTY_POTION_ID)));
+        return (charges > 0 && !potion.equals(Potions.WATER.value()));
     }
 
     public int getCharges() {
@@ -67,21 +58,22 @@ public class BottleGourdBlockEntity extends BlockEntity {
         return potion;
     }
 
-    @Override
-    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
-        super.loadAdditional(pTag, provider);
-        ResourceLocation potionId = ResourceLocation.tryParse(pTag.getString("Potion"));
-        this.potion = potionId != null ? BuiltInRegistries.POTION.get(potionId) : BuiltInRegistries.POTION.get(EMPTY_POTION_ID);
-        this.charges = pTag.getInt("Charges");
-        this.filled = pTag.getBoolean("Filled");
+    public void setPotion(Potion potion) {
+        this.potion = potion;
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
+    public void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider provider) {
+        super.loadAdditional(pTag, provider);
+        this.potion = BuiltInRegistries.POTION.get(ResourceLocation.tryParse(pTag.getString("Potion")));
+        this.charges = pTag.getInt("Charges");
+    }
+
+    @Override
+    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider provider) {
         super.saveAdditional(pTag, provider);
         ResourceLocation potionId = BuiltInRegistries.POTION.getKey(this.potion);
-        pTag.putString("Potion", potionId != null ? potionId.toString() : EMPTY_POTION_ID.toString());
+        if (potionId != null) pTag.putString("Potion", potionId.toString());
         pTag.putInt("Charges", this.charges);
-        pTag.putBoolean("Filled", this.filled);
     }
 }

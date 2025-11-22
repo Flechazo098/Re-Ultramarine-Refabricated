@@ -2,119 +2,145 @@ package com.voxelutopia.ultramarine.common.block;
 
 import com.mojang.serialization.Codec;
 import com.voxelutopia.ultramarine.init.data.ModBlockTags;
+import com.voxelutopia.ultramarine.init.registry.ModSounds;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.PushReaction;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 public final class BaseBlockProperty {
-
-
     public static BaseBlockProperty STONE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
             .sound(SoundType.STONE)
             .strength(1.5F, 6.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.STONE);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.BASEDRUM),
+            BlockMaterial.STONE);
     public static BaseBlockProperty MARBLE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
             .sound(SoundType.STONE)
             .strength(1.8F, 7.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.STONE);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.BASEDRUM),
+            BlockMaterial.STONE);
     public static BaseBlockProperty TERRACOTTA = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
             .sound(SoundType.STONE)
             .strength(1.2F, 4.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.STONE);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.BASEDRUM),
+            BlockMaterial.STONE);
     public static BaseBlockProperty IRON = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
             .sound(SoundType.METAL)
             .strength(5.0F, 6.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.METAL);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.IRON_XYLOPHONE),
+            BlockMaterial.METAL);
     public static BaseBlockProperty COPPER = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
             .sound(SoundType.METAL)
             .strength(5.0F, 6.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.METAL);
+            .requiresCorrectToolForDrops(),
+            BlockMaterial.METAL);
     public static BaseBlockProperty BRONZE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.METAL)
             .sound(SoundType.METAL)
             .strength(5.5F, 6.5F)
-            .requiresCorrectToolForDrops(), BlockMaterial.METAL);
+            .requiresCorrectToolForDrops(),
+            BlockMaterial.METAL);
     public static BaseBlockProperty TILE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
             .sound(SoundType.BONE_BLOCK)
             .strength(1.5F, 6.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.STONE);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.BASEDRUM),
+            BlockMaterial.STONE);
     public static BaseBlockProperty PORCELAIN = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.GRASS)
-            .mapColor(MapColor.WOOD)
-            //.sound(ModSounds.PORCELAIN)
-            .strength(1.0F, 1.0F), BlockMaterial.PORCELAIN);
+            .sound(ModSounds.PORCELAIN)
+            .strength(1.0F, 1.0F)
+            .instrument(NoteBlockInstrument.HAT),
+            BlockMaterial.PORCELAIN);
     public static BaseBlockProperty WOOD = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOD)
             .sound(SoundType.WOOD)
-            .strength(2.0F, 3.0F), BlockMaterial.WOOD);
+            .strength(2.0F, 3.0F)
+            .ignitedByLava()
+            .instrument(NoteBlockInstrument.BASS),
+            BlockMaterial.WOOD);
     public static BaseBlockProperty BAMBOO_WOOD = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOD)
-            .sound(SoundType.WOOD)
-            //.sound(ModSounds.BAMBOO_WOOD)
-            .strength(2.0F, 3.0F), BlockMaterial.WOOD);
+            .sound(ModSounds.BAMBOO_WOOD)
+            .strength(2.0F, 3.0F)
+            .ignitedByLava()
+            .instrument(NoteBlockInstrument.BASS),
+            BlockMaterial.WOOD);
     public static BaseBlockProperty BAMBOO = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOD)
             .sound(SoundType.BAMBOO)
-            .strength(1.5F, 2.5F), BlockMaterial.BAMBOO);
+            .ignitedByLava()
+            .instrument(NoteBlockInstrument.XYLOPHONE)
+            .strength(1.5F, 2.5F),
+            BlockMaterial.BAMBOO);
     public static BaseBlockProperty GLAZED = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
             .sound(SoundType.GLASS)
             .strength(1.5F, 6.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.STONE);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.HAT),
+            BlockMaterial.STONE);
     public static BaseBlockProperty JADE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.STONE)
             .sound(SoundType.GLASS)
             .strength(1.2F, 5.0F)
-            .requiresCorrectToolForDrops(), BlockMaterial.STONE);
+            .requiresCorrectToolForDrops()
+            .instrument(NoteBlockInstrument.BELL),
+            BlockMaterial.STONE);
     public static BaseBlockProperty FLAX = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOL)
-            .sound(SoundType.WOOL)
-            //.sound(ModSounds.FLAX)
-            .strength(1F, 2F), BlockMaterial.FLAX);
+            .sound(ModSounds.FLAX)
+            .strength(1F, 2F)
+            .ignitedByLava()
+            .instrument(NoteBlockInstrument.BANJO),
+            BlockMaterial.FLAX);
     public static BaseBlockProperty CROP = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.GRASS)
-            .mapColor(MapColor.STONE)
             .sound(SoundType.CROP)
-            .strength(1F, 1.5F), BlockMaterial.PLANT);
+            .strength(1F, 1.5F)
+            .ignitedByLava()
+            .pushReaction(PushReaction.DESTROY),
+            BlockMaterial.PLANT);
     public static BaseBlockProperty PLANT = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.GRASS)
             .sound(SoundType.CROP)
-            .strength(1F, 1.5F), BlockMaterial.PLANT);
+            .strength(1F, 1.5F)
+            .ignitedByLava()
+            .pushReaction(PushReaction.DESTROY),
+            BlockMaterial.PLANT);
     public static BaseBlockProperty LILY = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.GRASS)
             .sound(SoundType.LILY_PAD)
-            .strength(1F, 1.5F), BlockMaterial.PLANT);
+            .strength(1F, 1.5F)
+            .instabreak(),
+            BlockMaterial.PLANT);
     public static BaseBlockProperty SILK = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOL)
             .sound(SoundType.WOOL)
-            .strength(1F, 2F), BlockMaterial.FABRIC);
+            .strength(1F, 2F)
+            .ignitedByLava()
+            .instrument(NoteBlockInstrument.GUITAR),
+            BlockMaterial.FABRIC);
+    public static BaseBlockProperty WOOL = new BaseBlockProperty(BlockBehaviour.Properties.of()
+            .sound(SoundType.WOOL)
+            .strength(1F, 2F)
+            .ignitedByLava()
+            .instrument(NoteBlockInstrument.GUITAR),
+            BlockMaterial.WOOL);
     public static BaseBlockProperty PAPER = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOL)
             .sound(SoundType.WOOL)
-            .strength(1F, 2F), BlockMaterial.PAPER);
+            .strength(1F, 2F)
+            .ignitedByLava(),
+            BlockMaterial.PAPER);
     public static BaseBlockProperty DYE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WOOL)
             .sound(SoundType.WOOL)
-            .strength(1F, 1F), BlockMaterial.PAPER);
+            .strength(1F, 1F),
+            BlockMaterial.PAPER);
     public static BaseBlockProperty ICE = new BaseBlockProperty(BlockBehaviour.Properties.of()
-            .mapColor(MapColor.ICE)
             .sound(SoundType.CROP)
             .strength(0.5F, 1.0F),
             BlockMaterial.ICE);
 
-    // 新增 Codec 定义（基于枚举名称）
+    //todo map colors
+
     public static final Codec<BaseBlockProperty> CODEC = Codec.STRING.xmap(
             name -> {
                 try {
@@ -164,18 +190,19 @@ public final class BaseBlockProperty {
         PORCELAIN(BlockTags.MINEABLE_WITH_PICKAXE),
         BAMBOO(BlockTags.MINEABLE_WITH_AXE),
         FABRIC(ModBlockTags.MINEABLE_WITH_SHEARS),
+        WOOL(ModBlockTags.MINEABLE_WITH_SHEARS),
         PAPER(ModBlockTags.MINEABLE_WITH_SHEARS),
         PLANT(BlockTags.MINEABLE_WITH_HOE),
         FLAX(BlockTags.MINEABLE_WITH_HOE);
 
         final TagKey<Block> tool;
 
-        BlockMaterial(TagKey<Block> tool) {
-            this.tool = tool;
-        }
-
         public TagKey<Block> getTool() {
             return tool;
+        }
+
+        BlockMaterial(TagKey<Block> tool) {
+            this.tool = tool;
         }
     }
 

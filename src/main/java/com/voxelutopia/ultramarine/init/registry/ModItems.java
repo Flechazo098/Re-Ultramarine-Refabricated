@@ -226,6 +226,11 @@ public class ModItems {
     public static final Item GILDED_DARK_OAK_STAIRS = fromBlock(ModBlocks.GILDED_DARK_OAK_STAIRS, CreativeTabData.DECORATIVE_BLOCKS);
     public static final Item GILDED_DARK_OAK_BEAM_BRACKET = fromBlock(ModBlocks.GILDED_DARK_OAK_BRACKET, CreativeTabData.DECORATIVE_BLOCKS);
 
+    // CARVED CARPETS
+
+    public static final Item RED_CARVED_CARPET = fromBlock(ModBlocks.RED_CARVED_CARPET, CreativeTabData.DECORATIVE_BLOCKS);
+    public static final Item BLUE_CARVED_CARPET = fromBlock(ModBlocks.BLUE_CARVED_CARPET, CreativeTabData.DECORATIVE_BLOCKS);
+
     // PILLARS
 
     public static final Item CARVED_RED_PILLAR = fromBlock(ModBlocks.CARVED_RED_PILLAR, CreativeTabData.DECORATIVE_BLOCKS);
@@ -835,6 +840,7 @@ public class ModItems {
     // TEMPLATES
 
     public static final Item CARVED_WOOD_TEMPLATE = simpleItem("carved_wood_template", CreativeTabData.MATERIALS);
+    public static final Item CARVED_WOOL_TEMPLATE = simpleItem("carved_wool_template", CreativeTabData.MATERIALS);
     public static final Item FANGXIN_TEMPLATE = simpleItem("fangxin_template", CreativeTabData.MATERIALS);
     public static final Item FANGXIN_EDGE_TEMPLATE = simpleItem("fangxin_edge_template", CreativeTabData.MATERIALS);
     public static final Item ZHAOTOU_TEMPLATE = simpleItem("zhaotou_template", CreativeTabData.MATERIALS);

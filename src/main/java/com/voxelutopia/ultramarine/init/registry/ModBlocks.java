@@ -234,6 +234,11 @@ public class ModBlocks {
     public static final Block GILDED_DARK_OAK_STAIRS = registerBlock("gilded_dark_oak_stairs", new StraightStairBlock(BaseBlockProperty.WOOD));
     public static final Block GILDED_DARK_OAK_BRACKET = registerBlock("gilded_dark_oak_bracket", new Bracket(BaseBlockProperty.WOOD));
 
+    // CARVED CARPETS
+
+    public static final Block RED_CARVED_CARPET = registerBlock("red_carved_carpet", new CarvedCarpet(DyeColor.RED));
+    public static final Block BLUE_CARVED_CARPET = registerBlock("blue_carved_carpet", new CarvedCarpet(DyeColor.BLUE));
+
     // PILLARS
 
     public static final Block CARVED_RED_PILLAR = registerBlock("carved_red_pillar", new BaseBlock(BaseBlockProperty.TERRACOTTA));
@@ -249,7 +254,7 @@ public class ModBlocks {
     public static final Block CYAN_AND_WHITE_PILLAR_BASE = registerBlock("cyan_and_white_pillar_base", new BaseDirectionalBlock(BaseBlockProperty.WOOD));
     public static final Block CYAN_AND_WHITE_DECORATED_PILLAR = registerBlock("cyan_and_white_decorated_pillar", new BaseDirectionalBlock(BaseBlockProperty.WOOD));
     public static final Block CYAN_AND_WHITE_PILLAR_HEAD = registerBlock("cyan_and_white_pillar_head", new BaseDirectionalBlock(BaseBlockProperty.WOOD));
-    public static final Block STONE_PILLAR_BASE = registerBlock("stone_pillar_base", new BaseBlock(BaseBlockProperty.WOOD));
+    public static final Block STONE_PILLAR_BASE = registerBlock("stone_pillar_base", new BaseBlock(BaseBlockProperty.STONE));
 
     // FANGXIN
 

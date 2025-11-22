@@ -55,29 +55,22 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         this.access = access;
         this.player = playerInventory.player;
 
-        // 按照旧版本的槽位顺序添加槽位
-        // Material slot (slot 0)
         this.addSlot(new MaterialSlot(crafting, SLOT_MATERIAL, 26, 25));
 
-        // Template slot (slot 1)
         this.addSlot(new TemplateSlot(crafting, SLOT_TEMPLATE, 53, 25));
 
-        // Color slots (slots 2-5)
         for (int i = 0; i < 4; i++) {
             this.addSlot(new DyeSlot(crafting, SLOT_COLOR_START + i, 26 + i * 18, 52));
         }
 
-        // Result slot (slot 6)
         this.addSlot(new OutputSlot(result, 0, 130, 34));
 
-        // Player inventory
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
                 this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
-        // Player hotbar
         for (int k = 0; k < 9; ++k) {
             this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
         }
@@ -92,19 +85,11 @@ public class ChiselTableMenu extends AbstractContainerMenu {
 
     public void createResult() {
         Level level = player.level();
-        List<RecipeHolder<ChiselTableRecipe>> allRecipes = level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.CHISEL_TABLE);
 
         ChiselTableRecipe.ChiselTableRecipeInput input = new ChiselTableRecipe.ChiselTableRecipeInput(this.crafting);
 
-        // 查找匹配的配方
-        List<RecipeHolder<ChiselTableRecipe>> matchingRecipes = new ArrayList<>();
-        for (RecipeHolder<ChiselTableRecipe> recipeHolder : allRecipes) {
-            if (recipeHolder.value().matches(input, level)) {
-                matchingRecipes.add(recipeHolder);
-            }
-        }
+        List<RecipeHolder<ChiselTableRecipe>> matchingRecipes = level.getRecipeManager().getRecipesFor(ModRecipeTypes.CHISEL_TABLE, input, level);
 
-        // 只有在找到多个匹配的配方时才警告重复
         if (matchingRecipes.size() > 1) {
             Ultramarine.getLogger().warn("Found {} matching chisel table recipes for current input:", matchingRecipes.size());
             matchingRecipes.forEach(recipe -> Ultramarine.getLogger().warn("  - {}", recipe.id()));
@@ -113,7 +98,6 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         if (matchingRecipes.isEmpty()) {
             this.result.setItem(0, ItemStack.EMPTY);
         } else {
-            // 使用第一个匹配的配方
             ChiselTableRecipe recipe = matchingRecipes.getFirst().value();
             ItemStack resultItemStack = recipe.assemble(input, level.registryAccess());
             this.result.setItem(0, resultItemStack);
