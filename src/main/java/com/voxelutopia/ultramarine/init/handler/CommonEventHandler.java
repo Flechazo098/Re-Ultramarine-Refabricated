@@ -242,7 +242,7 @@ public class CommonEventHandler {
         });
 
         BlockEvents.PLACE.register((level, pos, state, placer) -> {
-            if (state.is(ModBlocks.BRUSH_AND_INKSTONE)) {
+            if (state != null && state.is(ModBlocks.BRUSH_AND_INKSTONE)) {
                 BlockState below = level.getBlockState(pos.below());
                 if (below.is(ModBlocks.PORCELAIN_INLAID_TABLE)) {
                     return ModBlocks.CHISEL_TABLE.defaultBlockState()
