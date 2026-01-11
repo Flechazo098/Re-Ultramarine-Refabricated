@@ -8,16 +8,16 @@ public class BaseStairs extends StairBlock implements BaseBlockPropertyHolder {
     private final BaseBlockProperty property;
 
     public BaseStairs() {
-        this(BaseBlockProperty.STONE);
+        this(BaseBlockProperty.stone());
     }
 
     public BaseStairs(BaseBlock block) {
-        super(block.defaultBlockState(), block.getProperty().properties);
+        super(block.defaultBlockState(), block.getProperty().properties());
         this.property = block.getProperty();
     }
 
     public BaseStairs(BaseBlockProperty property) {
-        super(ModBlocks.CYAN_BRICKS.defaultBlockState(), property.properties);
+        super(ModBlocks.CYAN_BRICKS.defaultBlockState(), property.properties());
         this.property = property;
     }
 

@@ -28,7 +28,7 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
             instance.group(
                     BaseBlockProperty.CODEC.fieldOf("property").forGetter(block -> block.property),
                     Codec.INT.fieldOf("sideThickness").forGetter(block -> block.sideThickness)
-            ).apply(instance, WallSideBlock::new) // 使用主构造函数
+            ).apply(instance, WallSideBlock::new)
     );
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -37,7 +37,7 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
     private final int sideThickness;
 
     public WallSideBlock(BaseBlockProperty property, int sideThickness) {
-        super(property.copy().properties.noOcclusion().noCollission());
+        super(property.properties().noOcclusion().noCollission());
         this.property = property;
         this.sideThickness = sideThickness;
         this.shapeFunction = ReShapeFunction.sideShape(sideThickness);
@@ -48,7 +48,7 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
 
 
     public WallSideBlock(BaseBlockProperty property, ReShapeFunction shapeFunction) {
-        super(property.copy().properties.noOcclusion().noCollission());
+        super(property.properties().noOcclusion().noCollission());
         this.property = property;
         this.sideThickness = 1;
         this.shapeFunction = shapeFunction;

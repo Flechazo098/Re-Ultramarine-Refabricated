@@ -30,7 +30,7 @@ public class SixSideBlock extends Block implements BaseBlockPropertyHolder, Simp
     protected final ReShapeFunction shapeFunction;
 
     public SixSideBlock(BaseBlockProperty property, ReShapeFunction shapeFunction, boolean hasCollision) {
-        super(property.copy().properties.noOcclusion().noCollission());
+        super(property.properties().noOcclusion().noCollission());
         this.property = property;
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH)

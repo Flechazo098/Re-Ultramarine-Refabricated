@@ -42,10 +42,10 @@ public class HangingLantern extends DecorativeBlock {
     private final HangingLanternType type;
 
     public HangingLantern(HangingLanternType type) {
-        super(DecorativeBlock.with(BaseBlockProperty.WOOD)
+        super(DecorativeBlock.with(BaseBlockProperty.wood())
                 .directional()
                 .luminous()
-                .properties(BaseBlockProperty.WOOD.properties.lightLevel(
+                .properties(BaseBlockProperty.wood().properties().lightLevel(
                         (state) -> state.hasProperty(LIT) && state.getValue(LIT) ?
                                 Math.min(15, 10 + (state.hasProperty(LANTERNS) ? state.getValue(LANTERNS) : 1)) : 0
                 )));

@@ -27,7 +27,7 @@ public class WoodworkingWorkBench extends Block {
     private static final Component CONTAINER_TITLE = Component.translatable("container.woodworking_workbench");
 
     public WoodworkingWorkBench() {
-        super(BaseBlockProperty.WOOD.properties);
+        super(BaseBlockProperty.wood().properties().noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 

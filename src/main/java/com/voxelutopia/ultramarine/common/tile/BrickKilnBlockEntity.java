@@ -272,9 +272,9 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
                 holders.add(holder);
 
                 Recipe<?> recipe = holder.value();
-                if (recipe instanceof AbstractCookingRecipe cooking) {
+                if (recipe instanceof CompositeSmeltingRecipe cooking) {
                     int used = entry.getIntValue();
-                    createExperience(level, pos, used, cooking.getExperience());
+                    createExperience(level, pos, used, cooking.getExp());
                 }
             });
         }

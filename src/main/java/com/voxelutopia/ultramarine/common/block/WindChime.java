@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class WindChime extends DecorativeBlock {
     public WindChime() {
-        super(DecorativeBlock.with(BaseBlockProperty.BRONZE).shaped(ReShapeFunction.simpleShape(new RawVoxelShape(5, -5, 5, 11, 16, 11))).noCollision().noOcclusion());
+        super(DecorativeBlock.with(BaseBlockProperty.bronze()).shaped(ReShapeFunction.simpleShape(new RawVoxelShape(5, -5, 5, 11, 16, 11))).noCollision().noOcclusion());
     }
 
     @Override

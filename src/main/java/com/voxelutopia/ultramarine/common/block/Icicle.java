@@ -22,7 +22,7 @@ public class Icicle extends WallSideBlock {
     private final ReShapeFunction shapeFunction;
 
     public Icicle(int numVariants, ReShapeFunction shapeFunction) {
-        super(BaseBlockProperty.ICE);
+        super(BaseBlockProperty.ice());
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(VARIANT, 0));
         this.numVariants = numVariants;

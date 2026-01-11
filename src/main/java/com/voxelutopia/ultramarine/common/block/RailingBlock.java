@@ -63,7 +63,7 @@ public class RailingBlock extends Block implements BaseBlockPropertyHolder, Simp
     private final Map<Direction, VoxelShape> shapeByPart;
 
     public RailingBlock(BaseBlockProperty property, Map<Direction, VoxelShape> partShapes) {
-        super(property.properties.noOcclusion());
+        super(property.properties().noOcclusion());
         this.property = property;
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(UP, true)

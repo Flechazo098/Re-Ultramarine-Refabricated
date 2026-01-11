@@ -7,6 +7,7 @@ import com.voxelutopia.ultramarine.init.registry.ModMenuTypes;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -50,7 +51,7 @@ public class BrickKilnMenu extends AbstractContainerMenu {
         this.addSlot(new IngredientSlot(this.inventory, SLOT_INPUT_PRIMARY, 46, 17));
         this.addSlot(new IngredientSlot(this.inventory, SLOT_INPUT_SECONDARY, 66, 17));
         this.addSlot(new FuelSlot(this.inventory, SLOT_FUEL, 56, 53));
-        this.addSlot(new OutputSlot(this.inventory, SLOT_RESULT, 116, 35));
+        this.addSlot(new OutputSlot(playerEntity, this.inventory, blockEntity, SLOT_RESULT, 116, 35));
 
         for (int r = 0; r < 3; ++r) {
             for (int c = 0; c < 9; ++c) {
@@ -149,13 +150,50 @@ public class BrickKilnMenu extends AbstractContainerMenu {
     }
 
     static class OutputSlot extends Slot {
-        public OutputSlot(BrickKilnInventory container, int index, int xPosition, int yPosition) {
+
+        private final Player player;
+        private final BlockEntity blockEntity;
+        private int removeCount;
+
+        public OutputSlot(Player player, BrickKilnInventory container, BlockEntity blockEntity, int index, int xPosition, int yPosition) {
             super(container, index, xPosition, yPosition);
+            this.player = player;
+            this.blockEntity = blockEntity;
         }
 
         @Override
         public boolean mayPlace(@Nonnull ItemStack stack) {
             return false;
+        }
+
+
+        @Override
+        public ItemStack remove(int amount) {
+            if (this.hasItem()) {
+                this.removeCount = this.removeCount + Math.min(amount, this.getItem().getCount());
+            }
+            return super.remove(amount);
+        }
+
+        @Override
+        public void onTake(Player player, ItemStack stack) {
+            this.checkTakeAchievements(stack);
+            super.onTake(player, stack);
+        }
+
+        @Override
+        protected void onQuickCraft(ItemStack stack, int amount) {
+            this.removeCount += amount;
+            this.checkTakeAchievements(stack);
+        }
+
+        @Override
+        protected void checkTakeAchievements(ItemStack stack) {
+            stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
+            if (this.player instanceof ServerPlayer serverplayer && blockEntity instanceof BrickKilnBlockEntity kiln) {
+                kiln.awardUsedRecipesAndPopExperience(serverplayer);
+            }
+            this.removeCount = 0;
         }
     }
 

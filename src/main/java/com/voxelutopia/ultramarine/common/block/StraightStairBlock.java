@@ -48,7 +48,7 @@ public class StraightStairBlock extends BaseHorizontalDirectionalBlock implement
     }
 
     public StraightStairBlock(BaseBlockProperty property) {
-        this(property.properties);
+        this(property.properties());
     }
 
     @Override

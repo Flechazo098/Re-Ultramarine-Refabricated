@@ -64,8 +64,8 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                            boolean luminous, boolean noCollision, boolean noFenceConnect,
                            @Nullable Direction offset) {
         super(luminous ?
-                property.properties.lightLevel((state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0) :
-                property.properties);
+                property.properties().lightLevel((state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0) :
+                property.properties());
         this.property = property;
         this.shape = shape;
         this.directional = directional;
@@ -249,6 +249,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     public static class Builder extends AbstractBuilder<Builder> {
 
         private final BaseBlockProperty property;
+        private BlockBehaviour.Properties props;
         private ReShapeFunction shape = BlockShapes.S16_H16;
         private boolean diagonallyPlaceable;
         private boolean directional;
@@ -258,11 +259,12 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         private Direction offset = null;
 
         public Builder(BaseBlockProperty property) {
-            this.property = property.copy();
+            this.property = property;
+            this.props = property.properties();
         }
 
         public Builder properties(BlockBehaviour.Properties properties) {
-            this.property.properties = properties;
+            this.props = properties;
             return this;
         }
 
@@ -297,21 +299,11 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
 
         public Builder luminous() {
             this.luminous = true;
-            // 确保在这里设置lightLevel
-            this.property.properties = this.property.properties.lightLevel(
-                    (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
-            );
             return this;
         }
 
         public Builder luminous(boolean luminous) {
             this.luminous = luminous;
-            if (luminous) {
-                // 确保在这里设置lightLevel
-                this.property.properties = this.property.properties.lightLevel(
-                        (state) -> state.hasProperty(LIT) && state.getValue(LIT) ? 15 : 0
-                );
-            }
             return this;
         }
 
@@ -326,12 +318,12 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         }
 
         public Builder noOcclusion() {
-            this.property.properties.noOcclusion();
+            this.props.noOcclusion();
             return this;
         }
 
         public Builder pushReaction(PushReaction reaction) {
-            this.property.properties.pushReaction(reaction);
+            this.props.pushReaction(reaction);
             return this;
         }
 
@@ -351,7 +343,17 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         }
 
         public DecorativeBlock build() {
-            return new DecorativeBlock(this);
+            BaseBlockProperty built = new BaseBlockProperty(this.props, this.property.material());
+            return new DecorativeBlock(
+                    built,
+                    this.shape,
+                    this.directional,
+                    this.diagonallyPlaceable,
+                    this.luminous,
+                    this.noCollision,
+                    this.noFenceConnect,
+                    this.offset
+            );
         }
 
         @Override

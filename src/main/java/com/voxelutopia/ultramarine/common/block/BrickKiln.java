@@ -39,7 +39,7 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     public BrickKiln() {
-        super(DecorativeBlock.with(BaseBlockProperty.STONE)
+        super(DecorativeBlock.with(BaseBlockProperty.stone())
                 .shaped(Block.box(0, 0, 0, 16, 15, 16)).directional().luminous().noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, Boolean.FALSE));
     }
@@ -136,6 +136,6 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
 
     @Override
     public BaseBlockProperty getProperty() {
-        return BaseBlockProperty.STONE;
+        return BaseBlockProperty.stone();
     }
 }
