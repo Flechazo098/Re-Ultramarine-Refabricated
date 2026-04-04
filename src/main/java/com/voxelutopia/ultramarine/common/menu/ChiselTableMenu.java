@@ -7,6 +7,7 @@ import com.voxelutopia.ultramarine.init.registry.ModBlocks;
 import com.voxelutopia.ultramarine.init.registry.ModMenuTypes;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -19,14 +20,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class ChiselTableMenu extends AbstractContainerMenu {
 
-    // 统一槽位定义，与旧版本保持一致
     public static final int SLOT_MATERIAL = 0;
     public static final int SLOT_TEMPLATE = 1;
     public static final int SLOT_COLOR_START = 2;
@@ -85,10 +83,19 @@ public class ChiselTableMenu extends AbstractContainerMenu {
 
     public void createResult() {
         Level level = player.level();
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
         ChiselTableRecipe.ChiselTableRecipeInput input = new ChiselTableRecipe.ChiselTableRecipeInput(this.crafting);
 
-        List<RecipeHolder<ChiselTableRecipe>> matchingRecipes = level.getRecipeManager().getRecipesFor(ModRecipeTypes.CHISEL_TABLE, input, level);
+        var recipeManager = serverLevel.recipeAccess();
+        @SuppressWarnings("unchecked")
+        List<RecipeHolder<ChiselTableRecipe>> matchingRecipes = recipeManager.getRecipes().stream()
+                .filter(holder -> holder.value().getType() == ModRecipeTypes.CHISEL_TABLE)
+                .map(holder -> (RecipeHolder<ChiselTableRecipe>) holder)
+                .filter(holder -> holder.value().matches(input, serverLevel))
+                .toList();
 
         if (matchingRecipes.size() > 1) {
             Ultramarine.getLogger().warn("Found {} matching chisel table recipes for current input:", matchingRecipes.size());
@@ -99,7 +106,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
             this.result.setItem(0, ItemStack.EMPTY);
         } else {
             ChiselTableRecipe recipe = matchingRecipes.getFirst().value();
-            ItemStack resultItemStack = recipe.assemble(input, level.registryAccess());
+            ItemStack resultItemStack = recipe.assemble(input);
             this.result.setItem(0, resultItemStack);
         }
     }
@@ -124,12 +131,12 @@ public class ChiselTableMenu extends AbstractContainerMenu {
             ItemStack slotItem = slot.getItem();
             itemstack = slotItem.copy();
             if (pIndex == SLOT_RESULT) {
-                slotItem.getItem().onCraftedBy(slotItem, pPlayer.level(), pPlayer);
+                slotItem.getItem().onCraftedBy(slotItem, pPlayer);
                 if (!this.moveItemStackTo(slotItem, INV_SLOT_START, USE_ROW_SLOT_END, true)) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(slotItem, itemstack);
-            } else if (pIndex > SLOT_RESULT) { // inv slots
+            } else if (pIndex > SLOT_RESULT) {
                 if (IS_WOOD.test(slotItem)) {
                     if (!this.moveItemStackTo(slotItem, SLOT_MATERIAL, SLOT_MATERIAL + 1, false)) {
                         return ItemStack.EMPTY;
@@ -174,7 +181,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
 
     public void removed(Player pPlayer) {
         super.removed(pPlayer);
-        this.access.execute((level, blockPos) -> this.clearContainer(pPlayer, this.crafting));
+        this.access.execute((_, _) -> this.clearContainer(pPlayer, this.crafting));
     }
 
     @Override
@@ -189,7 +196,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
+        public boolean mayPlace(ItemStack stack) {
             return false;
         }
 
@@ -206,7 +213,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+        public void onQuickCraft(ItemStack oldStackIn, ItemStack newStackIn) {
             int i = newStackIn.getCount() - oldStackIn.getCount();
             if (i > 0) {
                 this.onQuickCraft(newStackIn, i);
@@ -234,7 +241,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
+        public boolean mayPlace(ItemStack stack) {
             return IS_TEMPLATE.test(stack);
         }
     }
@@ -246,7 +253,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
+        public boolean mayPlace(ItemStack stack) {
             return IS_WOOD.test(stack);
         }
     }
@@ -258,7 +265,7 @@ public class ChiselTableMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
+        public boolean mayPlace(ItemStack stack) {
             return IS_COLOR.test(stack);
         }
     }

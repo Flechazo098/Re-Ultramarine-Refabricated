@@ -1,26 +1,21 @@
 package com.voxelutopia.ultramarine.common.tile;
 
-import com.mojang.serialization.DataResult;
-import com.voxelutopia.ultramarine.Ultramarine;
 import com.voxelutopia.ultramarine.common.menu.BrickKilnMenu;
 import com.voxelutopia.ultramarine.common.recipe.CompositeSmeltingRecipe;
 import com.voxelutopia.ultramarine.init.registry.ModBlockEntities;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -38,17 +33,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
 @SuppressWarnings("unused")
 public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
 
@@ -99,11 +92,10 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
         }
     };
 
-    private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
+    private final Object2IntOpenHashMap<ResourceKey<Recipe<?>>> recipesUsed = new Object2IntOpenHashMap<>();
 
     public BrickKilnBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(ModBlockEntities.BRICK_KILN, blockPos, blockState);
-        // 初始化物品数组
         Arrays.fill(items, ItemStack.EMPTY);
     }
 
@@ -117,45 +109,48 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
         ItemStack resultItem = blockEntity.getItem(SLOT_RESULT);
 
         CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input = new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primaryItem, secondaryItem);
-        RecipeHolder<CompositeSmeltingRecipe> recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, input, level).orElse(null);
+        RecipeHolder<CompositeSmeltingRecipe> recipe = null;
+        if (level instanceof ServerLevel serverLevel) {
+            recipe = serverLevel.recipeAccess().getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, input, serverLevel).orElse(null);
+        }
 
-            if (blockEntity.isLit()) {
-                --blockEntity.litTime;
-            }
+        if (blockEntity.isLit()) {
+            --blockEntity.litTime;
+        }
 
         if (recipe != null) {
             blockEntity.cookingTotalTime = recipe.value().getCookingTime();
         }
 
-            if (blockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
-                int maxStack = 64;
-                if (!blockEntity.isLit() && recipe != null && blockEntity.canBurn(recipe.value(), fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                    blockEntity.litTime = FuelRegistry.INSTANCE.get(fuelItem.getItem());
-                    blockEntity.litDuration = blockEntity.litTime;
-                    if (blockEntity.isLit()) {
-                        changed = true;
-                        fuelItem.shrink(1);
-                        blockEntity.setItem(SLOT_FUEL, fuelItem);
-                    }
+        if (blockEntity.isLit() || !fuelItem.isEmpty() && (!primaryItem.isEmpty() && !secondaryItem.isEmpty())) {
+            int maxStack = 64;
+            if (!blockEntity.isLit() && recipe != null && blockEntity.canBurn(recipe.value(), fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                blockEntity.litTime = level.fuelValues().burnDuration(fuelItem);
+                blockEntity.litDuration = blockEntity.litTime;
+                if (blockEntity.isLit()) {
+                    changed = true;
+                    fuelItem.shrink(1);
+                    blockEntity.setItem(SLOT_FUEL, fuelItem);
                 }
-
-                if (recipe != null && blockEntity.isLit() && blockEntity.canBurn(recipe.value(), fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                    ++blockEntity.cookingProgress;
-                    if (blockEntity.cookingProgress == blockEntity.cookingTotalTime) {
-                        blockEntity.cookingProgress = 0;
-                        blockEntity.cookingTotalTime = getTotalCookTime(level, blockEntity);
-                        if (blockEntity.burn(recipe.value(), blockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
-                            blockEntity.setRecipeUsed(recipe);
-                        }
-
-                        changed = true;
-                    }
-                } else {
-                    blockEntity.cookingProgress = 0;
-                }
-            } else if (blockEntity.cookingProgress > 0) {
-                blockEntity.cookingProgress = Mth.clamp(blockEntity.cookingProgress - 2, 0, blockEntity.cookingTotalTime);
             }
+
+            if (recipe != null && blockEntity.isLit() && blockEntity.canBurn(recipe.value(), fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                ++blockEntity.cookingProgress;
+                if (blockEntity.cookingProgress == blockEntity.cookingTotalTime) {
+                    blockEntity.cookingProgress = 0;
+                    blockEntity.cookingTotalTime = getTotalCookTime(level, blockEntity);
+                    if (blockEntity.burn(recipe.value(), blockEntity, fuelItem, primaryItem, secondaryItem, resultItem, maxStack)) {
+                        blockEntity.setRecipeUsed(recipe);
+                    }
+
+                    changed = true;
+                }
+            } else {
+                blockEntity.cookingProgress = 0;
+            }
+        } else if (blockEntity.cookingProgress > 0) {
+            blockEntity.cookingProgress = Mth.clamp(blockEntity.cookingProgress - 2, 0, blockEntity.cookingTotalTime);
+        }
 
         if (lit != blockEntity.isLit()) {
             changed = true;
@@ -168,7 +163,6 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    // 简单的物品管理方法
     public ItemStack getItem(int slot) {
         return slot >= 0 && slot < items.length ? items[slot] : ItemStack.EMPTY;
     }
@@ -193,7 +187,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
         if (recipe == null || primary.isEmpty() || secondary.isEmpty()) return false;
 
         CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input = new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primary, secondary);
-        ItemStack result = recipe.assemble(input, level.registryAccess());
+        ItemStack result = recipe.assemble(input);
         if (result.isEmpty()) {
             return false;
         } else {
@@ -212,7 +206,7 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
     private boolean burn(CompositeSmeltingRecipe recipe, BrickKilnBlockEntity entity, ItemStack fuel, ItemStack primary, ItemStack secondary, ItemStack resultPrev, int maxStackSize) {
         if (!canBurn(recipe, fuel, primary, secondary, resultPrev, maxStackSize)) return false;
         CompositeSmeltingRecipe.CompositeSmeltingRecipeInput input = new CompositeSmeltingRecipe.CompositeSmeltingRecipeInput(primary, secondary);
-        ItemStack newResult = recipe.assemble(input, level.registryAccess());
+        ItemStack newResult = recipe.assemble(input);
         if (resultPrev.isEmpty()) {
             entity.setItem(SLOT_RESULT, newResult.copy());
         } else if (resultPrev.is(newResult.getItem())) {
@@ -232,13 +226,17 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
                         entity.getItem(SLOT_INPUT_PRIMARY),
                         entity.getItem(SLOT_INPUT_SECONDARY)
                 );
-        return level.getRecipeManager().getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, input, level)
-                .map(holder -> holder.value().getCookingTime()).orElse(200);
+        if (level instanceof ServerLevel serverLevel) {
+            return serverLevel.recipeAccess().getRecipeFor(ModRecipeTypes.COMPOSITE_SMELTING, input, serverLevel)
+                    .map(holder -> holder.value().getCookingTime())
+                    .orElse(200);
+        }
+        return 200;
     }
 
     public void setRecipeUsed(@Nullable RecipeHolder<?> holder) {
         if (holder != null) {
-            ResourceLocation id = holder.id();
+            ResourceKey<Recipe<?>> id = holder.id();
             this.recipesUsed.addTo(id, 1);
         }
     }
@@ -247,14 +245,14 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public void awardUsedRecipesAndPopExperience(ServerPlayer player) {
-        if (!player.level().isClientSide()) {
+        if (player.level() instanceof ServerLevel level && !level.isClientSide()) {
             List<RecipeHolder<?>> toAward = new ArrayList<>();
-            for (Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
-                player.level().getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+            for (Object2IntMap.Entry<ResourceKey<Recipe<?>>> entry : this.recipesUsed.object2IntEntrySet()) {
+                level.recipeAccess().byKey(entry.getKey()).ifPresent(holder -> {
                     toAward.add(holder);
                     Recipe<?> recipe = holder.value();
                     if (recipe instanceof AbstractCookingRecipe cooking) {
-                        createExperience(player.serverLevel(), player.position(), entry.getIntValue(), cooking.getExperience());
+                        createExperience(level, player.position(), entry.getIntValue(), cooking.experience());
                     }
                 });
             }
@@ -267,8 +265,8 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
     public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 pos) {
         List<RecipeHolder<?>> holders = new ArrayList<>();
 
-        for (Object2IntMap.Entry<ResourceLocation> entry : this.recipesUsed.object2IntEntrySet()) {
-            level.getRecipeManager().byKey(entry.getKey()).ifPresent(holder -> {
+        for (Object2IntMap.Entry<ResourceKey<Recipe<?>>> entry : this.recipesUsed.object2IntEntrySet()) {
+            level.recipeAccess().byKey(entry.getKey()).ifPresent(holder -> {
                 holders.add(holder);
 
                 Recipe<?> recipe = holder.value();
@@ -320,72 +318,72 @@ public class BrickKilnBlockEntity extends BlockEntity implements MenuProvider {
 
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.litTime = tag.getInt("BurnTime");
-        this.cookingProgress = tag.getInt("CookTime");
-        this.cookingTotalTime = tag.getInt("CookTimeTotal");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.litTime = input.getIntOr("BurnTime", 0);
+        this.cookingProgress = input.getIntOr("CookTime", 0);
+        this.cookingTotalTime = input.getIntOr("CookTimeTotal", 0);
 
         Arrays.fill(items, ItemStack.EMPTY);
 
-        ListTag itemListTag = tag.getList("Items", 10);
-        for (int i = 0; i < itemListTag.size(); ++i) {
-            CompoundTag itemTag = itemListTag.getCompound(i);
-            int j = itemTag.getByte("Slot") & 255;
-            if (j < items.length) {
-                DataResult<ItemStack> result = ItemStack.OPTIONAL_CODEC
-                        .parse(registries.createSerializationContext(NbtOps.INSTANCE), itemTag);
-                result.resultOrPartial(error -> Ultramarine.LOGGER.error("从NBT加载物品失败: {}", error))
-                        .ifPresent(itemStack -> items[j] = itemStack);
+        for (ValueInput child : input.childrenListOrEmpty("Items")) {
+            int slot = child.getByteOr("Slot", (byte) 0) & 255;
+            if (slot >= items.length) {
+                continue;
             }
+            ItemStack itemStack = child.read("Item", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
+            items[slot] = itemStack;
         }
 
         ItemStack fuelItem = this.getItem(SLOT_FUEL);
         if (!fuelItem.isEmpty()) {
-            Integer fuelValue = FuelRegistry.INSTANCE.get(fuelItem.getItem());
-            this.litDuration = fuelValue != null ? fuelValue : 0;
+            Level level = this.getLevel();
+            this.litDuration = level == null ? 0 : level.fuelValues().burnDuration(fuelItem);
         } else {
             this.litDuration = 0;
         }
 
-        CompoundTag recipesTag = tag.getCompound("RecipesUsed");
-        for (String s : recipesTag.getAllKeys()) {
-            this.recipesUsed.put(ResourceLocation.tryParse(s), recipesTag.getInt(s));
+        this.recipesUsed.clear();
+        for (ValueInput child : input.childrenListOrEmpty("RecipesUsed")) {
+            String idString = child.getStringOr("id", "");
+            if (idString.isEmpty()) {
+                continue;
+            }
+            Identifier id = Identifier.tryParse(idString);
+            if (id == null) {
+                continue;
+            }
+            int count = child.getIntOr("count", 0);
+            if (count > 0) {
+                this.recipesUsed.put(ResourceKey.create(Registries.RECIPE, id), count);
+            }
         }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putInt("BurnTime", this.litTime);
-        tag.putInt("CookTime", this.cookingProgress);
-        tag.putInt("CookTimeTotal", this.cookingTotalTime);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("BurnTime", this.litTime);
+        output.putInt("CookTime", this.cookingProgress);
+        output.putInt("CookTimeTotal", this.cookingTotalTime);
 
-        ListTag itemListTag = new ListTag();
+        ValueOutput.ValueOutputList itemsOut = output.childrenList("Items");
         for (int i = 0; i < items.length; i++) {
             ItemStack item = items[i];
-            if (!item.isEmpty()) {
-                DataResult<Tag> result = ItemStack.OPTIONAL_CODEC
-                        .encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), item);
-
-                int finalI = i;
-                result.resultOrPartial(error -> Ultramarine.LOGGER.error("保存物品到NBT失败: {}", error))
-                        .ifPresent(tagResult -> {
-                            if (tagResult instanceof CompoundTag itemTag) {
-                                itemTag.putByte("Slot", (byte) finalI);
-                                itemListTag.add(itemTag);
-                            } else {
-                                Ultramarine.LOGGER.warn("意外的 NBT 类型: 不是 CompoundTag，而是 {}", tagResult.getClass().getSimpleName());
-                            }
-                        });
+            if (item.isEmpty()) {
+                continue;
             }
-        }
-        if (!itemListTag.isEmpty()) {
-            tag.put("Items", itemListTag);
+            ValueOutput child = itemsOut.addChild();
+            child.putByte("Slot", (byte) i);
+            child.store("Item", ItemStack.OPTIONAL_CODEC, item);
         }
 
-        CompoundTag recipesTag = new CompoundTag();
-        this.recipesUsed.forEach((resourceLocation, count) -> recipesTag.putInt(resourceLocation.toString(), count));
-        tag.put("RecipesUsed", recipesTag);
+        ValueOutput.ValueOutputList recipesOut = output.childrenList("RecipesUsed");
+        this.recipesUsed.forEach((id, count) -> {
+            if (count <= 0) return;
+            ValueOutput child = recipesOut.addChild();
+            child.putString("id", id.identifier().toString());
+            child.putInt("count", count);
+        });
     }
 }

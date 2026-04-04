@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "tag": "minecraft:saplings"
-    },
-    "D": {
-      "item": "minecraft:cyan_dye"
-    },
-    "P": {
-      "item": "minecraft:flower_pot"
-    }
+    "C": "#minecraft:saplings",
+    "D": "minecraft:cyan_dye",
+    "P": "minecraft:flower_pot"
   },
   "pattern": [
     "C ",

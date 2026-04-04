@@ -8,11 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -36,15 +34,15 @@ public class Censer extends DecorativeBlock implements EntityBlock {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack item, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useItemOn(ItemStack item, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (item.is(ModItems.INCENSE)) {
             if (!pPlayer.getAbilities().instabuild) {
                 item.shrink(1);
             }
             pLevel.getBlockEntity(pPos, ModBlockEntities.CENSER).ifPresent(entity -> entity.lightIncense(pLevel, pPos, pState));
-            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
+            return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Nullable
@@ -73,18 +71,12 @@ public class Censer extends DecorativeBlock implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return pLevel.isClientSide ? null : BlockEntityHelper.createTickerHelper(pBlockEntityType, (BlockEntityType<? extends CenserBlockEntity>) ModBlockEntities.CENSER, CenserBlockEntity::tick);
+        return pLevel.isClientSide() ? null : BlockEntityHelper.createTickerHelper(pBlockEntityType, (BlockEntityType<? extends CenserBlockEntity>) ModBlockEntities.CENSER, CenserBlockEntity::tick);
     }
 
     @Override
-    public @NotNull BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return isLuminous() ? state.setValue(LIT, false) : state;
-    }
-
-    @Override
-    public int getLightBlock(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
-        if (isLuminous()) return state.getValue(LIT) ? 4 : 0;
-        else return 0;
     }
 }

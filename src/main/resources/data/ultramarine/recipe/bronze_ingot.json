@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "ultramarine:bronze_block"
-    }
+    "ultramarine:bronze_block"
   ],
   "result": {
     "count": 9,

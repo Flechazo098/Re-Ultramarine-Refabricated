@@ -5,12 +5,8 @@
     "BSB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:rosewood_planks"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
+    "B": "ultramarine:rosewood_planks",
+    "S": "minecraft:stick"
   },
   "result": {
     "id": "ultramarine:rosewood_fence",

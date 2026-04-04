@@ -1,11 +1,9 @@
 {
   "type": "ultramarine:woodworking",
   "group": "",
-  "ingredient": {
-    "item": "minecraft:birch_planks"
-  },
-  "result":{
-    "id":"ultramarine:polished_birch_plank",
+  "ingredient": "minecraft:birch_planks",
+  "result": {
+    "id": "ultramarine:polished_birch_plank",
     "count": 2
   }
 }

@@ -28,14 +28,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlockPropertyHolder {
 
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     public BrickKiln() {
@@ -53,13 +53,13 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return pLevel.isClientSide ? null :
+        return pLevel.isClientSide() ? null :
                 BlockEntityHelper.createTickerHelper(pBlockEntityType, (BlockEntityType<? extends BrickKilnBlockEntity>) ModBlockEntities.BRICK_KILN, BrickKilnBlockEntity::serverTick);
     }
 
     @Override
     public InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHit) {
-        if (pLevel.isClientSide) {
+        if (pLevel.isClientSide()) {
             return InteractionResult.SUCCESS;
         } else {
             BlockEntity blockentity = pLevel.getBlockEntity(pPos);
@@ -71,22 +71,16 @@ public class BrickKiln extends DecorativeBlock implements EntityBlock, BaseBlock
         return InteractionResult.PASS;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (!pState.is(pNewState.getBlock())) {
-            BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-            if (blockentity instanceof BrickKilnBlockEntity furnace) {
-                if (pLevel instanceof ServerLevel) {
-                    Containers.dropContents(pLevel, pPos, new BrickKilnMenu.BrickKilnInventory(furnace));
-                    furnace.getRecipesToAwardAndPopExperience((ServerLevel) pLevel, Vec3.atCenterOf(pPos));
-                }
-
-                pLevel.updateNeighbourForOutputSignal(pPos, this);
-            }
-
-            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        BlockEntity blockentity = level.getBlockEntity(pos);
+        if (blockentity instanceof BrickKilnBlockEntity furnace) {
+            Containers.dropContents(level, pos, new BrickKilnMenu.BrickKilnInventory(furnace));
+            furnace.getRecipesToAwardAndPopExperience(level, Vec3.atCenterOf(pos));
+            level.updateNeighbourForOutputSignal(pos, this);
         }
+
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     @Override

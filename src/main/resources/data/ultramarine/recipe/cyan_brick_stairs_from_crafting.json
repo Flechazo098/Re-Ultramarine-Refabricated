@@ -6,9 +6,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:cyan_bricks"
-    }
+    "B": "ultramarine:cyan_bricks"
   },
   "result": {
     "id": "ultramarine:cyan_brick_stairs",

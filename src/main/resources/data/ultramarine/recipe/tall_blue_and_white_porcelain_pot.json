@@ -3,13 +3,9 @@
   "type": "ultramarine:composite_smelting",
   "cookingtime": 200,
   "experience": 0.1,
-  "primary_ingredient": {
-    "item": "ultramarine:tall_clay_pot"
-  },
+  "primary_ingredient": "ultramarine:tall_clay_pot",
   "result": {
     "id": "ultramarine:tall_blue_and_white_porcelain_pot"
   },
-  "secondary_ingredient": {
-    "item": "ultramarine:blue_and_white_glaze_powder"
-  }
+  "secondary_ingredient": "ultramarine:blue_and_white_glaze_powder"
 }

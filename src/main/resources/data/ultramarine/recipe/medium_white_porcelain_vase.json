@@ -3,13 +3,9 @@
   "type": "ultramarine:composite_smelting",
   "cookingtime": 200,
   "experience": 0.1,
-  "primary_ingredient": {
-    "item": "ultramarine:medium_clay_vase"
-  },
+  "primary_ingredient": "ultramarine:medium_clay_vase",
   "result": {
     "id": "ultramarine:medium_white_porcelain_vase"
   },
-  "secondary_ingredient": {
-    "item": "minecraft:white_dye"
-  }
+  "secondary_ingredient": "minecraft:white_dye"
 }

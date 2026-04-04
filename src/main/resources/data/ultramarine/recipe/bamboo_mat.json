@@ -6,12 +6,8 @@
     "BSB"
   ],
   "key": {
-    "B": {
-      "item": "minecraft:bamboo"
-    },
-    "S": {
-      "item": "minecraft:string"
-    }
+    "B": "minecraft:bamboo",
+    "S": "minecraft:string"
   },
   "result": {
     "id": "ultramarine:bamboo_mat",

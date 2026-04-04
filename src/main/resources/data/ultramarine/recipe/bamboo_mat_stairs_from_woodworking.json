@@ -1,11 +1,9 @@
 {
   "type": "ultramarine:woodworking",
-  "group":"",
-  "ingredient": {
-    "item": "ultramarine:bamboo_mat"
-  },
+  "group": "",
+  "ingredient": "ultramarine:bamboo_mat",
   "result": {
-    "id":"ultramarine:bamboo_mat_stairs",
+    "id": "ultramarine:bamboo_mat_stairs",
     "count": 1
   }
 }

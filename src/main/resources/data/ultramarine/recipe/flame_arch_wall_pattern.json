@@ -2,26 +2,14 @@
   "id": "ultramarine:flame_arch_wall_pattern",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "minecraft:orange_dye"
-    },
-    {
-      "item": "ultramarine:white_dye_powder"
-    },
-    {
-      "item": "ultramarine:blue_dye_powder"
-    },
-    {
-      "item": "ultramarine:green_dye_powder"
-    }
+    "minecraft:orange_dye",
+    "ultramarine:white_dye_powder",
+    "ultramarine:blue_dye_powder",
+    "ultramarine:green_dye_powder"
   ],
-  "material": {
-    "tag": "ultramarine:polished_planks"
-  },
+  "material": "#ultramarine:polished_planks",
   "result": {
     "id": "ultramarine:flame_arch_wall_pattern"
   },
-  "template": {
-    "item": "ultramarine:caihua_template"
-  }
+  "template": "ultramarine:caihua_template"
 }

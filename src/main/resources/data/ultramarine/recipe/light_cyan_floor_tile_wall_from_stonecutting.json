@@ -1,8 +1,6 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "ultramarine:light_cyan_floor_tile"
-  },
+  "ingredient": "ultramarine:light_cyan_floor_tile",
   "result": {
     "id": "ultramarine:light_cyan_floor_tile_wall",
     "count": 1

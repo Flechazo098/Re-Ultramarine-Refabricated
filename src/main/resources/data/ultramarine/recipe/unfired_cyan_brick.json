@@ -1,27 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:unfired_clay_brick"
-    },
-    {
-      "item": "ultramarine:prismarine_dust"
-    }
+    "ultramarine:unfired_clay_brick",
+    "ultramarine:unfired_clay_brick",
+    "ultramarine:unfired_clay_brick",
+    "ultramarine:unfired_clay_brick",
+    "ultramarine:unfired_clay_brick",
+    "ultramarine:unfired_clay_brick",
+    "ultramarine:prismarine_dust"
   ],
   "result": {
     "id": "ultramarine:unfired_cyan_brick",

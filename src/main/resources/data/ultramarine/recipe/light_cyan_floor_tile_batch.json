@@ -6,12 +6,8 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:cyan_floor_tile"
-    },
-    "D": {
-      "item": "minecraft:white_dye"
-    }
+    "B": "ultramarine:cyan_floor_tile",
+    "D": "minecraft:white_dye"
   },
   "result": {
     "id": "ultramarine:light_cyan_floor_tile",

@@ -1,9 +1,7 @@
 {
   "type": "ultramarine:woodworking",
   "count": 2,
-  "ingredient": {
-    "item": "minecraft:mangrove_planks"
-  },
+  "ingredient": "minecraft:mangrove_planks",
   "result": {
     "id": "ultramarine:polished_mangrove_plank"
   }

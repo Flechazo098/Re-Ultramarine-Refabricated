@@ -16,9 +16,9 @@ public class UltramarineJadePlugin implements IWailaPlugin {
 
     @Override
     public void register(IWailaCommonRegistration registration) {
-        registration.registerBlockDataProvider(CenserComponent.INSTANCE, CenserBlockEntity.class);
-        registration.registerBlockDataProvider(BrickKilnComponent.INSTANCE, BrickKilnBlockEntity.class);
-        registration.registerBlockDataProvider(BottleGourdComponent.INSTANCE, BottleGourdBlockEntity.class);
+        registration.registerBlockDataProvider(CenserDataProvider.INSTANCE, CenserBlockEntity.class);
+        registration.registerBlockDataProvider(BrickKilnDataProvider.INSTANCE, BrickKilnBlockEntity.class);
+        registration.registerBlockDataProvider(BottleGourdDataProvider.INSTANCE, BottleGourdBlockEntity.class);
     }
 
     @Override

@@ -5,18 +5,18 @@ import com.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
 import com.voxelutopia.ultramarine.init.registry.ModBlocks;
 import com.voxelutopia.ultramarine.init.registry.ModMenuTypes;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public class BrickKilnMenu extends AbstractContainerMenu {
@@ -43,7 +43,7 @@ public class BrickKilnMenu extends AbstractContainerMenu {
     public BrickKilnMenu(int id, BlockPos pos, Inventory inventory, BrickKilnBlockEntity container, ContainerData containerData) {
         super(ModMenuTypes.BRICK_KILN, id);
         this.playerEntity = inventory.player;
-        this.blockEntity = playerEntity.getCommandSenderWorld().getBlockEntity(pos);
+        this.blockEntity = playerEntity.level().getBlockEntity(pos);
         this.brickKiln = container != null ? container : (this.blockEntity instanceof BrickKilnBlockEntity ? (BrickKilnBlockEntity) this.blockEntity : null);
         this.data = containerData;
         this.inventory = new BrickKilnInventory(this.brickKiln);
@@ -83,7 +83,7 @@ public class BrickKilnMenu extends AbstractContainerMenu {
                     if (!this.moveItemStackTo(slotItem, SLOT_INPUT_PRIMARY, SLOT_INPUT_SECONDARY + 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (isFuel(slotItem)) {
+                } else if (this.isFuel(slotItem)) {
                     if (!this.moveItemStackTo(slotItem, SLOT_FUEL, SLOT_FUEL + 1, false)) {
                         return ItemStack.EMPTY;
                     }
@@ -118,8 +118,18 @@ public class BrickKilnMenu extends AbstractContainerMenu {
         if (blockEntity == null || blockEntity.getLevel() == null) {
             return false;
         }
-        return blockEntity.getLevel().getRecipeManager().getAllRecipesFor(ModRecipeTypes.COMPOSITE_SMELTING).stream()
-                .anyMatch(recipe -> recipe.value().partialMatch(new SingleRecipeInput(item)));
+        if (!(blockEntity.getLevel() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        var recipeManager = serverLevel.recipeAccess();
+        return recipeManager.getRecipes().stream()
+                .filter(holder -> holder.value().getType() == ModRecipeTypes.COMPOSITE_SMELTING)
+                .anyMatch(holder -> ((CompositeSmeltingRecipe) holder.value()).partialMatch(new SingleRecipeInput(item)));
+    }
+
+    private boolean isFuel(ItemStack stack) {
+        Level level = this.playerEntity.level();
+        return level != null && level.fuelValues().isFuel(stack);
     }
 
     @Override
@@ -162,7 +172,7 @@ public class BrickKilnMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
+        public boolean mayPlace(ItemStack stack) {
             return false;
         }
 
@@ -189,7 +199,7 @@ public class BrickKilnMenu extends AbstractContainerMenu {
 
         @Override
         protected void checkTakeAchievements(ItemStack stack) {
-            stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
+            stack.onCraftedBy(this.player, this.removeCount);
             if (this.player instanceof ServerPlayer serverplayer && blockEntity instanceof BrickKilnBlockEntity kiln) {
                 kiln.awardUsedRecipesAndPopExperience(serverplayer);
             }
@@ -209,27 +219,27 @@ public class BrickKilnMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(@Nonnull ItemStack stack) {
-            return isFuel(stack);
+        public boolean mayPlace(ItemStack stack) {
+            return container instanceof BrickKilnInventory inv && inv.isFuel(stack);
         }
     }
 
-    private static boolean isFuel(@NotNull ItemStack stack) {
-        Integer fuelValue = FuelRegistry.INSTANCE.get(stack.getItem());
-        return fuelValue != null && fuelValue > 0;
-    }
-
-    // 简单的 Container 实现来适配 Slot
     public static class BrickKilnInventory implements net.minecraft.world.Container {
         private final BrickKilnBlockEntity blockEntity;
         private final ItemStack[] items = new ItemStack[BrickKilnBlockEntity.NUM_SLOTS];
 
         public BrickKilnInventory(BrickKilnBlockEntity blockEntity) {
             this.blockEntity = blockEntity;
-            // 如果 blockEntity 为 null，初始化空的物品数组
             if (blockEntity == null) {
                 Arrays.fill(items, ItemStack.EMPTY);
             }
+        }
+
+        boolean isFuel(@NotNull ItemStack stack) {
+            if (stack.isEmpty()) return false;
+            if (blockEntity == null) return false;
+            Level level = blockEntity.getLevel();
+            return level != null && level.fuelValues().isFuel(stack);
         }
 
         @Override
@@ -304,9 +314,7 @@ public class BrickKilnMenu extends AbstractContainerMenu {
                     blockEntity.setItem(i, ItemStack.EMPTY);
                 }
             } else {
-                for (int i = 0; i < items.length; i++) {
-                    items[i] = ItemStack.EMPTY;
-                }
+                Arrays.fill(items, ItemStack.EMPTY);
             }
         }
     }

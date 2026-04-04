@@ -1,11 +1,9 @@
 {
   "type": "ultramarine:woodworking",
-  "group":"",
-  "ingredient": {
-    "item": "ultramarine:rosewood_planks"
-  },
+  "group": "",
+  "ingredient": "ultramarine:rosewood_planks",
   "result": {
-    "id":"ultramarine:polished_rosewood_plank",
+    "id": "ultramarine:polished_rosewood_plank",
     "count": 2
   }
 }

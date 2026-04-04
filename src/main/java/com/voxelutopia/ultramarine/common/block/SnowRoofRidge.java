@@ -5,7 +5,7 @@ import com.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -59,21 +59,21 @@ public interface SnowRoofRidge {
         }
     }
 
-    default ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    default InteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
         if (item.is(Items.SNOWBALL)) {
             handleSnow(pState, pLevel, pPos);
             if (!pPlayer.isCreative()) item.shrink(1);
-            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
+            return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         if (item.getItem() instanceof ShovelItem) {
             removeSnow(pState, pLevel, pPos);
             if (!pPlayer.isCreative()) {
                 stack.hurtAndBreak(1, pPlayer, pHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
-            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
+            return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     DyeColor getColor();

@@ -4,9 +4,7 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "minecraft:clay_ball"
-    }
+    "C": "minecraft:clay_ball"
   },
   "result": {
     "id": "ultramarine:unfired_clay_brick",

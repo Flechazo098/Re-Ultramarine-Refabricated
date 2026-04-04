@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "B": {
-      "item": "ultramarine:cyan_brick"
-    },
-    "F": {
-      "item": "minecraft:furnace"
-    }
+    "B": "ultramarine:cyan_brick",
+    "F": "minecraft:furnace"
   },
   "pattern": [
     "BBB",

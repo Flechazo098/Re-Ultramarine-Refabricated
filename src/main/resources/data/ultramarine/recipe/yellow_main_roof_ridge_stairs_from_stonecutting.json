@@ -1,9 +1,7 @@
 {
   "type": "minecraft:stonecutting",
   "count": 1,
-  "ingredient": {
-    "item": "ultramarine:yellow_main_roof_ridge_connection"
-  },
+  "ingredient": "ultramarine:yellow_main_roof_ridge_connection",
   "result": {
     "id": "ultramarine:yellow_main_roof_ridge_stairs"
   }

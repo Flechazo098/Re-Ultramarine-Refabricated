@@ -1,6 +1,6 @@
 package com.voxelutopia.ultramarine.init.datagen;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -8,7 +8,7 @@ import net.minecraft.core.registries.Registries;
 import java.util.concurrent.CompletableFuture;
 
 public class ModWorldGen extends FabricDynamicRegistryProvider {
-    public ModWorldGen(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public ModWorldGen(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

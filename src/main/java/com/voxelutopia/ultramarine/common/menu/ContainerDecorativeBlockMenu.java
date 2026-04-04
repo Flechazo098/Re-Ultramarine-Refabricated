@@ -2,7 +2,6 @@ package com.voxelutopia.ultramarine.common.menu;
 
 import com.voxelutopia.ultramarine.init.data.ContainerType;
 import com.voxelutopia.ultramarine.init.registry.ModMenuTypes;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +12,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-@MethodsReturnNonnullByDefault
 public class ContainerDecorativeBlockMenu extends AbstractContainerMenu {
 
     private static final int SLOTS_PER_ROW = 9;
@@ -33,21 +31,18 @@ public class ContainerDecorativeBlockMenu extends AbstractContainerMenu {
         container.startOpen(inventory.player);
         int i = (this.containerRows - 4) * 18;
 
-        //Container
         for (int row1 = 0; row1 < this.containerRows; ++row1) {
             for (int col1 = 0; col1 < 9; ++col1) {
                 this.addSlot(new FilteredSlot(container, col1 + row1 * 9, 8 + col1 * 18, 18 + row1 * 18, type));
             }
         }
 
-        //Inventory
         for (int row2 = 0; row2 < 3; ++row2) {
             for (int col2 = 0; col2 < 9; ++col2) {
                 this.addSlot(new Slot(inventory, col2 + row2 * 9 + 9, 8 + col2 * 18, 103 + row2 * 18 + i));
             }
         }
 
-        //Hot-bar
         for (int slot = 0; slot < 9; ++slot) {
             this.addSlot(new Slot(inventory, slot, 8 + slot * 18, 161 + i));
         }

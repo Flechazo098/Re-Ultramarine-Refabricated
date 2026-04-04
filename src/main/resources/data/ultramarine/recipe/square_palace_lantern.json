@@ -6,12 +6,8 @@
     " F "
   ],
   "key": {
-    "F": {
-      "item": "ultramarine:wooden_frame"
-    },
-    "C": {
-      "tag": "minecraft:candles"
-    }
+    "F": "ultramarine:wooden_frame",
+    "C": "#minecraft:candles"
   },
   "result": {
     "id": "ultramarine:square_palace_lantern"

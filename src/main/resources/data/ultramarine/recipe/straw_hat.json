@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "R": {
-      "item": "ultramarine:red_dye_powder"
-    },
-    "S": {
-      "item": "ultramarine:silk"
-    },
-    "W": {
-      "item": "minecraft:wheat"
-    }
+    "R": "ultramarine:red_dye_powder",
+    "S": "ultramarine:silk",
+    "W": "minecraft:wheat"
   },
   "pattern": [
     "RSR",

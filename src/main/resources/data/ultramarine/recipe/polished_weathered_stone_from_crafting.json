@@ -5,9 +5,7 @@
     "AA"
   ],
   "key": {
-    "A": {
-      "item": "ultramarine:weathered_stone"
-    }
+    "A": "ultramarine:weathered_stone"
   },
   "result": {
     "id": "ultramarine:polished_weathered_stone",

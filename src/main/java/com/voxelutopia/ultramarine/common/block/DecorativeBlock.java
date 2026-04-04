@@ -6,7 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 import com.voxelutopia.ultramarine.init.data.shape.BlockShapes;
 import com.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -18,15 +17,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-@MethodsReturnNonnullByDefault
 public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseBlockPropertyHolder, DiagonallyPlaceable {
 
     public static final MapCodec<DecorativeBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -47,7 +45,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
                             .build()
             ));
 
-    public static final DirectionProperty HORIZONTAL_FACING_SHIFT = ModBlockStateProperties.HORIZONTAL_FACING_SHIFT;
+    public static final EnumProperty<Direction> HORIZONTAL_FACING_SHIFT = ModBlockStateProperties.HORIZONTAL_FACING_SHIFT;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     private final BaseBlockProperty property;
@@ -117,8 +115,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
         return stateDefinition;
     }
 
-    @NotNull
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         BlockState state = setDiagonalStateForPlacement(this.defaultBlockState(), pContext);
         if (isDirectional() && isDiagonallyPlaceable()) {
             var directions = getMainAndShiftedDirections(pContext);
@@ -136,7 +133,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         if (isDirectional()) pBuilder.add(FACING);
         if (isDiagonallyPlaceable()) pBuilder.add(DIAGONAL);
@@ -145,7 +142,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public void onPlace(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pOldState, boolean pIsMoving) {
+    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
 //        if (offsetDirection != null) {
 //            switch (offsetDirection) {
 //                case DOWN -> {
@@ -233,7 +230,7 @@ public class DecorativeBlock extends HorizontalDirectionalBlock implements BaseB
     }
 
     @Override
-    public float getShadeBrightness(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
+    public float getShadeBrightness(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
         return 1.0f;
     }
 

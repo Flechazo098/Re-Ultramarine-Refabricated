@@ -2,23 +2,13 @@
   "id": "ultramarine:blue_green_yellow_gutou",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "minecraft:blue_dye"
-    },
-    {
-      "item": "minecraft:green_dye"
-    },
-    {
-      "item": "minecraft:yellow_dye"
-    }
+    "minecraft:blue_dye",
+    "minecraft:green_dye",
+    "minecraft:yellow_dye"
   ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
+  "material": "#minecraft:logs",
   "result": {
     "id": "ultramarine:blue_green_yellow_gutou"
   },
-  "template": {
-    "item": "ultramarine:gutou_template"
-  }
+  "template": "ultramarine:gutou_template"
 }

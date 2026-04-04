@@ -5,9 +5,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:black_bricks"
-    }
+    "B": "ultramarine:black_bricks"
   },
   "result": {
     "id": "ultramarine:black_brick_wall",

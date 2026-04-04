@@ -1,13 +1,13 @@
 package com.voxelutopia.ultramarine.init.registry;
 
 import com.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
-import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Direction;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class BlockApiLookupRegistry {
 
@@ -15,7 +15,7 @@ public class BlockApiLookupRegistry {
         ItemStorage.SIDED.registerForBlockEntities((blockEntity, direction) -> {
             if (!(blockEntity instanceof BrickKilnBlockEntity be)) return null;
             if (direction == null) return null;
-            return InventoryStorage.of(new BrickKilnSidedInventory(be), direction);
+            return ContainerStorage.of(new BrickKilnSidedInventory(be), direction);
         }, ModBlockEntities.BRICK_KILN);
     }
 
@@ -82,8 +82,8 @@ public class BlockApiLookupRegistry {
         public boolean canPlaceItem(int index, ItemStack stack) {
             if (index == BrickKilnBlockEntity.SLOT_RESULT) return false;
             if (index == BrickKilnBlockEntity.SLOT_FUEL) {
-                Integer burn = FuelRegistry.INSTANCE.get(stack.getItem());
-                return burn != null && burn > 0;
+                Level level = be.getLevel();
+                return level != null && level.fuelValues().isFuel(stack);
             }
             return true;
         }

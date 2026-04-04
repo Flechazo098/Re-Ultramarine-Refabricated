@@ -8,9 +8,13 @@
     "BlockItemMixin",
     "ItemEntityMixin",
     "LevelMixin",
+    "PlayerListMixin",
+    "RecipeAccessMixin",
+    "RecipeManagerMixin",
     "ServerLevelMixin"
   ],
   "client": [
+    "ClientRecipeContainerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

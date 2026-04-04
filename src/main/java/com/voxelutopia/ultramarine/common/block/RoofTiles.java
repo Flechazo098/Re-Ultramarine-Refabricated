@@ -5,12 +5,13 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.common.block.state.ModBlockStateProperties;
 import com.voxelutopia.ultramarine.init.data.RawVoxelShape;
+import com.voxelutopia.ultramarine.util.helper.RegistryIdContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -25,14 +26,15 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -44,9 +46,14 @@ public class RoofTiles extends ShiftableBlock {
                     RoofTileType.CODEC.fieldOf("type").forGetter(block -> block.type)
             ).apply(instance, RoofTiles::new));
 
-    public static final BlockBehaviour.Properties PROPERTIES = BlockBehaviour.Properties.of()
-            .requiresCorrectToolForDrops().strength(1.5F, 4.0F).sound(SoundType.DEEPSLATE_TILES);
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    private static BlockBehaviour.Properties createProperties() {
+        return RegistryIdContext.applyCurrentBlockId(BlockBehaviour.Properties.of()
+                .requiresCorrectToolForDrops()
+                .strength(1.5F, 4.0F)
+                .sound(SoundType.DEEPSLATE_TILES));
+    }
+
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty SNOW_LAYERS = ModBlockStateProperties.SNOW_LAYERS;
     public static final EnumProperty<SnowSide> SNOW_SIDE = ModBlockStateProperties.SNOW_SIDE;
 
@@ -66,7 +73,7 @@ public class RoofTiles extends ShiftableBlock {
     private final RoofTileType type;
 
     public RoofTiles(DyeColor color, RoofTileType type) {
-        super(PROPERTIES);
+        super(createProperties());
         this.color = color;
         this.type = type;
         this.registerDefaultState(this.stateDefinition.any()
@@ -139,27 +146,27 @@ public class RoofTiles extends ShiftableBlock {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
         if (item.is(Items.SNOWBALL)) {
             handleSnow(pState, pLevel, pPos);
             if (!pPlayer.isCreative()) item.shrink(1);
-            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
+            return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         if (item.getItem() instanceof ShovelItem) {
             removeSnow(pState, pLevel, pPos);
             if (!pPlayer.isCreative()) {
                 stack.hurtAndBreak(1, pPlayer, pHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             }
-            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
+            return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
+    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, @Nullable Orientation orientation, boolean pIsMoving) {
         updateSideSnow(pState, pLevel, pPos);
-        super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
+        super.neighborChanged(pState, pLevel, pPos, pBlock, orientation, pIsMoving);
     }
 
     @Override
@@ -170,9 +177,9 @@ public class RoofTiles extends ShiftableBlock {
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        updateNeighborSideSnow(pState, pLevel, pPos);
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        updateNeighborSideSnow(state, level, pos);
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     private void updateNeighborSideSnow(BlockState pState, Level pLevel, BlockPos pPos) {

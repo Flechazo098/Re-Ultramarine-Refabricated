@@ -2,6 +2,7 @@ package com.voxelutopia.ultramarine;
 
 import com.voxelutopia.ultramarine.common.world.ModConfiguredFeatures;
 import com.voxelutopia.ultramarine.common.world.ModPlacedFeatures;
+import com.voxelutopia.ultramarine.init.datagen.ModVillagerTradeProvider;
 import com.voxelutopia.ultramarine.init.datagen.ModWorldGen;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
@@ -16,6 +17,7 @@ public class UltramarineDataGenerators implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack generator = fabricDataGenerator.createPack();
         generator.addProvider(ModWorldGen::new);
+        generator.addProvider(ModVillagerTradeProvider::new);
     }
 
     @Override

@@ -2,26 +2,14 @@
   "id": "ultramarine:green_carved_wanzi_rafter",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "minecraft:green_dye"
-    },
-    {
-      "item": "minecraft:green_dye"
-    },
-    {
-      "item": "minecraft:yellow_dye"
-    },
-    {
-      "item": "ultramarine:gold_dye_powder"
-    }
+    "minecraft:green_dye",
+    "minecraft:green_dye",
+    "minecraft:yellow_dye",
+    "ultramarine:gold_dye_powder"
   ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
+  "material": "#minecraft:logs",
   "result": {
     "id": "ultramarine:green_carved_wanzi_rafter"
   },
-  "template": {
-    "item": "ultramarine:rafter_template"
-  }
+  "template": "ultramarine:rafter_template"
 }

@@ -6,11 +6,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeSerializers;
 import com.voxelutopia.ultramarine.init.registry.ModRecipeTypes;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +19,18 @@ public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.C
     protected final String group;
     protected final Ingredient primaryIngredient;
     protected final Ingredient secondaryIngredient;
-    protected final ItemStack result;
+    protected final ItemStackTemplate result;
     protected final float experience;
     protected final int cookingTime;
 
-    public CompositeSmeltingRecipe(String pGroup, Ingredient primaryIngredient, Ingredient secondaryIngredient, ItemStack pResult, float pExperience, int pCookingTime) {
+    public CompositeSmeltingRecipe(
+            String pGroup,
+            Ingredient primaryIngredient,
+            Ingredient secondaryIngredient,
+            ItemStackTemplate pResult,
+            float pExperience,
+            int pCookingTime
+    ) {
         this.group = pGroup;
         this.primaryIngredient = primaryIngredient;
         this.secondaryIngredient = secondaryIngredient;
@@ -43,13 +50,8 @@ public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.C
     }
 
     @Override
-    public @NotNull ItemStack assemble(@NotNull CompositeSmeltingRecipe.CompositeSmeltingRecipeInput pContainer, HolderLookup.@NotNull Provider provider) {
-        return this.result.copy();
-    }
-
-    @Override
-    public boolean canCraftInDimensions(int pWidth, int pHeight) {
-        return true;
+    public @NotNull ItemStack assemble(@NotNull CompositeSmeltingRecipe.CompositeSmeltingRecipeInput pContainer) {
+        return this.result.create();
     }
 
     public Ingredient getPrimaryIngredient() {
@@ -60,22 +62,41 @@ public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.C
         return secondaryIngredient;
     }
 
-    public ItemStack getResult() {
+    public ItemStackTemplate getResult() {
         return result;
     }
 
-    @Override
-    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider provider) {
-        return result.copy();
+    public @NotNull ItemStack getResultItem() {
+        return result.create();
     }
 
     @Override
-    public @NotNull RecipeSerializer<?> getSerializer() {
+    public boolean showNotification() {
+        return true;
+    }
+
+    @Override
+    public String group() {
+        return group;
+    }
+
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return RecipeBookCategories.FURNACE_MISC;
+    }
+
+    @Override
+    public @NotNull RecipeSerializer<CompositeSmeltingRecipe> getSerializer() {
         return ModRecipeSerializers.COMPOSITE_SMELTING_SERIALIZER;
     }
 
     @Override
-    public @NotNull RecipeType<?> getType() {
+    public @NotNull RecipeType<CompositeSmeltingRecipe> getType() {
         return ModRecipeTypes.COMPOSITE_SMELTING;
     }
 
@@ -87,37 +108,28 @@ public class CompositeSmeltingRecipe implements Recipe<CompositeSmeltingRecipe.C
         return experience;
     }
 
-    public enum Serializer implements RecipeSerializer<CompositeSmeltingRecipe> {
-        INSTANCE;
-        public static final MapCodec<CompositeSmeltingRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                Codec.STRING.optionalFieldOf("group", "").forGetter(CompositeSmeltingRecipe::getGroup),
-                Ingredient.CODEC.fieldOf("primary_ingredient").forGetter(CompositeSmeltingRecipe::getPrimaryIngredient),
-                Ingredient.CODEC.fieldOf("secondary_ingredient").forGetter(CompositeSmeltingRecipe::getSecondaryIngredient),
-                ItemStack.CODEC.fieldOf("result").forGetter(CompositeSmeltingRecipe::getResult),
-                Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(CompositeSmeltingRecipe::getExp),
-                Codec.INT.optionalFieldOf("cookingtime", 200).forGetter(CompositeSmeltingRecipe::getCookingTime)
-        ).apply(i, CompositeSmeltingRecipe::new));
-        public static final StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> STREAM_CODEC =
-                StreamCodec.composite(
-                        ByteBufCodecs.STRING_UTF8, CompositeSmeltingRecipe::getGroup,
-                        Ingredient.CONTENTS_STREAM_CODEC, CompositeSmeltingRecipe::getPrimaryIngredient,
-                        Ingredient.CONTENTS_STREAM_CODEC, CompositeSmeltingRecipe::getSecondaryIngredient,
-                        ItemStack.STREAM_CODEC, CompositeSmeltingRecipe::getResult,
-                        ByteBufCodecs.FLOAT, CompositeSmeltingRecipe::getExp,
-                        ByteBufCodecs.INT, CompositeSmeltingRecipe::getCookingTime,
-                        CompositeSmeltingRecipe::new
-                );
+    public static final MapCodec<CompositeSmeltingRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Codec.STRING.optionalFieldOf("group", "").forGetter(CompositeSmeltingRecipe::group),
+            Ingredient.CODEC.fieldOf("primary_ingredient").forGetter(CompositeSmeltingRecipe::getPrimaryIngredient),
+            Ingredient.CODEC.fieldOf("secondary_ingredient").forGetter(CompositeSmeltingRecipe::getSecondaryIngredient),
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(CompositeSmeltingRecipe::getResult),
+            Codec.FLOAT.optionalFieldOf("experience", 0f).forGetter(CompositeSmeltingRecipe::getExp),
+            Codec.INT.optionalFieldOf("cookingtime", 200).forGetter(CompositeSmeltingRecipe::getCookingTime)
+    ).apply(i, CompositeSmeltingRecipe::new));
 
-        @Override
-        public @NotNull MapCodec<CompositeSmeltingRecipe> codec() {
-            return CODEC;
-        }
+    public static final StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.STRING_UTF8, CompositeSmeltingRecipe::group,
+                    Ingredient.CONTENTS_STREAM_CODEC, CompositeSmeltingRecipe::getPrimaryIngredient,
+                    Ingredient.CONTENTS_STREAM_CODEC, CompositeSmeltingRecipe::getSecondaryIngredient,
+                    ItemStackTemplate.STREAM_CODEC, CompositeSmeltingRecipe::getResult,
+                    ByteBufCodecs.FLOAT, CompositeSmeltingRecipe::getExp,
+                    ByteBufCodecs.INT, CompositeSmeltingRecipe::getCookingTime,
+                    CompositeSmeltingRecipe::new
+            );
 
-        @Override
-        public @NotNull StreamCodec<RegistryFriendlyByteBuf, CompositeSmeltingRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
-    }
+    public static final RecipeSerializer<CompositeSmeltingRecipe> SERIALIZER = new RecipeSerializer<>(CODEC, STREAM_CODEC);
+
     public record CompositeSmeltingRecipeInput(ItemStack primaryItem, ItemStack secondaryItem) implements RecipeInput {
 
         @Override

@@ -1,9 +1,7 @@
 {
   "type": "ultramarine:woodworking",
   "count": 1,
-  "ingredient": {
-    "tag": "minecraft:planks"
-  },
+  "ingredient": "#minecraft:planks",
   "result": {
     "id": "ultramarine:large_wooden_gualuo"
   }

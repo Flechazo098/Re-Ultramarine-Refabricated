@@ -15,7 +15,7 @@ public abstract class ItemEntityMixin {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void onTick(CallbackInfo ci) {
-        ItemEntity self = (ItemEntity)(Object)this;
+        ItemEntity self = (ItemEntity) (Object) this;
         if (!self.level().isClientSide() && ItemEvents.UPDATE_EVENT.invoker().onItemUpdate(self)) {
             this.age = 0;
         }

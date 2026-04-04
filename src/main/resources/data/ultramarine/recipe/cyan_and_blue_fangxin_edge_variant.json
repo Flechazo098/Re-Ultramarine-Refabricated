@@ -2,26 +2,14 @@
   "id": "ultramarine:cyan_and_blue_fangxin_edge_variant",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "minecraft:green_dye"
-    },
-    {
-      "item": "minecraft:cyan_dye"
-    },
-    {
-      "item": "minecraft:blue_dye"
-    },
-    {
-      "item": "minecraft:blue_dye"
-    }
+    "minecraft:green_dye",
+    "minecraft:cyan_dye",
+    "minecraft:blue_dye",
+    "minecraft:blue_dye"
   ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
+  "material": "#minecraft:logs",
   "result": {
     "id": "ultramarine:cyan_and_blue_fangxin_edge_variant"
   },
-  "template": {
-    "item": "ultramarine:fangxin_edge_template"
-  }
+  "template": "ultramarine:fangxin_edge_template"
 }

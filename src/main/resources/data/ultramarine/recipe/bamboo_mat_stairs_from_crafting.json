@@ -6,9 +6,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:bamboo_mat"
-    }
+    "B": "ultramarine:bamboo_mat"
   },
   "result": {
     "id": "ultramarine:bamboo_mat_stairs",

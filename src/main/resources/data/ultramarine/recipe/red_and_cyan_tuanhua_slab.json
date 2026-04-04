@@ -2,26 +2,14 @@
   "id": "ultramarine:red_and_cyan_tuanhua_slab",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "minecraft:cyan_dye"
-    },
-    {
-      "item": "ultramarine:light_blue_dye_powder"
-    },
-    {
-      "item": "ultramarine:red_dye_powder"
-    },
-    {
-      "item": "ultramarine:cyan_dye_powder"
-    }
+    "minecraft:cyan_dye",
+    "ultramarine:light_blue_dye_powder",
+    "ultramarine:red_dye_powder",
+    "ultramarine:cyan_dye_powder"
   ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
+  "material": "#minecraft:logs",
   "result": {
     "id": "ultramarine:red_and_cyan_tuanhua_slab"
   },
-  "template": {
-    "item": "ultramarine:architrave_template"
-  }
+  "template": "ultramarine:architrave_template"
 }

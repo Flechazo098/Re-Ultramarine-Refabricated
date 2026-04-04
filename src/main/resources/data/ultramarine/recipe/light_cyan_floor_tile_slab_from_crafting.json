@@ -4,9 +4,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:light_cyan_floor_tile"
-    }
+    "B": "ultramarine:light_cyan_floor_tile"
   },
   "result": {
     "id": "ultramarine:light_cyan_floor_tile_slab",

@@ -1,11 +1,9 @@
 {
   "type": "ultramarine:woodworking",
   "group": "",
-  "ingredient": {
-    "item": "minecraft:dark_oak_planks"
-  },
+  "ingredient": "minecraft:dark_oak_planks",
   "result": {
-    "id":"ultramarine:polished_dark_oak_plank",
+    "id": "ultramarine:polished_dark_oak_plank",
     "count": 2
   }
 }

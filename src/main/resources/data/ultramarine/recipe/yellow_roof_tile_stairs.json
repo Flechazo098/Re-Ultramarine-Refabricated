@@ -6,9 +6,7 @@
     "TTT"
   ],
   "key": {
-    "T": {
-      "item": "ultramarine:yellow_roof_tile"
-    }
+    "T": "ultramarine:yellow_roof_tile"
   },
   "result": {
     "id": "ultramarine:yellow_roof_tile_stairs"

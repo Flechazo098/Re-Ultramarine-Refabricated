@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "item": "ultramarine:grease"
-    },
-    "S": {
-      "item": "minecraft:string"
-    }
+    "G": "ultramarine:grease",
+    "S": "minecraft:string"
   },
   "pattern": [
     "S",

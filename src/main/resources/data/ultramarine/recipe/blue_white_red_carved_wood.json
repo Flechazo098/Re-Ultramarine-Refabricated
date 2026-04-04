@@ -2,26 +2,14 @@
   "id": "ultramarine:blue_white_red_carved_wood",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "ultramarine:blue_dye_powder"
-    },
-    {
-      "item": "ultramarine:white_dye_powder"
-    },
-    {
-      "item": "minecraft:red_dye"
-    },
-    {
-      "item": "ultramarine:green_dye_powder"
-    }
+    "ultramarine:blue_dye_powder",
+    "ultramarine:white_dye_powder",
+    "minecraft:red_dye",
+    "ultramarine:green_dye_powder"
   ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
+  "material": "#minecraft:logs",
   "result": {
     "id": "ultramarine:blue_white_red_carved_wood"
   },
-  "template": {
-    "item": "ultramarine:carved_wood_template"
-  }
+  "template": "ultramarine:carved_wood_template"
 }

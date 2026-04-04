@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "S": {
-      "tag": "minecraft:wooden_fences"
-    },
-    "W": {
-      "tag": "minecraft:planks"
-    }
+    "S": "#minecraft:wooden_fences",
+    "W": "#minecraft:planks"
   },
   "pattern": [
     "WWW",

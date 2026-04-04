@@ -3,7 +3,7 @@ package com.voxelutopia.ultramarine.common.inventory;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
-import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * A wrapper interface that combines Fabric's Storage API with Minecraft's Container interface.
  * This allows us to use both modern transfer API features and traditional container functionality.
  */
-public interface FabricItemStorage extends Storage<ItemVariant>, Container {
+public interface FabricItemStorage extends Storage<ItemVariant> {
     /**
      * Gets an item from the storage at the specified slot.
      * This is a convenience method that wraps the Storage API's view functionality.
@@ -49,6 +49,24 @@ public interface FabricItemStorage extends Storage<ItemVariant>, Container {
      * @return true if the item can be inserted, false otherwise
      */
     boolean isItemValid(int slot, ItemStack stack);
+
+    int getContainerSize();
+
+    boolean isEmpty();
+
+    ItemStack getItem(int slot);
+
+    ItemStack removeItem(int slot, int count);
+
+    ItemStack removeItemNoUpdate(int slot);
+
+    void setItem(int slot, ItemStack itemStack);
+
+    void setChanged();
+
+    boolean stillValid(Player player);
+
+    void clearContent();
 
     /**
      * Gets the storage of the result slot

@@ -2,26 +2,14 @@
   "id": "ultramarine:medium_su_style_caihua",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "ultramarine:yellow_dye_powder"
-    },
-    {
-      "item": "ultramarine:blue_dye_powder"
-    },
-    {
-      "item": "minecraft:green_dye"
-    },
-    {
-      "item": "ultramarine:white_dye_powder"
-    }
+    "ultramarine:yellow_dye_powder",
+    "ultramarine:blue_dye_powder",
+    "minecraft:green_dye",
+    "ultramarine:white_dye_powder"
   ],
-  "material": {
-    "tag": "ultramarine:polished_planks"
-  },
+  "material": "#ultramarine:polished_planks",
   "result": {
     "id": "ultramarine:medium_su_style_caihua"
   },
-  "template": {
-    "item": "ultramarine:caihua_template"
-  }
+  "template": "ultramarine:caihua_template"
 }

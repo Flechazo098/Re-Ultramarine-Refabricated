@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "ultramarine:blue_carved_wooden_stairs"
-    },
-    {
-      "item": "ultramarine:yellow_dye_powder"
-    }
+    "ultramarine:blue_carved_wooden_stairs",
+    "ultramarine:yellow_dye_powder"
   ],
   "result": {
     "id": "ultramarine:blue_carved_wooden_bracket_stairs"

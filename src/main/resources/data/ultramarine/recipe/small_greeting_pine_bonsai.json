@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "D": {
-      "item": "minecraft:brown_dye"
-    },
-    "P": {
-      "item": "minecraft:flower_pot"
-    },
-    "S": {
-      "item": "minecraft:spruce_sapling"
-    }
+    "D": "minecraft:brown_dye",
+    "P": "minecraft:flower_pot",
+    "S": "minecraft:spruce_sapling"
   },
   "pattern": [
     "S ",

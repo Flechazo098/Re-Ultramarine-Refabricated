@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "B": {
-      "item": "minecraft:brick"
-    },
-    "P": {
-      "item": "minecraft:flower_pot"
-    },
-    "S": {
-      "tag": "minecraft:saplings"
-    }
+    "B": "minecraft:brick",
+    "P": "minecraft:flower_pot",
+    "S": "#minecraft:saplings"
   },
   "pattern": [
     " S ",

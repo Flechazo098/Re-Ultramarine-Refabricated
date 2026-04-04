@@ -4,12 +4,11 @@ import com.voxelutopia.ultramarine.common.block.ContainerDecorativeBlock;
 import com.voxelutopia.ultramarine.common.menu.ContainerDecorativeBlockMenu;
 import com.voxelutopia.ultramarine.init.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -17,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEntity {
@@ -66,45 +67,31 @@ public class ContainerDecorativeBlockEntity extends RandomizableContainerBlockEn
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.saveAdditional(nbt, provider);
-        if (!this.trySaveLootTable(nbt)) {
-            ContainerHelper.saveAllItems(nbt, this.items, provider);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        if (!this.trySaveLootTable(output)) {
+            ContainerHelper.saveAllItems(output, this.items);
         }
+        output.putInt("Rows", this.rows);
 
-        // 保存行数
-        nbt.putInt("Rows", this.rows);
-
-        // 保存方块信息
         if (this.block != null) {
-            nbt.putString("BlockId", BuiltInRegistries.BLOCK.getKey(this.block).toString());
+            output.putString("BlockId", BuiltInRegistries.BLOCK.getKey(this.block).toString());
         }
     }
 
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
-        super.loadAdditional(nbt, provider);
-
-        // 加载行数
-        if (nbt.contains("Rows")) {
-            this.rows = nbt.getInt("Rows");
-        }
-
-        // 加载方块信息
-        if (nbt.contains("BlockId")) {
-            String blockId = nbt.getString("BlockId");
-            this.block = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(blockId));
-        } else {
-            // 如果没有保存的方块信息，使用当前方块状态
-            if (this.level != null) {
-                this.block = this.level.getBlockState(this.worldPosition).getBlock();
-            }
-        }
-
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.rows = input.getIntOr("Rows", this.rows);
+        this.block = input.getString("BlockId")
+                .filter(s -> !s.isEmpty())
+                .map(Identifier::parse)
+                .flatMap(id -> BuiltInRegistries.BLOCK.get(id).map(Holder.Reference::value))
+                .orElseGet(() -> this.level == null ? this.block : this.level.getBlockState(this.worldPosition).getBlock());
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        if (!this.tryLoadLootTable(nbt)) {
-            ContainerHelper.loadAllItems(nbt, this.items, provider);
+        if (!this.tryLoadLootTable(input)) {
+            ContainerHelper.loadAllItems(input, this.items);
         }
     }
 }

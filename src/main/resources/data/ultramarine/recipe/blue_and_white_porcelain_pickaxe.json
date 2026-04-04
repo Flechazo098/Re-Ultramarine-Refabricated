@@ -1,15 +1,9 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "ultramarine:blue_and_white_porcelain_piece"
-  },
-  "base": {
-    "item": "minecraft:golden_pickaxe"
-  },
+  "addition": "ultramarine:blue_and_white_porcelain_piece",
+  "base": "minecraft:golden_pickaxe",
   "result": {
     "id": "ultramarine:blue_and_white_porcelain_pickaxe"
   },
-  "template": {
-    "item": "ultramarine:blue_and_white_porcelain_upgrade_smithing_template"
-  }
+  "template": "ultramarine:blue_and_white_porcelain_upgrade_smithing_template"
 }

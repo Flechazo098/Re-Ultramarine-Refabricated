@@ -4,9 +4,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:rosewood_planks"
-    }
+    "B": "ultramarine:rosewood_planks"
   },
   "result": {
     "id": "ultramarine:rosewood_slab",

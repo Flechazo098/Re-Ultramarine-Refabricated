@@ -6,7 +6,7 @@ import com.voxelutopia.ultramarine.init.data.shape.ReShapeFunction;
 import com.voxelutopia.ultramarine.init.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -20,7 +20,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
 public class HangingLantern extends DecorativeBlock {
 
@@ -91,19 +90,19 @@ public class HangingLantern extends DecorativeBlock {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack itemStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult useItemOn(ItemStack itemStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         ItemStack item = pPlayer.getItemInHand(pHand);
         int lanterns = pState.getValue(LANTERNS);
         if (item.is(ModItems.SMALL_RED_LANTERN) && lanterns < 3) {
             pLevel.setBlock(pPos, pState.setValue(LANTERNS, lanterns + 1), Block.UPDATE_ALL);
             if (!pPlayer.isCreative()) item.shrink(1);
-            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide());
+            return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
-    public @NotNull BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return state.setValue(LIT, true).setValue(LANTERNS, 1);
     }

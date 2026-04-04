@@ -3,13 +3,9 @@
   "type": "ultramarine:composite_smelting",
   "cookingtime": 200,
   "experience": 0.1,
-  "primary_ingredient": {
-    "item": "minecraft:flower_pot"
-  },
+  "primary_ingredient": "minecraft:flower_pot",
   "result": {
     "id": "ultramarine:blue_and_white_porcelain_flowerpot"
   },
-  "secondary_ingredient": {
-    "item": "ultramarine:blue_and_white_glaze_powder"
-  }
+  "secondary_ingredient": "ultramarine:blue_and_white_glaze_powder"
 }

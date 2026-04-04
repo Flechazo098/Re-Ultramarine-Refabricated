@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "ultramarine:wooden_railing"
-    },
-    {
-      "tag": "c:dyes/red"
-    }
+    "ultramarine:wooden_railing",
+    "#c:dyes/red"
   ],
   "result": {
     "id": "ultramarine:red_wooden_railing_edge"

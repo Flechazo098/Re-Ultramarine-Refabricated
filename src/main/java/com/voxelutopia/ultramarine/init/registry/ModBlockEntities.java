@@ -5,9 +5,10 @@ import com.voxelutopia.ultramarine.common.tile.BottleGourdBlockEntity;
 import com.voxelutopia.ultramarine.common.tile.BrickKilnBlockEntity;
 import com.voxelutopia.ultramarine.common.tile.CenserBlockEntity;
 import com.voxelutopia.ultramarine.common.tile.ContainerDecorativeBlockEntity;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -29,23 +30,23 @@ public class ModBlockEntities {
 
     public static void registerModBlockEntities() {
         CONTAINER_DECORATIVE_BLOCK = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "container_decorative_block_entity"),
-                BlockEntityType.Builder.of(ContainerDecorativeBlockEntity::new,
+                Identifier.fromNamespaceAndPath(Ultramarine.MOD_ID, "container_decorative_block_entity"),
+                FabricBlockEntityTypeBuilder.create(ContainerDecorativeBlockEntity::new,
                         new HashSet<>(CONTAINER_BLOCKS).toArray(new Block[0])).build());
 
         CENSER = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "censer_block_entity"),
-                BlockEntityType.Builder.of(CenserBlockEntity::new,
+                Identifier.fromNamespaceAndPath(Ultramarine.MOD_ID, "censer_block_entity"),
+                FabricBlockEntityTypeBuilder.create(CenserBlockEntity::new,
                         new HashSet<>(CENSERS).toArray(new Block[0])).build());
 
         BOTTLE_GOURD = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "bottle_gourd_entity"),
-                BlockEntityType.Builder.of(BottleGourdBlockEntity::new,
+                Identifier.fromNamespaceAndPath(Ultramarine.MOD_ID, "bottle_gourd_entity"),
+                FabricBlockEntityTypeBuilder.create(BottleGourdBlockEntity::new,
                         ModBlocks.BOTTLE_GOURD).build());
 
         BRICK_KILN = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, "brick_kiln_block_entity"),
-                BlockEntityType.Builder.of(BrickKilnBlockEntity::new,
-                        ModBlocks.BRICK_KILN).build(null));
+                Identifier.fromNamespaceAndPath(Ultramarine.MOD_ID, "brick_kiln_block_entity"),
+                FabricBlockEntityTypeBuilder.create(BrickKilnBlockEntity::new,
+                        ModBlocks.BRICK_KILN).build());
     }
 }

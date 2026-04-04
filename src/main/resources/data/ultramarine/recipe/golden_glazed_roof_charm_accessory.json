@@ -1,9 +1,7 @@
 {
   "type": "minecraft:stonecutting",
   "count": 1,
-  "ingredient": {
-    "item": "minecraft:yellow_glazed_terracotta"
-  },
+  "ingredient": "minecraft:yellow_glazed_terracotta",
   "result": {
     "id": "ultramarine:golden_glazed_roof_charm_accessory"
   }

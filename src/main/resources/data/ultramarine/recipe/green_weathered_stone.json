@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "ultramarine:weathered_stone"
-    },
-    {
-      "tag": "c:dyes/green"
-    }
+    "ultramarine:weathered_stone",
+    "#c:dyes/green"
   ],
   "result": {
     "id": "ultramarine:green_weathered_stone"

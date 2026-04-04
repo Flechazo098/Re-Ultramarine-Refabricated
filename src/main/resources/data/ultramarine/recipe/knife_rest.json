@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "F": {
-      "tag": "minecraft:wooden_fences"
-    },
-    "P": {
-      "tag": "minecraft:planks"
-    }
+    "F": "#minecraft:wooden_fences",
+    "P": "#minecraft:planks"
   },
   "pattern": [
     "FFF",

@@ -19,8 +19,8 @@ import java.util.Optional;
 
 public class WoodenHammer extends Item {
 
-    public WoodenHammer() {
-        super(new Item.Properties().durability(100));
+    public WoodenHammer(Item.Properties properties) {
+        super(properties.durability(100));
     }
 
     @NotNull
@@ -53,11 +53,11 @@ public class WoodenHammer extends Item {
         }
         if (success) {
             player.ifPresent(player1 -> {
-                item.hurtAndBreak(1, player1, null);
+                item.hurtAndBreak(1, player1, pContext.getHand());
                 player1.awardStat(Stats.ITEM_USED.get(item.getItem()));
                 level.playSound(player.get(), blockpos, ModSounds.WOOD_HAMMER, SoundSource.BLOCKS, 1, 0.75f);
             });
-            return InteractionResult.sidedSuccess(level.isClientSide());
+            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
         }
         return super.useOn(pContext);
     }

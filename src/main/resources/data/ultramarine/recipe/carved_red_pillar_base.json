@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "P": {
-      "item": "ultramarine:carved_red_pillar"
-    },
-    "S": {
-      "item": "minecraft:smooth_stone_slab"
-    }
+    "P": "ultramarine:carved_red_pillar",
+    "S": "minecraft:smooth_stone_slab"
   },
   "pattern": [
     "P",

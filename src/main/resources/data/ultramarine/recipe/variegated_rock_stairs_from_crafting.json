@@ -6,9 +6,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:variegated_rocks"
-    }
+    "B": "ultramarine:variegated_rocks"
   },
   "result": {
     "id": "ultramarine:variegated_rock_stairs",

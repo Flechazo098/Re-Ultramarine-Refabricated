@@ -5,12 +5,8 @@
     "P"
   ],
   "key": {
-    "C": {
-      "item": "minecraft:red_candle"
-    },
-    "P": {
-      "item": "ultramarine:wooden_parts"
-    }
+    "C": "minecraft:red_candle",
+    "P": "ultramarine:wooden_parts"
   },
   "result": {
     "id": "ultramarine:red_candle"

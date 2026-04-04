@@ -2,15 +2,15 @@ package com.voxelutopia.ultramarine.common.tile;
 
 import com.voxelutopia.ultramarine.init.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class BottleGourdBlockEntity extends BlockEntity {
 
@@ -21,6 +21,8 @@ public class BottleGourdBlockEntity extends BlockEntity {
 
     public BottleGourdBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BOTTLE_GOURD, pos, state);
+        this.potion = Potions.WATER.value();
+        this.charges = 0;
     }
 
     public void addCharge() {
@@ -63,17 +65,35 @@ public class BottleGourdBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider provider) {
-        super.loadAdditional(pTag, provider);
-        this.potion = BuiltInRegistries.POTION.get(ResourceLocation.tryParse(pTag.getString("Potion")));
-        this.charges = pTag.getInt("Charges");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.charges = input.getIntOr("Charges", 0);
+
+        String potionString = input.getStringOr("Potion", "");
+        if (potionString.isEmpty()) {
+            this.potion = Potions.WATER.value();
+            return;
+        }
+
+        Identifier potionId = Identifier.tryParse(potionString);
+        if (potionId == null) {
+            this.potion = Potions.WATER.value();
+            return;
+        }
+
+        this.potion = BuiltInRegistries.POTION.get(potionId)
+                .map(Holder.Reference::value)
+                .orElse(Potions.WATER.value());
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider provider) {
-        super.saveAdditional(pTag, provider);
-        ResourceLocation potionId = BuiltInRegistries.POTION.getKey(this.potion);
-        if (potionId != null) pTag.putString("Potion", potionId.toString());
-        pTag.putInt("Charges", this.charges);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("Charges", this.charges);
+
+        Identifier potionId = BuiltInRegistries.POTION.getKey(this.potion);
+        if (potionId != null) {
+            output.putString("Potion", potionId.toString());
+        }
     }
 }

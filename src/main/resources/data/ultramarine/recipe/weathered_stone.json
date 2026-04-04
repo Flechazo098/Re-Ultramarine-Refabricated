@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:stone"
-    },
-    {
-      "item": "minecraft:gravel"
-    }
+    "minecraft:stone",
+    "minecraft:gravel"
   ],
   "result": {
     "id": "ultramarine:weathered_stone",

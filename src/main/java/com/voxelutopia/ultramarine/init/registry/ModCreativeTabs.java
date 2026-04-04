@@ -2,11 +2,11 @@ package com.voxelutopia.ultramarine.init.registry;
 
 import com.voxelutopia.ultramarine.Ultramarine;
 import com.voxelutopia.ultramarine.init.data.CreativeTabData;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ public class ModCreativeTabs {
     public static CreativeModeTab LAMPS;
 
     public static void registerModGroups() {
-        MATERIALS = register("materials_tab", FabricItemGroup.builder()
+        MATERIALS = register("materials_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".materials"))
                 .icon(() -> new ItemStack(ModItems.CYAN_BRICK))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -32,7 +32,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        TOOLS = register("tools_tab", FabricItemGroup.builder()
+        TOOLS = register("tools_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".tools"))
                 .icon(() -> new ItemStack(ModItems.WOODEN_MALLET))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -41,7 +41,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        BUILDING_BLOCKS = register("building_blocks_tab", FabricItemGroup.builder()
+        BUILDING_BLOCKS = register("building_blocks_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".building_blocks"))
                 .icon(() -> new ItemStack(ModItems.CYAN_BRICKS))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -50,7 +50,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        DECORATIVE_BLOCKS = register("decorative_blocks_tab", FabricItemGroup.builder()
+        DECORATIVE_BLOCKS = register("decorative_blocks_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".decorative_blocks"))
                 .icon(() -> new ItemStack(ModItems.CARVED_RED_PILLAR_BASE))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -59,7 +59,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        DECORATIONS = register("decorations_tab", FabricItemGroup.builder()
+        DECORATIONS = register("decorations_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".decorations"))
                 .icon(() -> new ItemStack(ModItems.LARGE_BLUE_AND_WHITE_PORCELAIN_VASE))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -68,7 +68,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        FURNITURE = register("furniture_tab", FabricItemGroup.builder()
+        FURNITURE = register("furniture_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".furniture"))
                 .icon(() -> new ItemStack(ModItems.OAK_CABINET))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -77,7 +77,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        WINDOWS_AND_DOORS = register("windows_and_doors_tab", FabricItemGroup.builder()
+        WINDOWS_AND_DOORS = register("windows_and_doors_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".windows_and_doors"))
                 .icon(() -> new ItemStack(ModItems.CARVED_WOODEN_DOOR))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -86,7 +86,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        PLANTS = register("plants_tab", FabricItemGroup.builder()
+        PLANTS = register("plants_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".plants"))
                 .icon(() -> new ItemStack(ModItems.MEDIUM_LOTUS))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -95,7 +95,7 @@ public class ModCreativeTabs {
                     }
                 })
                 .build());
-        LAMPS = register("lamps_tab", FabricItemGroup.builder()
+        LAMPS = register("lamps_tab", FabricCreativeModeTab.builder()
                 .title(Component.translatable("item_group." + Ultramarine.MOD_ID + ".lamps"))
                 .icon(() -> new ItemStack(ModItems.OCTAGONAL_PALACE_LANTERN))
                 .displayItems((itemDisplayParameters, output) -> {
@@ -107,7 +107,7 @@ public class ModCreativeTabs {
     }
 
     private static CreativeModeTab register(String name, CreativeModeTab tab) {
-        return Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name), tab);
+        return Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Identifier.fromNamespaceAndPath(Ultramarine.MOD_ID, name), tab);
     }
 
 }

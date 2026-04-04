@@ -6,18 +6,10 @@
     "DPD"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:stick"
-    },
-    "C": {
-      "tag": "minecraft:candles"
-    },
-    "D": {
-      "item": "minecraft:red_dye"
-    },
-    "P": {
-      "item": "minecraft:paper"
-    }
+    "S": "minecraft:stick",
+    "C": "#minecraft:candles",
+    "D": "minecraft:red_dye",
+    "P": "minecraft:paper"
   },
   "result": {
     "id": "ultramarine:small_red_lantern"

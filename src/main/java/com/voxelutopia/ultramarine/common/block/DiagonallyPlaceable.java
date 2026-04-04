@@ -9,14 +9,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 
 public interface DiagonallyPlaceable {
     BooleanProperty DIAGONAL = ModBlockStateProperties.DIAGONAL;
 
     boolean isDiagonallyPlaceable();
 
-    default boolean getDiagonalState(@NotNull BlockPlaceContext pContext) {
+    default boolean getDiagonalState(BlockPlaceContext pContext) {
         return Math.round((pContext.getRotation() + 180.0F) / 45.0F) % 2 == 1;
     }
 
@@ -44,7 +43,7 @@ public interface DiagonallyPlaceable {
         }
     }
 
-    default BlockState setDiagonalStateForPlacement(@NotNull BlockState state, BlockPlaceContext pContext) {
+    default BlockState setDiagonalStateForPlacement(BlockState state, BlockPlaceContext pContext) {
         return isDiagonallyPlaceable() ? state.setValue(DIAGONAL, getDiagonalState(pContext)) : state;
     }
 }

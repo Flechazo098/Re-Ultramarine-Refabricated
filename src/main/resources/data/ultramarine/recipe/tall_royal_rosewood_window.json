@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "W": {
-      "item": "ultramarine:royal_rosewood_window"
-    }
+    "W": "ultramarine:royal_rosewood_window"
   },
   "pattern": [
     "W",

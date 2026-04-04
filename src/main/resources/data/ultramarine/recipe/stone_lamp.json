@@ -6,18 +6,10 @@
     " S "
   ],
   "key": {
-    "S": {
-      "item": "minecraft:stone"
-    },
-    "C": {
-      "tag": "minecraft:candles"
-    },
-    "W": {
-      "item": "minecraft:cobblestone_wall"
-    },
-    "T": {
-      "item": "minecraft:stone_slab"
-    }
+    "S": "minecraft:stone",
+    "C": "#minecraft:candles",
+    "W": "minecraft:cobblestone_wall",
+    "T": "minecraft:stone_slab"
   },
   "result": {
     "id": "ultramarine:stone_lamp"

@@ -1,8 +1,6 @@
 {
   "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "ultramarine:unfired_cyan_brick"
-  },
+  "ingredient": "ultramarine:unfired_cyan_brick",
   "result": {
     "id": "ultramarine:cyan_brick"
   },

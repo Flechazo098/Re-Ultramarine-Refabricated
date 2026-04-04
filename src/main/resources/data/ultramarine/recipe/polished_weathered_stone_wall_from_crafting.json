@@ -5,9 +5,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:polished_weathered_stone"
-    }
+    "B": "ultramarine:polished_weathered_stone"
   },
   "result": {
     "id": "ultramarine:polished_weathered_stone_wall",

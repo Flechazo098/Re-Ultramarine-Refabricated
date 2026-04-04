@@ -1,8 +1,6 @@
 {
   "type": "minecraft:blasting",
-  "ingredient": {
-    "item": "ultramarine:unfired_clay_brick"
-  },
+  "ingredient": "ultramarine:unfired_clay_brick",
   "result": {
     "id": "ultramarine:fired_brick"
   },

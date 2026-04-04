@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -30,14 +30,14 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
                     Codec.INT.fieldOf("sideThickness").forGetter(block -> block.sideThickness)
             ).apply(instance, WallSideBlock::new)
     );
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     protected final BaseBlockProperty property;
     private final ReShapeFunction shapeFunction;
     private final int sideThickness;
 
     public WallSideBlock(BaseBlockProperty property, int sideThickness) {
-        super(property.properties().noOcclusion().noCollission());
+        super(property.properties().noOcclusion().noCollision());
         this.property = property;
         this.sideThickness = sideThickness;
         this.shapeFunction = ReShapeFunction.sideShape(sideThickness);
@@ -48,7 +48,7 @@ public class WallSideBlock extends Block implements BaseBlockPropertyHolder, Sim
 
 
     public WallSideBlock(BaseBlockProperty property, ReShapeFunction shapeFunction) {
-        super(property.properties().noOcclusion().noCollission());
+        super(property.properties().noOcclusion().noCollision());
         this.property = property;
         this.sideThickness = 1;
         this.shapeFunction = shapeFunction;

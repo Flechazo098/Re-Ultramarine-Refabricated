@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "ultramarine:dark_oak_rafter"
-    },
-    {
-      "item": "ultramarine:gold_parts"
-    }
+    "ultramarine:dark_oak_rafter",
+    "ultramarine:gold_parts"
   ],
   "result": {
     "id": "ultramarine:gilded_dark_oak_rafter"

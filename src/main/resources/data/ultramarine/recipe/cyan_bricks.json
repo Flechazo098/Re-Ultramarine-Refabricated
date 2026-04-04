@@ -5,9 +5,7 @@
     "AA"
   ],
   "key": {
-    "A": {
-      "item": "ultramarine:cyan_brick"
-    }
+    "A": "ultramarine:cyan_brick"
   },
   "result": {
     "id": "ultramarine:cyan_bricks"

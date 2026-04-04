@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "F": {
-      "tag": "minecraft:wooden_fences"
-    }
+    "F": "#minecraft:wooden_fences"
   },
   "pattern": [
     "F F",

@@ -6,9 +6,7 @@
     "BBB"
   ],
   "key": {
-    "B": {
-      "item": "ultramarine:green_glazed_tiles"
-    }
+    "B": "ultramarine:green_glazed_tiles"
   },
   "result": {
     "id": "ultramarine:green_glazed_tile_stairs",

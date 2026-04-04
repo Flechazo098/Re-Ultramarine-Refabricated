@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "C": {
-      "item": "ultramarine:red_curtain"
-    }
+    "C": "ultramarine:red_curtain"
   },
   "pattern": [
     "C ",

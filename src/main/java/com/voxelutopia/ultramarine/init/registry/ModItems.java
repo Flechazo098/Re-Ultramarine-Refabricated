@@ -1,16 +1,19 @@
 package com.voxelutopia.ultramarine.init.registry;
 
-import com.google.common.base.Supplier;
 import com.voxelutopia.ultramarine.Ultramarine;
 import com.voxelutopia.ultramarine.common.item.*;
 import com.voxelutopia.ultramarine.init.data.CreativeTabData;
 import com.voxelutopia.ultramarine.init.data.ModTiers;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
+
+import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class ModItems {
@@ -867,7 +870,7 @@ public class ModItems {
 
     public static final Item MOONCAKE = foodItem("mooncake", ModFoods.MOONCAKE);
     public static final Item MUNG_BEAN_CAKE = foodItem("mung_bean_cake", ModFoods.MUNG_BEAN_CAKE);
-    public static final Item RAW_MEAT = foodItem("raw_meat", ModFoods.RAW_MEAT);
+    public static final Item RAW_MEAT = foodItem("raw_meat", ModFoods.RAW_MEAT, ModFoods.RAW_MEAT_CONSUMABLE);
     public static final Item COOKED_MEAT = foodItem("cooked_meat", ModFoods.COOKED_MEAT);
     public static final Item BAOZI = foodItem("baozi", ModFoods.BAOZI);
 
@@ -877,13 +880,13 @@ public class ModItems {
 
     public static final Item WOODEN_MALLET = toolItem("wooden_mallet", WoodenHammer::new);
     public static final Item BLUE_AND_WHITE_PORCELAIN_SWORD = toolItem("blue_and_white_porcelain_sword",
-            () -> new SwordItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(SwordItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 3, -2.4F))));
+            properties -> new Item(properties.sword(ModTiers.BLUE_AND_WHITE_PORCELAIN, 3.0F, -2.4F)));
     public static final Item BLUE_AND_WHITE_PORCELAIN_SHOVEL = toolItem("blue_and_white_porcelain_shovel",
-            () -> new ShovelItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(ShovelItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 1.5F, -3.0F))));
+            properties -> new ShovelItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, 1.5F, -3.0F, properties));
     public static final Item BLUE_AND_WHITE_PORCELAIN_PICKAXE = toolItem("blue_and_white_porcelain_pickaxe",
-            () -> new PickaxeItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(PickaxeItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 1.0F, -2.8F))));
+            properties -> new Item(properties.pickaxe(ModTiers.BLUE_AND_WHITE_PORCELAIN, 1.0F, -2.8F)));
     public static final Item BLUE_AND_WHITE_PORCELAIN_AXE = toolItem("blue_and_white_porcelain_axe",
-            () -> new AxeItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, (new Item.Properties()).attributes(AxeItem.createAttributes(ModTiers.BLUE_AND_WHITE_PORCELAIN, 6.0F, -3.2F))));
+            properties -> new AxeItem(ModTiers.BLUE_AND_WHITE_PORCELAIN, 6.0F, -3.2F, properties));
     public static final Item BLUE_AND_WHITE_PORCELAIN_UPGRADE_SMITHING_TEMPLATE = toolItem("blue_and_white_porcelain_upgrade_smithing_template",
             BlueAndWhitePorcelainUpgradeSmithingTemplate::new);
     public static final Item WOODWORKING_WORKBENCH = fromBlock(ModBlocks.WOODWORKING_WORKBENCH, CreativeTabData.TOOLS);
@@ -891,13 +894,15 @@ public class ModItems {
     public static final Item CHISEL_TABLE = fromBlock(ModBlocks.CHISEL_TABLE, CreativeTabData.TOOLS);
 
     private static <B extends Block> Item fromBlock(Block block, CreativeTabData tabDef) {
-        Item registryObject = registerItem(BuiltInRegistries.BLOCK.getKey(block).getPath(), new BlockItem(block, new Item.Properties()));
+        String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
+        Item registryObject = registerItem(name, properties -> new BlockItem(block, properties));
         CreativeTabData.putItemInSet(registryObject, tabDef);
         return registryObject;
     }
 
     private static <B extends Block> Item aquaticPlantItem(Block block, CreativeTabData tabDef) {
-        Item registryObject = registerItem(BuiltInRegistries.BLOCK.getKey(block).getPath(), new AquaticPlantBlockItem(block, new Item.Properties()));
+        String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
+        Item registryObject = registerItem(name, properties -> new AquaticPlantBlockItem(block, properties));
         CreativeTabData.putItemInSet(registryObject, tabDef);
         return registryObject;
     }
@@ -909,33 +914,42 @@ public class ModItems {
 //    }
 
     private static Item simpleItem(String name, CreativeTabData tabDef) {
-        Item registryObject = registerItem(name, new Item(new Item.Properties()));
+        Item registryObject = registerItem(name, Item::new);
         CreativeTabData.putItemInSet(registryObject, tabDef);
         return registryObject;
     }
 
     private static Item foodItem(String name, FoodProperties food) {
-        Item registryObject = registerItem(name, new BaseFood(food));
+        Item registryObject = registerItem(name, properties -> new BaseFood(properties, food));
+        CreativeTabData.putItemInSet(registryObject, CreativeTabData.MATERIALS);
+        return registryObject;
+    }
+
+    private static Item foodItem(String name, FoodProperties food, net.minecraft.world.item.component.Consumable consumable) {
+        Item registryObject = registerItem(name, properties -> new BaseFood(properties, food, consumable));
         CreativeTabData.putItemInSet(registryObject, CreativeTabData.MATERIALS);
         return registryObject;
     }
 
 
     private static Item dyePowderItem(String name, DyeColor color) {
-        Item registryObject = registerItem(name, new DyePowder(color));
+        Item registryObject = registerItem(name, properties -> new DyePowder(properties, color));
         CreativeTabData.putItemInSet(registryObject, CreativeTabData.MATERIALS);
         return registryObject;
     }
 
-    private static Item toolItem(String name, Supplier<Item> toolItemSupplier) {
-        Item item = registerItem(name, toolItemSupplier.get());
+    private static Item toolItem(String name, Function<Item.Properties, Item> toolItemFactory) {
+        Item item = registerItem(name, toolItemFactory);
         CreativeTabData.putItemInSet(item, CreativeTabData.TOOLS);
         return item;
     }
 
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(BuiltInRegistries.ITEM,
-                ResourceLocation.fromNamespaceAndPath(Ultramarine.MOD_ID, name), item);
+    private static Item registerItem(String name, Function<Item.Properties, Item> itemFactory) {
+        Identifier id = Identifier.fromNamespaceAndPath(Ultramarine.MOD_ID, name);
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+        Item.Properties properties = new Item.Properties().setId(key);
+        Item item = itemFactory.apply(properties);
+        return Registry.register(BuiltInRegistries.ITEM, key, item);
     }
 
     public static void registerModItems() {

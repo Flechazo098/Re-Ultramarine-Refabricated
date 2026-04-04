@@ -2,30 +2,14 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "ultramarine:black_porcelain_plate"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    },
-    {
-      "item": "ultramarine:mung_bean_cake"
-    }
+    "ultramarine:black_porcelain_plate",
+    "ultramarine:mung_bean_cake",
+    "ultramarine:mung_bean_cake",
+    "ultramarine:mung_bean_cake",
+    "ultramarine:mung_bean_cake",
+    "ultramarine:mung_bean_cake",
+    "ultramarine:mung_bean_cake",
+    "ultramarine:mung_bean_cake"
   ],
   "result": {
     "id": "ultramarine:plated_mung_bean_cakes"

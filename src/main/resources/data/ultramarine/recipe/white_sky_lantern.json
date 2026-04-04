@@ -6,18 +6,10 @@
     " F "
   ],
   "key": {
-    "X": {
-      "item": "ultramarine:xuan_paper"
-    },
-    "C": {
-      "tag": "minecraft:candles"
-    },
-    "D": {
-      "item": "minecraft:white_dye"
-    },
-    "F": {
-      "item": "ultramarine:wooden_frame"
-    }
+    "X": "ultramarine:xuan_paper",
+    "C": "#minecraft:candles",
+    "D": "minecraft:white_dye",
+    "F": "ultramarine:wooden_frame"
   },
   "result": {
     "id": "ultramarine:white_sky_lantern"

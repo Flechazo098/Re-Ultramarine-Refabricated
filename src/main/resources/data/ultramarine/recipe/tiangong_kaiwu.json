@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:book"
-    },
-    {
-      "item": "minecraft:lapis_lazuli"
-    }
+    "minecraft:book",
+    "minecraft:lapis_lazuli"
   ],
   "result": {
     "id": "patchouli:guide_book",

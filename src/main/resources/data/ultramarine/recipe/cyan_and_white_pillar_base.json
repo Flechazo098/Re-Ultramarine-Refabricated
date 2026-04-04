@@ -2,26 +2,14 @@
   "id": "ultramarine:cyan_and_white_pillar_base",
   "type": "ultramarine:chisel_table",
   "colors": [
-    {
-      "item": "minecraft:red_dye"
-    },
-    {
-      "item": "minecraft:green_dye"
-    },
-    {
-      "item": "minecraft:white_dye"
-    },
-    {
-      "item": "ultramarine:black_dye_powder"
-    }
+    "minecraft:red_dye",
+    "minecraft:green_dye",
+    "minecraft:white_dye",
+    "ultramarine:black_dye_powder"
   ],
-  "material": {
-    "tag": "minecraft:logs"
-  },
+  "material": "#minecraft:logs",
   "result": {
     "id": "ultramarine:cyan_and_white_pillar_base"
   },
-  "template": {
-    "item": "ultramarine:zhaotou_template"
-  }
+  "template": "ultramarine:zhaotou_template"
 }

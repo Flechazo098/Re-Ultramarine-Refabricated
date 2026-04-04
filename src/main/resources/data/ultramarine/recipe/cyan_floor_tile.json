@@ -1,12 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:smooth_stone"
-    },
-    {
-      "item": "minecraft:cyan_dye"
-    }
+    "minecraft:smooth_stone",
+    "minecraft:cyan_dye"
   ],
   "result": {
     "id": "ultramarine:cyan_floor_tile"

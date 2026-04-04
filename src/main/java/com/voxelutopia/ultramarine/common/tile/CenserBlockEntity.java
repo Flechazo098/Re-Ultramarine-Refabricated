@@ -3,8 +3,6 @@ package com.voxelutopia.ultramarine.common.tile;
 import com.voxelutopia.ultramarine.common.block.DecorativeBlock;
 import com.voxelutopia.ultramarine.init.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,6 +10,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 
 public class CenserBlockEntity extends BlockEntity {
@@ -55,12 +55,11 @@ public class CenserBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
-        super.loadAdditional(pTag, provider);
-        this.remainingTime = pTag.getInt("BurnTime");
-        this.lit = pTag.getBoolean("Lit");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.remainingTime = input.getIntOr("BurnTime", 0);
+        this.lit = input.getBooleanOr("Lit", false);
 
-        // 确保方块状态与实体状态一致
         BlockState state = this.getBlockState();
         if (state.hasProperty(DecorativeBlock.LIT) && state.getValue(DecorativeBlock.LIT) != this.lit) {
             Level level = this.getLevel();
@@ -71,9 +70,9 @@ public class CenserBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag pTag, HolderLookup.Provider provider) {
-        super.saveAdditional(pTag, provider);
-        pTag.putInt("BurnTime", remainingTime);
-        pTag.putBoolean("Lit", lit);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("BurnTime", remainingTime);
+        output.putBoolean("Lit", lit);
     }
 }

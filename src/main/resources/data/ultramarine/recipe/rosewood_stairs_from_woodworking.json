@@ -1,9 +1,7 @@
 {
   "type": "ultramarine:woodworking",
   "group": "",
-  "ingredient": {
-    "item": "ultramarine:rosewood_planks"
-  },
+  "ingredient": "ultramarine:rosewood_planks",
   "result": {
     "id": "ultramarine:rosewood_stairs",
     "count": 1

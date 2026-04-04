@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "ultramarine:lotus_bud"
-    },
-    {
-      "item": "minecraft:bone_meal"
-    }
+    "ultramarine:lotus_bud",
+    "minecraft:bone_meal"
   ],
   "result": {
     "id": "ultramarine:medium_lotus"
